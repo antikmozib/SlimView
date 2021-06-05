@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -151,11 +150,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public void pane_onKeyPress(KeyEvent keyEvent) {
         if (keyEvent.isAltDown() && ((Stage) pane.getScene().getWindow()).isFullScreen()) {
-            if (menuBar.isVisible()) {
-                menuBar.setVisible(false);
-            } else {
-                menuBar.setVisible(true);
-            }
+            menuBar.setVisible(!menuBar.isVisible());
         }
     }
 

@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 
 public class SimView extends Application {
@@ -22,6 +23,7 @@ public class SimView extends Application {
         stage.setScene(scene);
         stage.setTitle("SimView");
         stage.getIcons().add(new Image(this.getClass().getResourceAsStream("icons/simview.png")));
+        stage.setFullScreenExitHint("");
         stage.show();
 
         if (cmdLineArgs != null && cmdLineArgs.length > 0) {
