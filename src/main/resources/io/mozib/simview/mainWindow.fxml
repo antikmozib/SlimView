@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.RadioMenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.input.KeyCodeCombination?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.simview.MainWindowController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.simview.MainWindowController">
     <children>
         <MenuBar fx:id="menuBar">
             <menus>
@@ -35,32 +26,33 @@
                 </Menu>
                 <Menu text="_View">
                <items>
-                  <RadioMenuItem text="_Full screen">
+                  <RadioMenuItem text="_Full Screen">
                      <accelerator>
-                        <KeyCodeCombination alt="DOWN" code="F11" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                        <KeyCodeCombination alt="DOWN" code="ENTER" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </RadioMenuItem>
-                  <RadioMenuItem text="_Original size" />
-                  <RadioMenuItem text="Fit to _window" />
+                  <RadioMenuItem text="_Original Size" />
+                  <RadioMenuItem text="Fit To _Window" />
                </items></Menu>
                 <Menu text="_Help">
                     <items>
-                        <MenuItem text="_About..." />
+                  <MenuItem mnemonicParsing="false" text="Check For Updates..." />
+                        <MenuItem fx:id="menuAbout" onAction="#menuAbout_onAction" text="_About..." />
                     </items>
                 </Menu>
             </menus>
         </MenuBar>
       <ToolBar fx:id="toolBar" prefHeight="40.0" prefWidth="200.0">
         <items>
-          <Button mnemonicParsing="false" text="First" />
-            <Button mnemonicParsing="false" text="Previous" />
-            <Button mnemonicParsing="false" text="Next" />
-            <Button mnemonicParsing="false" text="Last" />
+          <Button fx:id="buttonFirst" mnemonicParsing="false" text="First" />
+            <Button fx:id="buttonPrevious" mnemonicParsing="false" text="Previous" />
+            <Button fx:id="buttonNext" mnemonicParsing="false" text="Next" />
+            <Button fx:id="buttonLast" mnemonicParsing="false" text="Last" />
         </items>
       </ToolBar>
-      <Pane fx:id="pane" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+      <Pane fx:id="pane" onKeyPressed="#pane_onKeyPress" onMouseClicked="#pane_onClick" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" VBox.vgrow="ALWAYS">
          <children>
-            <ImageView fx:id="imageViewMain" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imageViewMain" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#imageViewMain_onClick" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
         <HBox fx:id="statusBar" prefHeight="24.0" prefWidth="200.0">

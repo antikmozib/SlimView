@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="206.0" prefWidth="391.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.simview.AboutWindowController">
+   <children>
+      <ImageView fitHeight="64.0" fitWidth="64.0" layoutX="16.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
+         <image>
+            <Image url="@icons/simview.png" />
+         </image>
+      </ImageView>
+      <VBox layoutX="96.0" layoutY="16.0" prefWidth="100.0" AnchorPane.leftAnchor="96.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
+         <children>
+            <Label text="SimView" />
+            <Label fx:id="labelVersion" text="Version 1.0" />
+            <Separator prefHeight="16.0" prefWidth="488.0" />
+            <Label text="Copyright © 2021 Antik Mozib." />
+            <Label text="All Rights Reserved." />
+            <HBox alignment="CENTER_LEFT" prefWidth="200.0">
+               <children>
+                  <Label text="Website:" />
+                  <Hyperlink fx:id="hyperlinkWebsite" focusTraversable="false" onAction="#hyperlinkWebsite_onAction" text="https://mozib.io/simview" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#buttonOK_onAction" text="OK" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="16.0" />
+   </children>
+</AnchorPane>
