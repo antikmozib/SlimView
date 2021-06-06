@@ -34,7 +34,7 @@ public class AboutWindowController implements Initializable {
         try {
             Desktop.getDesktop().browse(new URL(hyperlinkWebsite.getText()).toURI());
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 }

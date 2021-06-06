@@ -37,6 +37,7 @@
                 <Menu text="_Help">
                     <items>
                   <MenuItem mnemonicParsing="false" text="Check For Updates..." />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem fx:id="menuAbout" onAction="#menuAbout_onAction" text="_About..." />
                     </items>
                 </Menu>
@@ -44,10 +45,10 @@
         </MenuBar>
       <ToolBar fx:id="toolBar" prefHeight="40.0" prefWidth="200.0">
         <items>
-          <Button fx:id="buttonFirst" mnemonicParsing="false" text="First" />
-            <Button fx:id="buttonPrevious" mnemonicParsing="false" text="Previous" />
-            <Button fx:id="buttonNext" mnemonicParsing="false" text="Next" />
-            <Button fx:id="buttonLast" mnemonicParsing="false" text="Last" />
+          <Button fx:id="buttonFirst" mnemonicParsing="false" onAction="#buttonFirst_onAction" text="First" />
+            <Button fx:id="buttonPrevious" mnemonicParsing="false" onAction="#buttonPrevious_onAction" text="Previous" />
+            <Button fx:id="buttonNext" mnemonicParsing="false" onAction="#buttonNext_onAction" text="Next" />
+            <Button fx:id="buttonLast" mnemonicParsing="false" onAction="#buttonLast_onAction" text="Last" />
         </items>
       </ToolBar>
       <Pane fx:id="pane" onKeyPressed="#pane_onKeyPress" onMouseClicked="#pane_onClick" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" VBox.vgrow="ALWAYS">
