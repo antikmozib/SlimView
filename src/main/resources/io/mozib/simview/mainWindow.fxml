@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.input.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.simview.MainWindowController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.simview.MainWindowController">
     <children>
-        <MenuBar fx:id="menuBar">
+        <MenuBar fx:id="menuBar" onKeyPressed="#menuBar_onKeyPress">
             <menus>
                 <Menu text="_File">
                     <items>
@@ -26,11 +35,10 @@
                 </Menu>
                 <Menu text="_View">
                <items>
-                  <RadioMenuItem text="_Full Screen">
+                  <RadioMenuItem fx:id="menuFullScreen" onAction="#menuFullScreen_onAction" text="_Full Screen">
                      <accelerator>
-                        <KeyCodeCombination alt="DOWN" code="ENTER" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </RadioMenuItem>
+                        <KeyCodeCombination alt="UP" code="F11" control="UP" meta="UP" shift="UP" shortcut="ANY" />
+                     </accelerator></RadioMenuItem>
                   <RadioMenuItem text="_Original Size" />
                   <RadioMenuItem text="Fit To _Window" />
                </items></Menu>
@@ -51,7 +59,7 @@
             <Button fx:id="buttonLast" mnemonicParsing="false" onAction="#buttonLast_onAction" text="Last" />
         </items>
       </ToolBar>
-      <Pane fx:id="pane" onKeyPressed="#pane_onKeyPress" onMouseClicked="#pane_onClick" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" VBox.vgrow="ALWAYS">
+      <Pane fx:id="pane" onKeyPressed="#pane_onKeyPress" onMouseClicked="#pane_onClick" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #b3b3b3;" VBox.vgrow="ALWAYS">
          <children>
             <ImageView fx:id="imageViewMain" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#imageViewMain_onClick" pickOnBounds="true" preserveRatio="true" />
          </children>

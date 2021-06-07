@@ -5,10 +5,9 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.ToolBar;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -30,34 +29,26 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public ImageView imageViewMain;
-
     @FXML
     private Pane pane;
-
     @FXML
     private Label labelStatus;
-
     @FXML
     private ToolBar toolBar;
-
     @FXML
     private HBox statusBar;
-
     @FXML
     private MenuBar menuBar;
+    @FXML
+    private RadioMenuItem menuFullScreen;
 
-    public MainViewModel mainViewModel;
-
-    private SimpleBooleanProperty isViewingFullscreen;
+    public MainViewModel mainViewModel = new MainViewModel();
+    private final SimpleBooleanProperty isViewingFullscreen = new SimpleBooleanProperty(false);
 
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        mainViewModel = new MainViewModel();
-        isViewingFullscreen = new SimpleBooleanProperty(false);
-
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
-        imageViewMain.setPreserveRatio(false);
         imageViewMain.fitWidthProperty().bind(pane.widthProperty());
         imageViewMain.fitHeightProperty().bind(pane.heightProperty());
         imageViewMain.requestFocus();
@@ -66,9 +57,18 @@ public class MainWindowController implements Initializable {
         toolBar.managedProperty().bind(toolBar.visibleProperty());
         statusBar.managedProperty().bind(statusBar.visibleProperty());
         menuBar.managedProperty().bind(menuBar.visibleProperty());
-        toolBar.visibleProperty().bind(isViewingFullscreen.not());
-        statusBar.visibleProperty().bind(isViewingFullscreen.not());
-        menuBar.visibleProperty().bind(isViewingFullscreen.not());
+
+        // bind ImageView to selectedImage
+        mainViewModel.selectedImageModelProperty().addListener((observable, oldValue, newValue) -> {
+            imageViewMain.setImage(newValue.getImage());
+            imageViewMain.requestFocus();
+            try {
+                ((Stage) imageViewMain.getScene().getWindow()).setTitle(newValue.getShortName() + " - SimView");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
         System.out.println("Initialized!");
     }
 
@@ -83,27 +83,25 @@ public class MainWindowController implements Initializable {
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
             pane.requestFocus();
             if (mouseEvent.getClickCount() == 2) {
-                Stage stage = (Stage) pane.getScene().getWindow();
-                if (stage.isFullScreen()) {
-                    stage.setFullScreen(false);
-                    isViewingFullscreen.set(false);
-                } else {
-                    stage.setFullScreen(true);
-                    isViewingFullscreen.set(true);
-                }
+                toggleFullscreen();
             }
         }
     }
 
     @FXML
     public void imageViewMain_onClick(MouseEvent mouseEvent) {
-        System.out.println("imageViewMain clicked!");
+        //System.out.println("imageViewMain clicked!");
     }
 
     @FXML
     public void pane_onKeyPress(KeyEvent keyEvent) {
-        if (keyEvent.isAltDown() && ((Stage) pane.getScene().getWindow()).isFullScreen()) {
+        if (keyEvent.isAltDown() &&
+                keyEvent.getCode() != KeyCode.ENTER &&
+                isViewingFullscreen.get()) {
             menuBar.setVisible(!menuBar.isVisible());
+            if (menuBar.isVisible()) {
+                menuBar.requestFocus();
+            }
         }
 
         switch (keyEvent.getCode()) {
@@ -113,6 +111,16 @@ public class MainWindowController implements Initializable {
             case RIGHT:
                 mainViewModel.showNextImage();
                 break;
+            case ENTER:
+                toggleFullscreen();
+                break;
+            case ESCAPE:
+                if (isViewingFullscreen.get()) {
+                    toggleFullscreen();
+                    break;
+                } else {
+                    Platform.exit();
+                }
         }
     }
 
@@ -132,20 +140,51 @@ public class MainWindowController implements Initializable {
         aboutWindow.show();
     }
 
-
+    @FXML
     public void buttonNext_onAction(ActionEvent actionEvent) {
         mainViewModel.showNextImage();
     }
 
+    @FXML
     public void buttonPrevious_onAction(ActionEvent actionEvent) {
         mainViewModel.showPreviousImage();
     }
 
+    @FXML
     public void buttonFirst_onAction(ActionEvent actionEvent) {
         mainViewModel.showFirstImage();
     }
 
+    @FXML
     public void buttonLast_onAction(ActionEvent actionEvent) {
         mainViewModel.showLastImage();
+    }
+
+    private void toggleFullscreen() {
+        boolean setFullscreen;
+        Stage stage = (Stage) pane.getScene().getWindow();
+
+        stage.setFullScreen(!stage.isFullScreen());
+        setFullscreen = stage.isFullScreen();
+
+        isViewingFullscreen.set(setFullscreen);
+        toolBar.setVisible(!setFullscreen);
+        statusBar.setVisible(!setFullscreen);
+        menuBar.setVisible(!setFullscreen);
+        menuFullScreen.setSelected(setFullscreen);
+    }
+
+    @FXML
+    public void menuFullScreen_onAction(ActionEvent actionEvent) {
+        toggleFullscreen();
+    }
+
+    public void menuBar_onKeyPress(KeyEvent keyEvent) {
+        if (isViewingFullscreen.get() && menuBar.isVisible()) {
+            if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ALT) {
+                menuBar.setVisible(false);
+                imageViewMain.requestFocus();
+            }
+        }
     }
 }

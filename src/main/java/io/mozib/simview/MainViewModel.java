@@ -21,10 +21,10 @@ public class MainViewModel {
 
     private final ReadOnlyStringWrapper status=new ReadOnlyStringWrapper();
     private final SimpleBooleanProperty directoryScanCompleted= new SimpleBooleanProperty(false);
-    private final ReadOnlyObjectWrapper<Image> selectedImageWrapper = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
 
-    public ReadOnlyObjectProperty<Image> selectedImageProperty() {
-        return selectedImageWrapper.getReadOnlyProperty();
+    public ReadOnlyObjectProperty<ImageModel> selectedImageModelProperty() {
+        return selectedImageModelWrapper.getReadOnlyProperty();
     }
 
     public ReadOnlyStringProperty statusProperty() {
@@ -99,7 +99,7 @@ public class MainViewModel {
                 @Override
                 protected List<ImageModel> call() {
 
-                    Iterator<File> iterator = FileUtils.iterateFiles(new File(directoryPath), new String[]{"jpg", "png"}, false);
+                    Iterator<File> iterator = FileUtils.iterateFiles(new File(directoryPath), new String[]{"jpg", "png", "gif"}, false);
 
                     while (iterator.hasNext()) {
                         ImageModel image = new ImageModel(iterator.next().getPath());
@@ -116,7 +116,7 @@ public class MainViewModel {
     }
 
     private void setSelectedImage(ImageModel imageModel) {
-        selectedImageWrapper.set(imageModel.getImage());
+        selectedImageModelWrapper.set(imageModel);
         currentIndex = imageModels.indexOf(imageModel);
         status.unbind();
         status.set("Showing " + (currentIndex + 1) + " of " + imageModels.size() + ": " + imageModel.getShortName());
