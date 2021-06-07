@@ -8,4 +8,4 @@ _Requirements:_
 * Java 11 or later
 * Maven
 
-`clone` the repository, `cd` into the root directory and execute `mvn clean`
+`clone` the repository, `cd` into the root directory and execute `mvn clean`.
