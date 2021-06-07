@@ -179,6 +179,7 @@ public class MainWindowController implements Initializable {
         toggleFullscreen();
     }
 
+    @FXML
     public void menuBar_onKeyPress(KeyEvent keyEvent) {
         if (isViewingFullscreen.get() && menuBar.isVisible()) {
             if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ALT) {
