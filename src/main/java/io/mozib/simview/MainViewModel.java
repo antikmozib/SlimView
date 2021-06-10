@@ -18,8 +18,8 @@ public class MainViewModel {
     private final ObservableList<ImageModel> images = FXCollections.observableList(imageModels);
     private Integer currentIndex = 0;
 
-    private final ReadOnlyStringWrapper status=new ReadOnlyStringWrapper();
-    private final SimpleBooleanProperty directoryScanCompleted= new SimpleBooleanProperty(false);
+    private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper();
+    private final SimpleBooleanProperty directoryScanCompleted = new SimpleBooleanProperty(false);
     private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
 
     public ReadOnlyObjectProperty<ImageModel> selectedImageModelProperty() {
@@ -64,6 +64,7 @@ public class MainViewModel {
             currentIndex = 0;
         }
         setSelectedImage(imageModels.get(currentIndex));
+        unloadInvisibleImages();
     }
 
     public void showPreviousImage() {
@@ -72,6 +73,7 @@ public class MainViewModel {
             currentIndex = imageModels.size() - 1;
         }
         setSelectedImage(imageModels.get(currentIndex));
+        unloadInvisibleImages();
     }
 
     private static class LoadDirectory extends Service<List<ImageModel>> {
@@ -119,5 +121,14 @@ public class MainViewModel {
         currentIndex = imageModels.indexOf(imageModel);
         status.unbind();
         status.set("Image " + (currentIndex + 1) + " of " + imageModels.size() + ": " + imageModel.getShortName());
+    }
+
+    private void unloadInvisibleImages() {
+        if (currentIndex > 0) {
+            imageModels.get(currentIndex - 1).unsetImage();
+        }
+        if (currentIndex < imageModels.size() - 1) {
+            imageModels.get(currentIndex + 1).unsetImage();
+        }
     }
 }

@@ -159,32 +159,31 @@ public class MainWindowController implements Initializable {
     public void pane_onKeyPress(KeyEvent keyEvent) {
         System.out.println("Key pressed!");
 
-        if (keyEvent.isAltDown() &&
-                keyEvent.getCode() != KeyCode.ENTER &&
-                isViewingFullscreen.get()) {
+        if (keyEvent.isAltDown() && keyEvent.getCode() != KeyCode.ENTER && isViewingFullscreen.get()) {
             menuBar.setVisible(!menuBar.isVisible());
             if (menuBar.isVisible()) {
                 menuBar.requestFocus();
             }
-        }
+        } else {
 
-        switch (keyEvent.getCode()) {
-            case LEFT:
-                mainViewModel.showPreviousImage();
-                break;
-            case RIGHT:
-                mainViewModel.showNextImage();
-                break;
-            case ENTER:
-                toggleFullScreen();
-                break;
-            case ESCAPE:
-                if (isViewingFullscreen.get()) {
+            switch (keyEvent.getCode()) {
+                case LEFT:
+                    mainViewModel.showPreviousImage();
+                    break;
+                case RIGHT:
+                    mainViewModel.showNextImage();
+                    break;
+                case ENTER:
                     toggleFullScreen();
                     break;
-                } else {
-                    Platform.exit();
-                }
+                case ESCAPE:
+                    if (isViewingFullscreen.get()) {
+                        toggleFullScreen();
+                        break;
+                    } else {
+                        Platform.exit();
+                    }
+            }
         }
     }
 

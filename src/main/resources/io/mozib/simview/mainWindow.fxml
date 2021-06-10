@@ -28,7 +28,10 @@
                      </accelerator></MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem id="menuOpenContainingFolder" text="Open _Containing Folder..." />
-                  <MenuItem id="menuOpenInExternalEditor" text="Open in _External Editor..." />
+                  <MenuItem id="menuOpenInExternalEditor" text="Open in _External Editor...">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem id="menuDeleteFile" text="_Delete File...">
                      <accelerator>

@@ -30,4 +30,8 @@ public class ImageModel {
         }
         return image;
     }
+
+    public void unsetImage() {
+        image = null;
+    }
 }
