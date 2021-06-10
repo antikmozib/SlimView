@@ -7,9 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-import java.util.Locale;
 
 public class SimView extends Application {
     private static String[] cmdLineArgs;

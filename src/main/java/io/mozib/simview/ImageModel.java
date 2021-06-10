@@ -2,10 +2,8 @@ package io.mozib.simview;
 
 import javafx.beans.property.*;
 import javafx.scene.image.Image;
-
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 
 import static io.mozib.simview.SimView.*;

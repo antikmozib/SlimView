@@ -1,13 +1,10 @@
 package io.mozib.simview;
 
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.commons.io.FileUtils;
 
-import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,11 +13,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainViewModel {
     private List<ImageModel> imageModels = new ArrayList<>();
-    private final ObservableList<ImageModel> images = FXCollections.observableList(imageModels);
     private Integer currentIndex = 0;
+    private LoadDirectory loadDirectory;
 
     private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper();
-    private final SimpleBooleanProperty directoryScanCompleted = new SimpleBooleanProperty(false);
     private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
 
     public ReadOnlyObjectProperty<ImageModel> selectedImageModelProperty() {
@@ -33,62 +29,61 @@ public class MainViewModel {
 
     @SuppressWarnings("unchecked")
     public void loadImage(ImageModel imageModel) {
-        imageModels.clear();
-
         // first, show the image requested while the directory is being scanned
         setSelectedImage(imageModel);
 
         // now scan the rest of the directory
-        LoadDirectory loadDirectory = new LoadDirectory(new File(imageModel.getPath()).getParent(), images);
+        loadDirectory = new LoadDirectory(new File(imageModel.getPath()).getParent());
         loadDirectory.setOnSucceeded(event -> {
             imageModels = (List<ImageModel>) event.getSource().getValue();
             setSelectedImage(imageModels.stream().filter(image -> image.getPath().equals(imageModel.getPath())).findFirst().orElseThrow());
-            directoryScanCompleted.set(true);
         });
         status.bind(loadDirectory.messageProperty());
         loadDirectory.start();
     }
 
     public void showFirstImage() {
-        if (imageModels.size() == 0) return;
-        currentIndex = 0;
-        setSelectedImage(imageModels.get(currentIndex));
+        if (directoryScanComplete() && imageModels.size() > 0) {
+            currentIndex = 0;
+            setSelectedImage(imageModels.get(currentIndex));
+        }
     }
 
     public void showLastImage() {
-        if (imageModels.size() == 0) return;
-        currentIndex = imageModels.size() - 1;
-        setSelectedImage(imageModels.get(currentIndex));
+        if (directoryScanComplete() && imageModels.size() > 0) {
+            currentIndex = imageModels.size() - 1;
+            setSelectedImage(imageModels.get(currentIndex));
+        }
     }
 
     public void showNextImage() {
-        if (imageModels.size() == 0) return;
-        if (++currentIndex >= imageModels.size()) {
-            currentIndex = 0;
+        if (directoryScanComplete() && imageModels.size() > 0) {
+            if (++currentIndex >= imageModels.size()) {
+                currentIndex = 0;
+            }
+            setSelectedImage(imageModels.get(currentIndex));
+            unloadInvisibleImages();
         }
-        setSelectedImage(imageModels.get(currentIndex));
-        unloadInvisibleImages();
     }
 
     public void showPreviousImage() {
-        if (imageModels.size() == 0) return;
-        if (--currentIndex < 0) {
-            currentIndex = imageModels.size() - 1;
+        if (directoryScanComplete() && imageModels.size() > 0) {
+            if (--currentIndex < 0) {
+                currentIndex = imageModels.size() - 1;
+            }
+            setSelectedImage(imageModels.get(currentIndex));
+            unloadInvisibleImages();
         }
-        setSelectedImage(imageModels.get(currentIndex));
-        unloadInvisibleImages();
     }
 
     private static class LoadDirectory extends Service<List<ImageModel>> {
 
         private final String directoryPath;
-        private final AtomicInteger fileCount;
-        private final ObservableList<ImageModel> images;
+        private final AtomicInteger fileCount = new AtomicInteger(0);
+        private final List<ImageModel> images = new ArrayList<>();
 
-        public LoadDirectory(String directoryPath, ObservableList<ImageModel> images) {
+        public LoadDirectory(String directoryPath) {
             this.directoryPath = directoryPath;
-            this.images = images;
-            fileCount = new AtomicInteger(0);
         }
 
         public Integer getFileCount() {
@@ -137,5 +132,12 @@ public class MainViewModel {
 
     public ImageModel getSelectedImage() {
         return selectedImageModelWrapper.get();
+    }
+
+    public boolean directoryScanComplete() {
+        if (loadDirectory != null && loadDirectory.isRunning()) {
+            return false;
+        }
+        return true;
     }
 }

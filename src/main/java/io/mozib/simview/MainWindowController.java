@@ -3,21 +3,13 @@ package io.mozib.simview;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
@@ -26,7 +18,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -41,10 +32,6 @@ public class MainWindowController implements Initializable {
     public RadioMenuItem menuFitToWindow;
     @FXML
     public RadioMenuItem menuOriginalSize;
-    @FXML
-    public RadioMenuItem menuFitHeight;
-    @FXML
-    public RadioMenuItem menuFitWidth;
     @FXML
     public RadioMenuItem menuFullScreen;
     @FXML
@@ -146,8 +133,6 @@ public class MainWindowController implements Initializable {
             }
         }));
         viewStyleProperty.set(ViewStyle.FitToWindow);
-
-        System.out.println("Initialized!");
     }
 
     @FXML
@@ -166,8 +151,6 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void pane_onKeyPress(KeyEvent keyEvent) {
-        System.out.println("Key pressed!");
-
         if (keyEvent.isAltDown() && keyEvent.getCode() != KeyCode.ENTER && isViewingFullscreen.get()) {
             menuBar.setVisible(!menuBar.isVisible());
             if (menuBar.isVisible()) {
@@ -177,10 +160,18 @@ public class MainWindowController implements Initializable {
 
             switch (keyEvent.getCode()) {
                 case LEFT:
+                case PAGE_DOWN:
                     mainViewModel.showPreviousImage();
                     break;
                 case RIGHT:
+                case PAGE_UP:
                     mainViewModel.showNextImage();
+                    break;
+                case HOME:
+                    mainViewModel.showFirstImage();
+                    break;
+                case END:
+                    mainViewModel.showLastImage();
                     break;
                 case ENTER:
                     toggleFullScreen();
@@ -198,10 +189,13 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void pane_onScroll(ScrollEvent scrollEvent) {
-        if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
-            mainViewModel.showNextImage();
-        } else {
-            mainViewModel.showPreviousImage();
+        if (viewStyleProperty.get() == ViewStyle.FitToWindow) {
+            if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
+                mainViewModel.showNextImage();
+            } else {
+                mainViewModel.showPreviousImage();
+            }
+            scrollEvent.consume();
         }
     }
 
