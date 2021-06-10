@@ -26,7 +26,6 @@
     -fx-graphic: none;
 }
 
-
 #menuDeleteFile > .label {
 	-fx-graphic: url("icons/Trash_16x.png");
 }

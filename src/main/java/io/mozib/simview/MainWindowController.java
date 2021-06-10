@@ -8,17 +8,26 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -217,6 +226,13 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
+    public void buttonEdit_onAction(ActionEvent actionEvent) {
+        if (mainViewModel.getSelectedImage() != null) {
+            mainViewModel.getSelectedImage().OpenInEditor();
+        }
+    }
+
+    @FXML
     public void menuClose_onAction(ActionEvent actionEvent) {
         Platform.exit();
     }
@@ -265,6 +281,32 @@ public class MainWindowController implements Initializable {
     @FXML
     public void menuStretched_onAction(ActionEvent actionEvent) {
         viewStyleProperty.set(ViewStyle.Stretched);
+    }
+
+    @FXML
+    public void menuOpen_onAction(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files (jpg, png, gif)", "*.jpg;*.png;*.gif")
+        );
+        File file = fileChooser.showOpenDialog(imageViewMain.getScene().getWindow());
+        if (file != null) {
+            mainViewModel.loadImage(new ImageModel(file.getPath()));
+        }
+    }
+
+    @FXML
+    public void menuOpenContainingFolder_onAction(ActionEvent actionEvent) {
+        if (mainViewModel.getSelectedImage() != null) {
+            mainViewModel.getSelectedImage().OpenContainingFolder();
+        }
+    }
+
+    @FXML
+    public void menuOpenInExternalEditor_onAction(ActionEvent actionEvent) {
+        if (mainViewModel.getSelectedImage() != null) {
+            mainViewModel.getSelectedImage().OpenInEditor();
+        }
     }
 
 }

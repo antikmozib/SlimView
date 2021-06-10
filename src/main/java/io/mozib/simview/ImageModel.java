@@ -3,8 +3,12 @@ package io.mozib.simview;
 import javafx.beans.property.*;
 import javafx.scene.image.Image;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
+
+import static io.mozib.simview.SimView.*;
 
 public class ImageModel {
     private final StringProperty fullPath = new SimpleStringProperty();
@@ -33,5 +37,35 @@ public class ImageModel {
 
     public void unsetImage() {
         image = null;
+    }
+
+    public void OpenInEditor() {
+        if (getOSType() == OSType.Windows) {
+            try {
+                Runtime.getRuntime().exec("mspaint \"" + getPath() + "\"");
+            } catch (Exception ignored) {
+
+            }
+        }
+    }
+
+    public void OpenContainingFolder() {
+        if (getOSType() == OSType.Windows) {
+            try {
+                Runtime.getRuntime().exec("explorer.exe /select, \"\"" + getPath() + "\"\"");
+            } catch (Exception ignored) {
+
+            }
+        } else {
+            try {
+                Desktop.getDesktop().open(getContainingFolder());
+            } catch (Exception ignored) {
+
+            }
+        }
+    }
+
+    public File getContainingFolder() {
+        return new File(new File(getPath()).getParent());
     }
 }

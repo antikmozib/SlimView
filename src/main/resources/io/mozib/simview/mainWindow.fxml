@@ -8,6 +8,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.image.Image?>
@@ -22,13 +23,16 @@
             <menus>
                 <Menu text="_File">
                     <items>
-                  <MenuItem id="menuOpen" text="_Open...">
+                  <MenuItem id="menuOpen" fx:id="menuOpen" onAction="#menuOpen_onAction" text="_Open...">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem id="menuOpenContainingFolder" text="Open _Containing Folder..." />
-                  <MenuItem id="menuOpenInExternalEditor" text="Open in _External Editor...">
+                  <MenuItem id="menuOpenContainingFolder" fx:id="menuOpenContainingFolder" onAction="#menuOpenContainingFolder_onAction" text="Open _Containing Folder...">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="O" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem id="menuOpenInExternalEditor" fx:id="menuOpenInExternalEditor" onAction="#menuOpenInExternalEditor_onAction" text="Open in _External Editor...">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
@@ -93,6 +97,16 @@
                   </ImageView>
                </graphic></Button>
             <Button fx:id="buttonLast" mnemonicParsing="false" onAction="#buttonLast_onAction" text="Last" />
+            <Separator prefWidth="8.0" />
+            <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#buttonEdit_onAction" text="Edit...">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/Edit_16x.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
         </items>
       </ToolBar>
       <ScrollPane fx:id="pane" fitToHeight="true" fitToWidth="true" onKeyPressed="#pane_onKeyPress" onMouseClicked="#pane_onClick" onScroll="#pane_onScroll" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">

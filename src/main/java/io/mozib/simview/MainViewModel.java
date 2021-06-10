@@ -7,6 +7,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.commons.io.FileUtils;
 
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,6 +33,8 @@ public class MainViewModel {
 
     @SuppressWarnings("unchecked")
     public void loadImage(ImageModel imageModel) {
+        imageModels.clear();
+
         // first, show the image requested while the directory is being scanned
         setSelectedImage(imageModel);
 
@@ -130,5 +133,9 @@ public class MainViewModel {
         if (currentIndex < imageModels.size() - 1) {
             imageModels.get(currentIndex + 1).unsetImage();
         }
+    }
+
+    public ImageModel getSelectedImage() {
+        return selectedImageModelWrapper.get();
     }
 }

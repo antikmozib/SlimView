@@ -9,12 +9,18 @@ import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class SimView extends Application {
     private static String[] cmdLineArgs;
 
+    public enum OSType {
+        Windows, Mac, Linux
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));
         Parent root = fxmlLoader.load();
         MainWindowController controller = fxmlLoader.getController();
@@ -35,5 +41,17 @@ public class SimView extends Application {
     public static void main(String[] args) {
         cmdLineArgs = args;
         launch();
+    }
+
+    public static OSType getOSType() {
+        String platform = System.getProperty("os.name").toLowerCase();
+        if (platform.contains("win")) {
+            return OSType.Windows;
+        } else if (platform.contains("mac")) {
+            return OSType.Mac;
+        } else if (platform.contains("nux")) {
+            return OSType.Linux;
+        }
+        return null;
     }
 }
