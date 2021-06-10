@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.scene.image.Image;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -16,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainViewModel {
     private List<ImageModel> imageModels = new ArrayList<>();
-    private ObservableList<ImageModel> images = FXCollections.observableList(imageModels);
+    private final ObservableList<ImageModel> images = FXCollections.observableList(imageModels);
     private Integer currentIndex = 0;
 
     private final ReadOnlyStringWrapper status=new ReadOnlyStringWrapper();
@@ -119,6 +118,6 @@ public class MainViewModel {
         selectedImageModelWrapper.set(imageModel);
         currentIndex = imageModels.indexOf(imageModel);
         status.unbind();
-        status.set("Showing " + (currentIndex + 1) + " of " + imageModels.size() + ": " + imageModel.getShortName());
+        status.set("Image " + (currentIndex + 1) + " of " + imageModels.size() + ": " + imageModel.getShortName());
     }
 }

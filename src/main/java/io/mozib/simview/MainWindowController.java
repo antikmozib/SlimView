@@ -2,58 +2,91 @@ package io.mozib.simview;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.StageStyle;
-
 public class MainWindowController implements Initializable {
-
+    @FXML
+    public RadioMenuItem menuStretched;
     @FXML
     public ImageView imageViewMain;
     @FXML
-    private Pane pane;
+    public RadioMenuItem menuFitToWindow;
     @FXML
-    private Label labelStatus;
+    public RadioMenuItem menuOriginalSize;
     @FXML
-    private ToolBar toolBar;
+    public RadioMenuItem menuFitHeight;
     @FXML
-    private HBox statusBar;
+    public RadioMenuItem menuFitWidth;
     @FXML
-    private MenuBar menuBar;
+    public RadioMenuItem menuFullScreen;
     @FXML
-    private RadioMenuItem menuFullScreen;
+    public ScrollPane pane;
+    @FXML
+    public Label labelStatus;
+    @FXML
+    public ToolBar toolBar;
+    @FXML
+    public HBox statusBar;
+    @FXML
+    public MenuBar menuBar;
+    @FXML
+    public MenuItem menuClose;
+    @FXML
+    public Button buttonPrevious;
+    @FXML
+    public Button buttonNext;
 
+    private final ToggleGroup toggleGroup = new ToggleGroup();
     public MainViewModel mainViewModel = new MainViewModel();
     private final SimpleBooleanProperty isViewingFullscreen = new SimpleBooleanProperty(false);
+
+    private enum ViewStyle {
+        FitToWindow, Original, Stretched
+    }
+
+    private final SimpleObjectProperty<ViewStyle> viewStyleProperty = new SimpleObjectProperty<>();
+
+    private void toggleFullScreen() {
+        boolean setFullScreen = !isViewingFullscreen.get();
+        ((Stage) pane.getScene().getWindow()).setFullScreen(setFullScreen);
+        menuBar.setVisible(!setFullScreen);
+        toolBar.setVisible(!setFullScreen);
+        statusBar.setVisible(!setFullScreen);
+        isViewingFullscreen.set(setFullScreen);
+        menuFullScreen.setSelected(setFullScreen);
+    }
 
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
-        imageViewMain.fitWidthProperty().bind(pane.widthProperty());
-        imageViewMain.fitHeightProperty().bind(pane.heightProperty());
         imageViewMain.requestFocus();
 
-        // bindings for full screen viewing
+        // menubar toggle group
+        menuStretched.setToggleGroup(toggleGroup);
+        menuFitToWindow.setToggleGroup(toggleGroup);
+        menuOriginalSize.setToggleGroup(toggleGroup);
+
+        // bindings for fullscreen viewing
         toolBar.managedProperty().bind(toolBar.visibleProperty());
         statusBar.managedProperty().bind(statusBar.visibleProperty());
         menuBar.managedProperty().bind(menuBar.visibleProperty());
@@ -69,13 +102,47 @@ public class MainWindowController implements Initializable {
             }
         });
 
+        viewStyleProperty.addListener(((observable, oldValue, newValue) -> {
+            imageViewMain.fitWidthProperty().unbind();
+            imageViewMain.fitHeightProperty().unbind();
+            pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+            if (imageViewMain.getImage() != null) {
+                imageViewMain.setFitWidth(imageViewMain.getImage().getWidth());
+                imageViewMain.setFitHeight(imageViewMain.getImage().getHeight());
+            }
+
+            imageViewMain.setPreserveRatio(true);
+
+            switch (newValue) {
+                case Original:
+                    menuOriginalSize.setSelected(true);
+                    pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                    pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                    break;
+
+                case FitToWindow:
+                    menuFitToWindow.setSelected(true);
+                    imageViewMain.fitWidthProperty().bind(pane.widthProperty());
+                    imageViewMain.fitHeightProperty().bind(pane.heightProperty());
+                    break;
+
+                case Stretched:
+                    menuStretched.setSelected(true);
+                    imageViewMain.setPreserveRatio(false);
+                    imageViewMain.fitWidthProperty().bind(pane.widthProperty());
+                    imageViewMain.fitHeightProperty().bind(pane.heightProperty());
+                    break;
+            }
+        }));
+        viewStyleProperty.set(ViewStyle.FitToWindow);
+
         System.out.println("Initialized!");
     }
 
     @FXML
-    public void menuClose_onAction(ActionEvent actionEvent) {
-        System.out.println("Clicked!");
-        Platform.exit();
+    public void imageViewMain_onClick(MouseEvent mouseEvent) {
     }
 
     @FXML
@@ -83,18 +150,15 @@ public class MainWindowController implements Initializable {
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
             pane.requestFocus();
             if (mouseEvent.getClickCount() == 2) {
-                toggleFullscreen();
+                toggleFullScreen();
             }
         }
     }
 
     @FXML
-    public void imageViewMain_onClick(MouseEvent mouseEvent) {
-        //System.out.println("imageViewMain clicked!");
-    }
-
-    @FXML
     public void pane_onKeyPress(KeyEvent keyEvent) {
+        System.out.println("Key pressed!");
+
         if (keyEvent.isAltDown() &&
                 keyEvent.getCode() != KeyCode.ENTER &&
                 isViewingFullscreen.get()) {
@@ -112,11 +176,11 @@ public class MainWindowController implements Initializable {
                 mainViewModel.showNextImage();
                 break;
             case ENTER:
-                toggleFullscreen();
+                toggleFullScreen();
                 break;
             case ESCAPE:
                 if (isViewingFullscreen.get()) {
-                    toggleFullscreen();
+                    toggleFullScreen();
                     break;
                 } else {
                     Platform.exit();
@@ -125,19 +189,12 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("aboutWindow.fxml"));
-        Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root);
-        Stage aboutWindow = new Stage();
-        aboutWindow.setScene(scene);
-        aboutWindow.initModality(Modality.WINDOW_MODAL);
-        aboutWindow.initStyle(StageStyle.UTILITY);
-        aboutWindow.initOwner(imageViewMain.getScene().getWindow());
-        aboutWindow.setResizable(false);
-        aboutWindow.setIconified(false);
-        aboutWindow.setTitle("About");
-        aboutWindow.show();
+    public void pane_onScroll(ScrollEvent scrollEvent) {
+        if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
+            mainViewModel.showNextImage();
+        } else {
+            mainViewModel.showPreviousImage();
+        }
     }
 
     @FXML
@@ -160,23 +217,30 @@ public class MainWindowController implements Initializable {
         mainViewModel.showLastImage();
     }
 
-    private void toggleFullscreen() {
-        boolean setFullscreen;
-        Stage stage = (Stage) pane.getScene().getWindow();
+    @FXML
+    public void menuClose_onAction(ActionEvent actionEvent) {
+        Platform.exit();
+    }
 
-        stage.setFullScreen(!stage.isFullScreen());
-        setFullscreen = stage.isFullScreen();
-
-        isViewingFullscreen.set(setFullscreen);
-        toolBar.setVisible(!setFullscreen);
-        statusBar.setVisible(!setFullscreen);
-        menuBar.setVisible(!setFullscreen);
-        menuFullScreen.setSelected(setFullscreen);
+    @FXML
+    public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("aboutWindow.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root);
+        Stage aboutWindow = new Stage();
+        aboutWindow.setScene(scene);
+        aboutWindow.initModality(Modality.WINDOW_MODAL);
+        aboutWindow.initStyle(StageStyle.UTILITY);
+        aboutWindow.initOwner(imageViewMain.getScene().getWindow());
+        aboutWindow.setResizable(false);
+        aboutWindow.setIconified(false);
+        aboutWindow.setTitle("About");
+        aboutWindow.show();
     }
 
     @FXML
     public void menuFullScreen_onAction(ActionEvent actionEvent) {
-        toggleFullscreen();
+        toggleFullScreen();
     }
 
     @FXML
@@ -188,4 +252,20 @@ public class MainWindowController implements Initializable {
             }
         }
     }
+
+    @FXML
+    public void menuOriginalSize_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.Original);
+    }
+
+    @FXML
+    public void menuFitToWindow_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.FitToWindow);
+    }
+
+    @FXML
+    public void menuStretched_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.Stretched);
+    }
+
 }

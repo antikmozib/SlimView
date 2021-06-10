@@ -1,0 +1,60 @@
+#hBoxMain {
+	-fx-background-color: black;
+}
+
+#menuOpen > .label {
+	-fx-graphic: url("icons/Open_16x.png");
+}
+
+#menuOpen .accelerator-text{
+    -fx-graphic: none;
+}
+
+#menuOpenContainingFolder > .label {
+	-fx-graphic: url("icons/OpenFolder_16x.png");
+}
+
+#menuOpenContainingFolder .accelerator-text{
+    -fx-graphic: none;
+}
+
+#menuOpenInExternalEditor > .label {
+	-fx-graphic: url("icons/Edit_16x.png");
+}
+
+#menuOpenInExternalEditor .accelerator-text{
+    -fx-graphic: none;
+}
+
+
+#menuDeleteFile > .label {
+	-fx-graphic: url("icons/Trash_16x.png");
+}
+
+#menuDeleteFile .accelerator-text{
+    -fx-graphic: none;
+}
+
+#menuExit > .label {
+	-fx-graphic: url("icons/Close_16x.png");
+}
+
+#menuExit .accelerator-text{
+    -fx-graphic: none;
+}
+
+#menuCheckForUpdates > .label {
+	-fx-graphic: url("icons/CloudDownload_16x.png");
+}
+
+#menuCheckForUpdates .accelerator-text{
+    -fx-graphic: none;
+}
+
+#menuAbout > .label {
+	-fx-graphic: url("icons/StatusInformation_16x.png");
+}
+
+#menuAbout .accelerator-text{
+    -fx-graphic: none;
+}

@@ -20,6 +20,7 @@ public class SimView extends Application {
         MainWindowController controller = fxmlLoader.getController();
 
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("SimView");
         stage.getIcons().add(new Image(this.getClass().getResourceAsStream("icons/simview.png")));
