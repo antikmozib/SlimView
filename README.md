@@ -5,7 +5,7 @@ A simple, cross-platform image viewer.
 
 _Requirements:_
 
-* Java 11 or later
-* Maven
+* Java 11
+* Maven 3.8.1
 
 `clone` the repository, `cd` into the root directory and execute `mvn clean`.
