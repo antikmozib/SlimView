@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.simview.MainWindowController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="io.mozib.simview.MainWindowController">
     <children>
         <MenuBar fx:id="menuBar" onKeyPressed="#menuBar_onKeyPress">
             <menus>
@@ -27,6 +27,7 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
+                  <Menu text="Open _Recent" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem id="menuOpenContainingFolder" fx:id="menuOpenContainingFolder" onAction="#menuOpenContainingFolder_onAction" text="Open _Containing Folder...">
                      <accelerator>
@@ -48,6 +49,15 @@
                      </accelerator></MenuItem>
                     </items>
                 </Menu>
+            <Menu text="_Edit">
+              <items>
+                  <MenuItem id="menuCopy" text="_Copy">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+              </items>
+            </Menu>
                 <Menu text="_View">
                <items>
                   <RadioMenuItem fx:id="menuFitToWindow" onAction="#menuFitToWindow_onAction" text="Fit To _Window">
@@ -67,6 +77,17 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F11" control="UP" meta="UP" shift="UP" shortcut="ANY" />
                      </accelerator></RadioMenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem id="menuZoomIn" text="Zoom _In">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="ADD" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem id="menuZoomOut" text="Zoom Ou_t">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="SUBTRACT" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
                </items></Menu>
                 <Menu text="_Help">
                     <items>
@@ -79,8 +100,7 @@
         </MenuBar>
       <ToolBar fx:id="toolBar" prefHeight="40.0" prefWidth="200.0">
         <items>
-          <Button fx:id="buttonFirst" mnemonicParsing="false" onAction="#buttonFirst_onAction" text="First" />
-            <Button fx:id="buttonPrevious" mnemonicParsing="false" onAction="#buttonPrevious_onAction" text="Previous">
+          <Button fx:id="buttonFirst" mnemonicParsing="false" onAction="#buttonFirst_onAction" prefHeight="32.0" text="First">
                <graphic>
                   <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -88,7 +108,23 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Button fx:id="buttonNext" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonNext_onAction" text="Next">
+            <Button fx:id="buttonPrevious" mnemonicParsing="false" onAction="#buttonPrevious_onAction" prefHeight="32.0" text="Previous">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/Previous_16x.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button fx:id="buttonNext" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonNext_onAction" prefHeight="32.0" text="Next">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/Next_16x.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button fx:id="buttonLast" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonLast_onAction" prefHeight="32.0" text="Last">
                <graphic>
                   <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -96,9 +132,8 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Button fx:id="buttonLast" mnemonicParsing="false" onAction="#buttonLast_onAction" text="Last" />
             <Separator prefWidth="8.0" />
-            <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#buttonEdit_onAction" text="Edit...">
+            <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#buttonEdit_onAction" prefHeight="32.0" text="Edit...">
                <graphic>
                   <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -109,11 +144,11 @@
             </Button>
         </items>
       </ToolBar>
-      <ScrollPane fx:id="pane" fitToHeight="true" fitToWidth="true" onKeyPressed="#pane_onKeyPress" onMouseClicked="#pane_onClick" onScroll="#pane_onScroll" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+      <ScrollPane id="mainScrollPane" fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" onKeyPressed="#mainScrollPane_onKeyPress" onMouseClicked="#mainScrollPane_onClick" onScroll="#mainScrollPane_onScroll" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
          <content>
-            <HBox id="hBoxMain" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+            <HBox id="hBoxMain" fx:id="hBoxMain" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <ImageView fx:id="imageViewMain" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#imageViewMain_onClick" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
+                  <ImageView id="imageViewMain" fx:id="imageViewMain" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#imageViewMain_onClick" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
          </content>

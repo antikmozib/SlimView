@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainViewModel {
+
     private List<ImageModel> imageModels = new ArrayList<>();
     private Integer currentIndex = 0;
     private LoadDirectory loadDirectory;
@@ -98,7 +99,7 @@ public class MainViewModel {
                 @Override
                 protected List<ImageModel> call() {
 
-                    Iterator<File> iterator = FileUtils.iterateFiles(new File(directoryPath), new String[]{"jpg", "png", "gif"}, false);
+                    Iterator<File> iterator = FileUtils.iterateFiles(new File(directoryPath), new String[]{"jpg", "jpeg", "png", "gif"}, false);
 
                     while (iterator.hasNext()) {
                         ImageModel image = new ImageModel(iterator.next().getPath());
@@ -118,7 +119,9 @@ public class MainViewModel {
         selectedImageModelWrapper.set(imageModel);
         currentIndex = imageModels.indexOf(imageModel);
         status.unbind();
-        status.set("Image " + (currentIndex + 1) + " of " + imageModels.size() + ": " + imageModel.getShortName());
+        status.set((currentIndex + 1) + " / " + imageModels.size() + " | Resolution: "
+                + imageModel.getResolution() + " | Format: " + imageModel.getFormat()
+                + " | Size: " + imageModel.getFormattedFileSize());
     }
 
     private void unloadInvisibleImages() {
@@ -135,9 +138,6 @@ public class MainViewModel {
     }
 
     public boolean directoryScanComplete() {
-        if (loadDirectory != null && loadDirectory.isRunning()) {
-            return false;
-        }
-        return true;
+        return loadDirectory == null || !loadDirectory.isRunning();
     }
 }

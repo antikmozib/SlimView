@@ -1,5 +1,5 @@
 module io.mozib.simview {
-    requires javafx.controls;
+    requires transitive javafx.controls;
     requires javafx.fxml;
     requires org.apache.commons.io;
     requires transitive javafx.graphics;

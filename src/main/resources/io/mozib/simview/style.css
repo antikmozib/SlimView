@@ -1,9 +1,10 @@
-#hBoxMain {
-	-fx-background-color: black;
+#hBoxMain, #mainScrollPane, #imageViewMain {
+    -fx-border-style: none;
+    -fx-background-color: black;
 }
 
 #menuOpen > .label {
-	-fx-graphic: url("icons/Open_16x.png");
+    -fx-graphic: url("icons/Open_16x.png");
 }
 
 #menuOpen .accelerator-text{
@@ -11,7 +12,7 @@
 }
 
 #menuOpenContainingFolder > .label {
-	-fx-graphic: url("icons/OpenFolder_16x.png");
+    -fx-graphic: url("icons/OpenFolder_16x.png");
 }
 
 #menuOpenContainingFolder .accelerator-text{
@@ -19,7 +20,7 @@
 }
 
 #menuOpenInExternalEditor > .label {
-	-fx-graphic: url("icons/Edit_16x.png");
+    -fx-graphic: url("icons/Edit_16x.png");
 }
 
 #menuOpenInExternalEditor .accelerator-text{
@@ -27,7 +28,7 @@
 }
 
 #menuDeleteFile > .label {
-	-fx-graphic: url("icons/Trash_16x.png");
+    -fx-graphic: url("icons/Trash_16x.png");
 }
 
 #menuDeleteFile .accelerator-text{
@@ -35,15 +36,39 @@
 }
 
 #menuExit > .label {
-	-fx-graphic: url("icons/Close_16x.png");
+    -fx-graphic: url("icons/Close_16x.png");
 }
 
 #menuExit .accelerator-text{
     -fx-graphic: none;
 }
 
+#menuCopy > .label {
+    -fx-graphic: url("icons/Copy_16x.png");
+}
+
+#menuCopy .accelerator-text {
+    -fx-graphic: none;
+}
+
+#menuZoomIn > .label {
+    -fx-graphic: url("icons/ZoomIn_16x.png");
+}
+
+#menuZoomIn .accelerator-text{
+    -fx-graphic: none;
+}
+
+#menuZoomOut > .label {
+    -fx-graphic: url("icons/ZoomOut_16x.png");
+}
+
+#menuZoomOut .accelerator-text{
+    -fx-graphic: none;
+}
+
 #menuCheckForUpdates > .label {
-	-fx-graphic: url("icons/CloudDownload_16x.png");
+    -fx-graphic: url("icons/CloudDownload_16x.png");
 }
 
 #menuCheckForUpdates .accelerator-text{
@@ -51,7 +76,7 @@
 }
 
 #menuAbout > .label {
-	-fx-graphic: url("icons/StatusInformation_16x.png");
+    -fx-graphic: url("icons/StatusInformation_16x.png");
 }
 
 #menuAbout .accelerator-text{
