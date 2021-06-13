@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="io.mozib.simview.MainWindowController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.simview.MainWindowController">
     <children>
         <MenuBar fx:id="menuBar" onKeyPressed="#menuBar_onKeyPress">
             <menus>
@@ -27,7 +27,7 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
-                  <Menu text="Open _Recent" />
+                  <Menu id="menuOpenRecent" text="Open _Recent" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem id="menuOpenContainingFolder" fx:id="menuOpenContainingFolder" onAction="#menuOpenContainingFolder_onAction" text="Open _Containing Folder...">
                      <accelerator>
@@ -37,6 +37,12 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem id="menuSaveAs" fx:id="menuSaveAs" text="_Save As">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem id="menuDeleteFile" text="_Delete File...">
                      <accelerator>
@@ -78,6 +84,23 @@
                         <KeyCodeCombination alt="UP" code="F11" control="UP" meta="UP" shift="UP" shortcut="ANY" />
                      </accelerator></RadioMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <Menu id="menuRotate" fx:id="menuRotate" text="_Rotate">
+                    <items>
+                      <MenuItem id="menuRotateLeft" fx:id="menuRotateLeft" onAction="#menuRotateLeft_onAction" text="Rotate _Left">
+                           <accelerator>
+                              <KeyCodeCombination alt="DOWN" code="L" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem id="menuRotateRight" fx:id="menuRotateRight" onAction="#menuRotateRight_onAction" text="Rotate _Right">
+                           <accelerator>
+                              <KeyCodeCombination alt="DOWN" code="R" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                    </items>
+                  </Menu>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem id="menuResize" fx:id="menuResize" text="R_esize" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem id="menuZoomIn" text="Zoom _In">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="ADD" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
@@ -100,44 +123,44 @@
         </MenuBar>
       <ToolBar fx:id="toolBar" prefHeight="40.0" prefWidth="200.0">
         <items>
-          <Button fx:id="buttonFirst" mnemonicParsing="false" onAction="#buttonFirst_onAction" prefHeight="32.0" text="First">
+          <Button fx:id="buttonFirst" mnemonicParsing="false" onAction="#buttonFirst_onAction" prefHeight="32.0">
                <graphic>
-                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@icons/Backwards_16x.png" />
+                        <Image url="@icons/first.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Button fx:id="buttonPrevious" mnemonicParsing="false" onAction="#buttonPrevious_onAction" prefHeight="32.0" text="Previous">
+            <Button fx:id="buttonPrevious" mnemonicParsing="false" onAction="#buttonPrevious_onAction" prefHeight="32.0">
                <graphic>
-                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@icons/Previous_16x.png" />
+                        <Image url="@icons/prev.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Button fx:id="buttonNext" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonNext_onAction" prefHeight="32.0" text="Next">
+            <Button fx:id="buttonNext" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonNext_onAction" prefHeight="32.0">
                <graphic>
-                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@icons/Next_16x.png" />
+                        <Image url="@icons/next.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Button fx:id="buttonLast" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonLast_onAction" prefHeight="32.0" text="Last">
+            <Button fx:id="buttonLast" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonLast_onAction" prefHeight="32.0">
                <graphic>
-                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@icons/Forwards_16x.png" />
+                        <Image url="@icons/last.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
             <Separator prefWidth="8.0" />
-            <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#buttonEdit_onAction" prefHeight="32.0" text="Edit...">
+            <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#buttonEdit_onAction" prefHeight="32.0">
                <graphic>
-                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@icons/Edit_16x.png" />
+                        <Image url="@icons/edit.png" />
                      </image>
                   </ImageView>
                </graphic>

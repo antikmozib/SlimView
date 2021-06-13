@@ -6,6 +6,8 @@ module io.mozib.simview {
 	requires javafx.base;
     requires java.base;
     requires java.desktop;
+    requires imgscalr.lib;
+    requires javafx.swing;
 
     opens io.mozib.simview to javafx.fxml;
     exports io.mozib.simview;

@@ -18,7 +18,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -54,9 +53,18 @@ public class MainWindowController implements Initializable {
     @FXML
     public Button buttonNext;
 
+    private final int scrollPaneOffset = 6; // to force correct clipping of scroll pane
     private final ToggleGroup toggleGroup = new ToggleGroup();
     public MainViewModel mainViewModel = new MainViewModel();
     private final SimpleBooleanProperty isViewingFullScreen = new SimpleBooleanProperty(false);
+
+    public void menuRotateLeft_onAction(ActionEvent actionEvent) {
+        mainViewModel.rotateLeft();
+    }
+
+    public void menuRotateRight_onAction(ActionEvent actionEvent) {
+        mainViewModel.rotateRight();
+    }
 
     private enum ViewStyle {
         FIT_TO_WINDOW, ORIGINAL, STRETCHED
@@ -72,12 +80,6 @@ public class MainWindowController implements Initializable {
         statusBar.setVisible(!setFullScreen);
         isViewingFullScreen.set(setFullScreen);
         menuFullScreen.setSelected(setFullScreen);
-    }
-
-    private void centerImageView() {
-        if (imageViewMain.getFitWidth() < mainScrollPane.getWidth()) {
-            imageViewMain.setLayoutX((mainScrollPane.getWidth() - imageViewMain.getFitWidth()) / 2);
-        }
     }
 
     @FXML
@@ -120,8 +122,8 @@ public class MainWindowController implements Initializable {
             mainScrollPane.setFitToWidth(false);
 
             if (imageViewMain.getImage() != null) {
-                imageViewMain.setFitWidth(mainViewModel.getSelectedImage().getOriginalWidth());
-                imageViewMain.setFitHeight(mainViewModel.getSelectedImage().getOriginalHeight());
+                imageViewMain.setFitWidth(mainViewModel.getSelectedImageModel().getOriginalWidth());
+                imageViewMain.setFitHeight(mainViewModel.getSelectedImageModel().getOriginalHeight());
             }
 
             imageViewMain.setPreserveRatio(true);
@@ -140,8 +142,8 @@ public class MainWindowController implements Initializable {
                     mainScrollPane.setFitToHeight(true);
                     mainScrollPane.setFitToWidth(true);
                     
-                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(8));
-                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(8));
+                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(scrollPaneOffset));
+                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(scrollPaneOffset));
                     break;
 
                 case STRETCHED:
@@ -152,8 +154,8 @@ public class MainWindowController implements Initializable {
                     
                     imageViewMain.setPreserveRatio(false);
                     
-                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(8));
-                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(8));
+                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(scrollPaneOffset));
+                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(scrollPaneOffset));
                     break;
             }
         }));
@@ -254,8 +256,8 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void buttonEdit_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImage() != null) {
-            mainViewModel.getSelectedImage().openInEditor();
+        if (mainViewModel.getSelectedImageModel() != null) {
+            mainViewModel.getSelectedImageModel().openInEditor();
         }
     }
 
@@ -324,15 +326,15 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuOpenContainingFolder_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImage() != null) {
-            mainViewModel.getSelectedImage().openContainingFolder();
+        if (mainViewModel.getSelectedImageModel() != null) {
+            mainViewModel.getSelectedImageModel().openContainingFolder();
         }
     }
 
     @FXML
     public void menuOpenInExternalEditor_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImage() != null) {
-            mainViewModel.getSelectedImage().openInEditor();
+        if (mainViewModel.getSelectedImageModel() != null) {
+            mainViewModel.getSelectedImageModel().openInEditor();
         }
     }
 

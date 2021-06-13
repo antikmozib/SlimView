@@ -1,5 +1,9 @@
-#hBoxMain, #mainScrollPane, #imageViewMain {
+/*#hBoxMain, #mainScrollPane, #imageViewMain {
     -fx-border-style: none;
+    -fx-background-color: black;
+}*/
+
+#hBoxMain {
     -fx-background-color: black;
 }
 
@@ -7,7 +11,7 @@
     -fx-graphic: url("icons/Open_16x.png");
 }
 
-#menuOpen .accelerator-text{
+#menuOpen .accelerator-text {
     -fx-graphic: none;
 }
 
@@ -15,7 +19,7 @@
     -fx-graphic: url("icons/OpenFolder_16x.png");
 }
 
-#menuOpenContainingFolder .accelerator-text{
+#menuOpenContainingFolder .accelerator-text {
     -fx-graphic: none;
 }
 
@@ -23,7 +27,7 @@
     -fx-graphic: url("icons/Edit_16x.png");
 }
 
-#menuOpenInExternalEditor .accelerator-text{
+#menuOpenInExternalEditor .accelerator-text {
     -fx-graphic: none;
 }
 
@@ -31,7 +35,7 @@
     -fx-graphic: url("icons/Trash_16x.png");
 }
 
-#menuDeleteFile .accelerator-text{
+#menuDeleteFile .accelerator-text {
     -fx-graphic: none;
 }
 
@@ -39,7 +43,7 @@
     -fx-graphic: url("icons/Close_16x.png");
 }
 
-#menuExit .accelerator-text{
+#menuExit .accelerator-text {
     -fx-graphic: none;
 }
 
@@ -55,7 +59,7 @@
     -fx-graphic: url("icons/ZoomIn_16x.png");
 }
 
-#menuZoomIn .accelerator-text{
+#menuZoomIn .accelerator-text {
     -fx-graphic: none;
 }
 
@@ -63,7 +67,7 @@
     -fx-graphic: url("icons/ZoomOut_16x.png");
 }
 
-#menuZoomOut .accelerator-text{
+#menuZoomOut .accelerator-text {
     -fx-graphic: none;
 }
 
@@ -71,7 +75,7 @@
     -fx-graphic: url("icons/CloudDownload_16x.png");
 }
 
-#menuCheckForUpdates .accelerator-text{
+#menuCheckForUpdates .accelerator-text {
     -fx-graphic: none;
 }
 
@@ -79,6 +83,18 @@
     -fx-graphic: url("icons/StatusInformation_16x.png");
 }
 
-#menuAbout .accelerator-text{
+#menuAbout .accelerator-text {
+    -fx-graphic: none;
+}
+
+#menuOpenRecent > .label {
+    -fx-graphic: url("icons/transparent_16x.png");
+}
+
+#menuSaveAs > .label {
+    -fx-graphic: url("icons/SaveAs_16x.png");
+}
+
+#menuSaveAs .accelerator-text {
     -fx-graphic: none;
 }
