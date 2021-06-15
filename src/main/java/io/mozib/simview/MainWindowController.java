@@ -18,6 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -58,12 +59,39 @@ public class MainWindowController implements Initializable {
     public MainViewModel mainViewModel = new MainViewModel();
     private final SimpleBooleanProperty isViewingFullScreen = new SimpleBooleanProperty(false);
 
-    public void menuRotateLeft_onAction(ActionEvent actionEvent) {
-        mainViewModel.rotateLeft();
-    }
+    public void menuResize_onAction(ActionEvent actionEvent) {
 
-    public void menuRotateRight_onAction(ActionEvent actionEvent) {
-        mainViewModel.rotateRight();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("resizeWindow.fxml"));
+        Parent root = null;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Scene scene = new Scene(root);
+        Stage resizeWindow = new Stage();
+        ResizeViewModel resizeViewModel = new ResizeViewModel(
+                mainViewModel.getSelectedImageModel().getOriginalWidth(),
+                mainViewModel.getSelectedImageModel().getOriginalHeight());
+        resizeWindow.setScene(scene);
+        resizeWindow.setTitle("Resize");
+        resizeWindow.initModality(Modality.WINDOW_MODAL);
+        resizeWindow.initStyle(StageStyle.UTILITY);
+        resizeWindow.initOwner(imageViewMain.getScene().getWindow());
+        resizeWindow.setResizable(false);
+        ResizeWindowController controller = fxmlLoader.getController();
+        controller.setViewModel(resizeViewModel);
+        resizeWindow.showAndWait();
+
+        if (resizeViewModel.useNewValues.get()) {
+            mainViewModel.resizeImage(
+                    mainViewModel.getSelectedImageModel(),
+                    Integer.parseInt(resizeViewModel.newWidthProperty.get()),
+                    Integer.parseInt(resizeViewModel.newHeightProperty.get()));
+            System.out.println("Resize image!");
+        }
+
     }
 
     private enum ViewStyle {
@@ -71,16 +99,6 @@ public class MainWindowController implements Initializable {
     }
 
     private final SimpleObjectProperty<ViewStyle> viewStyleProperty = new SimpleObjectProperty<>(ViewStyle.ORIGINAL);
-
-    private void toggleFullScreen() {
-        boolean setFullScreen = !isViewingFullScreen.get();
-        ((Stage) mainScrollPane.getScene().getWindow()).setFullScreen(setFullScreen);
-        menuBar.setVisible(!setFullScreen);
-        toolBar.setVisible(!setFullScreen);
-        statusBar.setVisible(!setFullScreen);
-        isViewingFullScreen.set(setFullScreen);
-        menuFullScreen.setSelected(setFullScreen);
-    }
 
     @FXML
     @Override
@@ -114,12 +132,12 @@ public class MainWindowController implements Initializable {
 
             imageViewMain.fitWidthProperty().unbind();
             imageViewMain.fitHeightProperty().unbind();
-            
+
             mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            
-            mainScrollPane.setFitToHeight(false);
-            mainScrollPane.setFitToWidth(false);
+
+            mainScrollPane.setFitToHeight(true);
+            mainScrollPane.setFitToWidth(true);
 
             if (imageViewMain.getImage() != null) {
                 imageViewMain.setFitWidth(mainViewModel.getSelectedImageModel().getOriginalWidth());
@@ -131,29 +149,21 @@ public class MainWindowController implements Initializable {
             switch (newValue) {
                 case ORIGINAL:
                     menuOriginalSize.setSelected(true);
-                    
                     mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
                     mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
                     break;
 
                 case FIT_TO_WINDOW:
                     menuFitToWindow.setSelected(true);
-                    
-                    mainScrollPane.setFitToHeight(true);
-                    mainScrollPane.setFitToWidth(true);
-                    
+
                     imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(scrollPaneOffset));
                     imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(scrollPaneOffset));
                     break;
 
                 case STRETCHED:
                     menuStretched.setSelected(true);
-                    
-                    mainScrollPane.setFitToHeight(true);
-                    mainScrollPane.setFitToWidth(true);
-                    
                     imageViewMain.setPreserveRatio(false);
-                    
+
                     imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(scrollPaneOffset));
                     imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(scrollPaneOffset));
                     break;
@@ -168,6 +178,103 @@ public class MainWindowController implements Initializable {
                     viewStyleProperty.set(oldViewStyle);
                 }));
         viewStyleProperty.set(ViewStyle.FIT_TO_WINDOW);
+    }
+
+    @FXML
+    public void menuRotateLeft_onAction(ActionEvent actionEvent) {
+        mainViewModel.rotateLeft();
+    }
+
+    @FXML
+    public void menuRotateRight_onAction(ActionEvent actionEvent) {
+        mainViewModel.rotateRight();
+    }
+
+    @FXML
+    public void menuFlipVertically_onAction(ActionEvent actionEvent) {
+        mainViewModel.flipVertically();
+    }
+
+    @FXML
+    public void menuFlipHorizontally_onAction(ActionEvent actionEvent) {
+        mainViewModel.flipHorizontally();
+    }
+
+    @FXML
+    public void menuClose_onAction(ActionEvent actionEvent) {
+        Platform.exit();
+    }
+
+    @FXML
+    public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("aboutWindow.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root);
+        Stage aboutWindow = new Stage();
+        aboutWindow.setScene(scene);
+        aboutWindow.initModality(Modality.WINDOW_MODAL);
+        aboutWindow.initStyle(StageStyle.UTILITY);
+        aboutWindow.initOwner(imageViewMain.getScene().getWindow());
+        aboutWindow.setResizable(false);
+        aboutWindow.setIconified(false);
+        aboutWindow.setTitle("About");
+        aboutWindow.show();
+    }
+
+    @FXML
+    public void menuFullScreen_onAction(ActionEvent actionEvent) {
+        toggleFullScreen();
+    }
+
+    @FXML
+    public void menuBar_onKeyPress(KeyEvent keyEvent) {
+        if (isViewingFullScreen.get() && menuBar.isVisible()) {
+            if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ALT) {
+                menuBar.setVisible(false);
+                imageViewMain.requestFocus();
+            }
+        }
+    }
+
+    @FXML
+    public void menuOriginalSize_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.ORIGINAL);
+    }
+
+    @FXML
+    public void menuFitToWindow_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.FIT_TO_WINDOW);
+    }
+
+    @FXML
+    public void menuStretched_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.STRETCHED);
+    }
+
+    @FXML
+    public void menuOpen_onAction(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Images", "*.jpg;*.jpeg;*.png;*.gif")
+        );
+        File file = fileChooser.showOpenDialog(imageViewMain.getScene().getWindow());
+        if (file != null) {
+            mainViewModel.loadImage(new ImageModel(file.getPath()));
+        }
+    }
+
+    @FXML
+    public void menuOpenContainingFolder_onAction(ActionEvent actionEvent) {
+        if (mainViewModel.getSelectedImageModel() != null) {
+            mainViewModel.getSelectedImageModel().openContainingFolder();
+        }
+    }
+
+    @FXML
+    public void menuOpenInExternalEditor_onAction(ActionEvent actionEvent) {
+        if (mainViewModel.getSelectedImageModel() != null) {
+            mainViewModel.getSelectedImageModel().openInEditor();
+        }
     }
 
     @FXML
@@ -261,81 +368,13 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    @FXML
-    public void menuClose_onAction(ActionEvent actionEvent) {
-        Platform.exit();
+    private void toggleFullScreen() {
+        boolean setFullScreen = !isViewingFullScreen.get();
+        ((Stage) mainScrollPane.getScene().getWindow()).setFullScreen(setFullScreen);
+        menuBar.setVisible(!setFullScreen);
+        toolBar.setVisible(!setFullScreen);
+        statusBar.setVisible(!setFullScreen);
+        isViewingFullScreen.set(setFullScreen);
+        menuFullScreen.setSelected(setFullScreen);
     }
-
-    @FXML
-    public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("aboutWindow.fxml"));
-        Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root);
-        Stage aboutWindow = new Stage();
-        aboutWindow.setScene(scene);
-        aboutWindow.initModality(Modality.WINDOW_MODAL);
-        aboutWindow.initStyle(StageStyle.UTILITY);
-        aboutWindow.initOwner(imageViewMain.getScene().getWindow());
-        aboutWindow.setResizable(false);
-        aboutWindow.setIconified(false);
-        aboutWindow.setTitle("About");
-        aboutWindow.show();
-    }
-
-    @FXML
-    public void menuFullScreen_onAction(ActionEvent actionEvent) {
-        toggleFullScreen();
-    }
-
-    @FXML
-    public void menuBar_onKeyPress(KeyEvent keyEvent) {
-        if (isViewingFullScreen.get() && menuBar.isVisible()) {
-            if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ALT) {
-                menuBar.setVisible(false);
-                imageViewMain.requestFocus();
-            }
-        }
-    }
-
-    @FXML
-    public void menuOriginalSize_onAction(ActionEvent actionEvent) {
-        viewStyleProperty.set(ViewStyle.ORIGINAL);
-    }
-
-    @FXML
-    public void menuFitToWindow_onAction(ActionEvent actionEvent) {
-        viewStyleProperty.set(ViewStyle.FIT_TO_WINDOW);
-    }
-
-    @FXML
-    public void menuStretched_onAction(ActionEvent actionEvent) {
-        viewStyleProperty.set(ViewStyle.STRETCHED);
-    }
-
-    @FXML
-    public void menuOpen_onAction(ActionEvent actionEvent) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.jpg;*.jpeg;*.png;*.gif")
-        );
-        File file = fileChooser.showOpenDialog(imageViewMain.getScene().getWindow());
-        if (file != null) {
-            mainViewModel.loadImage(new ImageModel(file.getPath()));
-        }
-    }
-
-    @FXML
-    public void menuOpenContainingFolder_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null) {
-            mainViewModel.getSelectedImageModel().openContainingFolder();
-        }
-    }
-
-    @FXML
-    public void menuOpenInExternalEditor_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null) {
-            mainViewModel.getSelectedImageModel().openInEditor();
-        }
-    }
-
 }

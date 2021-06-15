@@ -7,7 +7,12 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
+
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class SimView extends Application {
     private static String[] cmdLineArgs;
@@ -36,6 +41,15 @@ public class SimView extends Application {
         }
     }
 
+    @Override
+    public void stop() {
+        // clear caches...
+        var files = new File(cacheDirectory());
+        for (File file : files.listFiles()) {
+            file.delete();
+        }
+    }
+
     public static void main(String[] args) {
         cmdLineArgs = args;
         launch();
@@ -51,5 +65,17 @@ public class SimView extends Application {
             return OSType.Linux;
         }
         return null;
+    }
+
+    public static String cacheDirectory() {
+        Path path = Paths.get(System.getProperty("user.home"), ".simview", "cache");
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectory(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return Paths.get(System.getProperty("user.home"), ".simview", "cache").toString();
     }
 }

@@ -8,8 +8,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 
-import static io.mozib.simview.SimView.OSType;
-import static io.mozib.simview.SimView.getOSType;
+import static io.mozib.simview.SimView.*;
 
 public class ImageModel {
 
@@ -97,5 +96,12 @@ public class ImageModel {
 
     public double getOriginalHeight() {
         return getImage().getHeight();
+    }
+
+    public void refresh() {
+        if (image != null) {
+            image = null;
+            getImage();
+        }
     }
 }

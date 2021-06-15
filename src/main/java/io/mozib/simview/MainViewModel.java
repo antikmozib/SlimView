@@ -9,9 +9,11 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.embed.swing.SwingFXUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -19,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static io.mozib.simview.SimView.cacheDirectory;
 
 public class MainViewModel {
 
@@ -151,28 +155,42 @@ public class MainViewModel {
     }
 
     public void rotateLeft() {
-        try {
-            File tempFile = new File(Paths.get(System.getProperty("user.home"), ".simview", getSelectedImageModel().getShortName()).toString());
-            tempFile.createNewFile();
-            var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(getSelectedImageModel().getImage(), null), Scalr.Rotation.CW_90);
-            ImageIO.write(rotated, getSelectedImageModel().getFormat(), tempFile);
-            setSelectedImage(new ImageModel(tempFile.getPath()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        rotateImage(getSelectedImageModel(), Scalr.Rotation.CW_270);
     }
 
     public void rotateRight() {
+        rotateImage(getSelectedImageModel(), Scalr.Rotation.CW_90);
+    }
+
+    public void flipVertically() {
+        rotateImage(getSelectedImageModel(), Scalr.Rotation.FLIP_VERT);
+    }
+
+    public void flipHorizontally() {
+        rotateImage(getSelectedImageModel(), Scalr.Rotation.FLIP_HORZ);
+    }
+
+    private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
+        var file = new File(Paths.get(cacheDirectory(), imageModel.getShortName()).toString());
+        var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(imageModel.getImage(), null), rotation);
+        editImage(rotated, file);
+    }
+
+    public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
+        var file = new File(Paths.get(cacheDirectory(), imageModel.getShortName()).toString());
+        var image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
+        var resized = Scalr.resize(image, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
+        editImage(resized, file);
+    }
+
+    private void editImage(BufferedImage edited, File file) {
+        String format = FilenameUtils.getExtension(file.getPath());
         try {
-            File tempFile = new File(Paths.get(
-                    System.getProperty("user.home"), ".simview", getSelectedImageModel().getShortName()
-            ).toString());
-            tempFile.createNewFile();
-            var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(getSelectedImageModel().getImage(), null), Scalr.Rotation.CW_180);
-            ImageIO.write(rotated, getSelectedImageModel().getFormat(), tempFile);
-            setSelectedImage(new ImageModel(tempFile.getPath()));
+            file.createNewFile();
+            ImageIO.write(edited, format, file);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        setSelectedImage(new ImageModel(file.getPath()));
     }
 }
