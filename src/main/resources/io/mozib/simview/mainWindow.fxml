@@ -29,18 +29,18 @@
                                 <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
-                        <Menu id="menuOpenRecent" text="Open _Recent" />
+                        <Menu id="menuOpenRecent" fx:id="menuRecent" text="Open _Recent" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem id="menuOpenContainingFolder" fx:id="menuOpenContainingFolder" onAction="#menuOpenContainingFolder_onAction" text="Open _Containing Folder..." />
-                        <MenuItem id="menuOpenInExternalEditor" fx:id="menuOpenInExternalEditor" onAction="#menuOpenInExternalEditor_onAction" text="Open in _External Editor..." />
+                        <MenuItem id="menuOpenContainingFolder" fx:id="menuOpenContainingFolder" onAction="#menuOpenContainingFolder_onAction" text="Open _Containing Folder" />
+                        <MenuItem id="menuOpenInExternalEditor" fx:id="menuOpenInExternalEditor" onAction="#menuOpenInExternalEditor_onAction" text="Open in _External Editor" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem id="menuSaveAs" fx:id="menuSaveAs" text="_Save As...">
+                        <MenuItem id="menuSaveAs" fx:id="menuSaveAs" onAction="#menuSaveAs_onAction" text="_Save As...">
                             <accelerator>
                                 <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem id="menuDeleteFile" text="_Delete File...">
+                        <MenuItem id="menuDeleteFile" fx:id="menuDelete" onAction="#menuDelete_onAction" text="_Delete File">
                             <accelerator>
                                 <KeyCodeCombination alt="UP" code="DELETE" control="UP" meta="ANY" shift="UP" shortcut="UP" />
                             </accelerator>
@@ -111,9 +111,9 @@
                 </Menu>
                 <Menu text="_Help">
                     <items>
-                        <MenuItem id="menuCheckForUpdates" text="Check For _Updates..." />
+                        <MenuItem id="menuCheckForUpdates" text="Check For _Updates" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="menuAbout" onAction="#menuAbout_onAction" text="_About..." />
+                        <MenuItem fx:id="menuAbout" onAction="#menuAbout_onAction" text="_About" />
                     </items>
                 </Menu>
             </menus>

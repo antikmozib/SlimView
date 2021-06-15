@@ -8,7 +8,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 
-import static io.mozib.simview.SimView.*;
+import static io.mozib.simview.Common.*;
 
 public class ImageModel {
 

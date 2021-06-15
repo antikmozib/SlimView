@@ -50,6 +50,8 @@ public class MainWindowController implements Initializable {
     @FXML
     public MenuItem menuClose;
     @FXML
+    public Menu menuRecent;
+    @FXML
     public Button buttonPrevious;
     @FXML
     public Button buttonNext;
@@ -59,6 +61,7 @@ public class MainWindowController implements Initializable {
     public MainViewModel mainViewModel = new MainViewModel();
     private final SimpleBooleanProperty isViewingFullScreen = new SimpleBooleanProperty(false);
 
+    @FXML
     public void menuResize_onAction(ActionEvent actionEvent) {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("resizeWindow.fxml"));
@@ -94,11 +97,24 @@ public class MainWindowController implements Initializable {
 
     }
 
-    private enum ViewStyle {
-        FIT_TO_WINDOW, ORIGINAL, STRETCHED
+    @FXML
+    public void menuSaveAs_onAction(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JPEG Image", "*.jpg"),
+                new FileChooser.ExtensionFilter("PNG Image", "*.png"),
+                new FileChooser.ExtensionFilter("GIF Image", "*.gif")
+        );
+        fileChooser.setInitialFileName(mainViewModel.getSelectedImageModel().getShortName());
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        File file = fileChooser.showSaveDialog(imageViewMain.getScene().getWindow());
+        if (file != null) {
+            mainViewModel.saveImage(
+                    mainViewModel.getSelectedImageModel(),
+                    file.getPath()
+            );
+        }
     }
-
-    private final SimpleObjectProperty<ViewStyle> viewStyleProperty = new SimpleObjectProperty<>(ViewStyle.ORIGINAL);
 
     @FXML
     @Override
@@ -367,6 +383,17 @@ public class MainWindowController implements Initializable {
             mainViewModel.getSelectedImageModel().openInEditor();
         }
     }
+
+    @FXML
+    public void menuDelete_onAction(ActionEvent actionEvent) {
+        mainViewModel.trashImage(mainViewModel.getSelectedImageModel());
+    }
+
+    private enum ViewStyle {
+        FIT_TO_WINDOW, ORIGINAL, STRETCHED
+    }
+
+    private final SimpleObjectProperty<ViewStyle> viewStyleProperty = new SimpleObjectProperty<>(ViewStyle.ORIGINAL);
 
     private void toggleFullScreen() {
         boolean setFullScreen = !isViewingFullScreen.get();

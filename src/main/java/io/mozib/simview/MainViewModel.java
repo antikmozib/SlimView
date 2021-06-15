@@ -13,6 +13,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.mozib.simview.SimView.cacheDirectory;
+import static io.mozib.simview.Common.*;
 
 public class MainViewModel {
 
@@ -110,6 +111,7 @@ public class MainViewModel {
         });
         status.bind(loadDirectory.messageProperty());
         loadDirectory.start();
+        addToRecent(imageModel.getPath());
     }
 
     public void showFirstImage() {
@@ -192,5 +194,30 @@ public class MainViewModel {
             e.printStackTrace();
         }
         setSelectedImage(new ImageModel(file.getPath()));
+    }
+
+    public void saveImage(ImageModel imageModel, String destination) {
+        File file = new File(destination);
+        try {
+            file.createNewFile();
+            ImageIO.write(
+                    SwingFXUtils.fromFXImage(imageModel.getImage(), null),
+                    FilenameUtils.getExtension(destination),
+                    file
+            );
+        } catch (IOException e) {
+
+        }
+    }
+
+    public void trashImage(ImageModel imageModel) {
+        try {
+            Desktop.getDesktop().moveToTrash(new File(imageModel.getPath()));
+            // remove from list
+            imageModels.remove(imageModel);
+            showNextImage();
+        } catch (Exception e) {
+
+        }
     }
 }
