@@ -53,10 +53,7 @@ public class Common {
         String line = null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         try {
-            while (true) {
-
-                if (!((line = br.readLine()) != null)) break;
-
+            while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
             br.close();
@@ -70,7 +67,13 @@ public class Common {
         XmlMapper xmlMapper = new XmlMapper();
         RecentFiles recentFiles = loadRecentFiles();
 
-        assert false;
+        // if file already exists in recent, don't add again
+        for (RecentFiles.RecentFile rf : recentFiles.recentFileList) {
+            if (rf.getPath().equals(path)) {
+                return;
+            }
+        }
+
         if (recentFiles.recentFileList.size() > 5) {
             long oldestSeen = System.currentTimeMillis();
             for (RecentFiles.RecentFile rf : recentFiles.recentFileList) {
@@ -101,23 +104,17 @@ public class Common {
     public static RecentFiles loadRecentFiles() {
         // load recent files
         XmlMapper xmlMapper = new XmlMapper();
-        String xml = null;
+        String xml;
+        RecentFiles recentFiles = null;
         try {
             xml = inputStreamToString(new FileInputStream(recentFilesCache()));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        RecentFiles recentFiles = null;
-
-        try {
             recentFiles = xmlMapper.readValue(xml, RecentFiles.class);
-        } catch (JsonProcessingException e) {
+        } catch (JsonProcessingException | FileNotFoundException e) {
             e.printStackTrace();
         }
         if (recentFiles == null || recentFiles.recentFileList == null) {
             recentFiles = new RecentFiles();
         }
-
         return recentFiles;
     }
 }

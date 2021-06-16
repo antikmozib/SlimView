@@ -107,7 +107,8 @@ public class MainViewModel {
         loadDirectory = new LoadDirectory(new File(imageModel.getPath()).getParent());
         loadDirectory.setOnSucceeded((WorkerStateEvent event) -> {
             imageModels = (List<ImageModel>) event.getSource().getValue();
-            setSelectedImage(imageModels.stream().filter(image -> image.getPath().equals(imageModel.getPath())).findFirst().orElseThrow());
+            setSelectedImage(imageModels.stream().filter(
+                    image -> image.getPath().equals(imageModel.getPath())).findFirst().orElseThrow());
         });
         status.bind(loadDirectory.messageProperty());
         loadDirectory.start();

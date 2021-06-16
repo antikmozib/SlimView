@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static io.mozib.simview.Common.loadRecentFiles;
+
 public class MainWindowController implements Initializable {
     @FXML
     public HBox hBoxMain;
@@ -194,6 +196,16 @@ public class MainWindowController implements Initializable {
                     viewStyleProperty.set(oldViewStyle);
                 }));
         viewStyleProperty.set(ViewStyle.FIT_TO_WINDOW);
+
+        // load recent files
+        RecentFiles recentFiles=loadRecentFiles();
+        for (RecentFiles.RecentFile recentFile : recentFiles.recentFileList) {
+            MenuItem menuItem = new MenuItem(recentFile.getPath());
+            menuItem.setOnAction(event -> {
+                mainViewModel.loadImage(new ImageModel(menuItem.getText()));
+            });
+            menuRecent.getItems().add(menuItem);
+        }
     }
 
     @FXML

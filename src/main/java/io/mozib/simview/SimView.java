@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
@@ -17,6 +16,7 @@ import static io.mozib.simview.Common.*;
 
 public class SimView extends Application {
     private static String[] cmdLineArgs;
+
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -33,16 +33,6 @@ public class SimView extends Application {
                 new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("icons/simview.png"))));
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         stage.show();
-
-        // load recent files
-        RecentFiles recentFiles=loadRecentFiles();
-        for (RecentFiles.RecentFile recentFile : recentFiles.recentFileList) {
-            MenuItem menuItem = new MenuItem(recentFile.getPath());
-            menuItem.setOnAction(event -> {
-                controller.mainViewModel.loadImage(new ImageModel(menuItem.getText()));
-            });
-            controller.menuRecent.getItems().add(menuItem);
-        }
 
         if (cmdLineArgs != null && cmdLineArgs.length > 0) {
             controller.mainViewModel.loadImage(new ImageModel(cmdLineArgs[0]));
