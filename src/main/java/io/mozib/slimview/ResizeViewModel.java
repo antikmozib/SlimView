@@ -1,4 +1,4 @@
-package io.mozib.simview;
+package io.mozib.slimview;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;

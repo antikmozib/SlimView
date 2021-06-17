@@ -12,6 +12,6 @@ module io.mozib.simview {
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.dataformat.xml;
 
-    opens io.mozib.simview to javafx.fxml, com.fasterxml.jackson.databind;
-    exports io.mozib.simview;
+    opens io.mozib.slimview to javafx.fxml, com.fasterxml.jackson.databind;
+    exports io.mozib.slimview;
 }

@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="206.0" prefWidth="391.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="io.mozib.simview.AboutWindowController">
+<AnchorPane id="AnchorPane" prefHeight="206.0" prefWidth="391.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="io.mozib.slimview.AboutWindowController">
    <children>
       <ImageView fitHeight="64.0" fitWidth="64.0" layoutX="16.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
          <image>

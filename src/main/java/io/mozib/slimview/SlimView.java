@@ -1,4 +1,4 @@
-package io.mozib.simview;
+package io.mozib.slimview;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,9 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import static io.mozib.simview.Common.*;
+import static io.mozib.slimview.Common.*;
 
-public class SimView extends Application {
+public class SlimView extends Application {
     private static String[] cmdLineArgs;
 
     @Override
@@ -28,7 +28,7 @@ public class SimView extends Application {
         scene.getStylesheets().add(
                 Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
         stage.setScene(scene);
-        stage.setTitle("SimView");
+        stage.setTitle("SlimView");
         stage.getIcons().add(
                 new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("icons/simview.png"))));
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);

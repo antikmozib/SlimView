@@ -1,4 +1,4 @@
-package io.mozib.simview;
+package io.mozib.slimview;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static io.mozib.simview.Common.loadRecentFiles;
+import static io.mozib.slimview.Common.loadRecentFiles;
 
 public class MainWindowController implements Initializable {
     @FXML
@@ -139,7 +139,7 @@ public class MainWindowController implements Initializable {
             imageViewMain.setImage(newValue.getImage());
             imageViewMain.requestFocus();
             try {
-                ((Stage) imageViewMain.getScene().getWindow()).setTitle(newValue.getShortName() + " - SimView");
+                ((Stage) imageViewMain.getScene().getWindow()).setTitle(newValue.getShortName() + " - SlimView");
             } catch (Exception e) {
                 e.printStackTrace();
             }

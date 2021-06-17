@@ -1,4 +1,4 @@
-package io.mozib.simview;
+package io.mozib.slimview;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.mozib.simview.Common.*;
+import static io.mozib.slimview.Common.*;
 
 public class MainViewModel {
 
@@ -57,21 +57,17 @@ public class MainViewModel {
 
         @Override
         protected Task<List<ImageModel>> createTask() {
-
             return new Task<>() {
-
                 @Override
                 protected List<ImageModel> call() {
-
-                    Iterator<File> iterator = FileUtils.iterateFiles(new File(directoryPath), new String[]{"jpg", "jpeg", "png", "gif"}, false);
-
+                    Iterator<File> iterator = FileUtils.iterateFiles(
+                            new File(directoryPath), new String[]{"jpg", "jpeg", "png", "gif"}, false);
                     while (iterator.hasNext()) {
                         ImageModel image = new ImageModel(iterator.next().getPath());
                         images.add(image);
                         fileCount.addAndGet(1);
                         updateMessage("Scanning " + directoryPath + "... " + image.getShortName());
                     }
-
                     updateMessage("Found " + getFileCount() + " files.");
                     return images;
                 }

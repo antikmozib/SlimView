@@ -1,4 +1,4 @@
-package io.mozib.simview;
+package io.mozib.slimview;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;

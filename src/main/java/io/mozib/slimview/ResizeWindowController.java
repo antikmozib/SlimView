@@ -1,4 +1,4 @@
-package io.mozib.simview;
+package io.mozib.slimview;
 
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -54,6 +54,6 @@ public class ResizeWindowController implements Initializable {
 
     @FXML
     public void buttonCancel_onAction(ActionEvent actionEvent) {
-        ((Stage) ((Node) actionEvent.getSource()).getScene().getWindow()).close();
+        ((Stage) ((Node) actionEvent.getSource()).getScene().getWindow()).close();        
     }
 }

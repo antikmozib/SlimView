@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.mozib</groupId>
-    <artifactId>simview</artifactId>
+    <artifactId>slimview</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <properties>
@@ -70,7 +70,7 @@
                         <!-- Usage: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>io.mozib.simview.App</mainClass>
+                            <mainClass>io.mozib.slimview.App</mainClass>
                         </configuration>
                     </execution>
                 </executions>
@@ -85,7 +85,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>io.mozib.simview.App</mainClass>
+                            <mainClass>io.mozib.slimview.App</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
@@ -104,7 +104,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>io.mozib.simview.App</mainClass>
+                                    <mainClass>io.mozib.slimview.App</mainClass>
                                 </transformer>
                             </transformers>
                             <filters>

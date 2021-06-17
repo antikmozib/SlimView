@@ -1,4 +1,4 @@
-package io.mozib.simview;
+package io.mozib.slimview;
 
 import java.net.URL;
 import java.util.ResourceBundle;

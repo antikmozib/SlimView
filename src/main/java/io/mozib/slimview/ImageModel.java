@@ -1,4 +1,4 @@
-package io.mozib.simview;
+package io.mozib.slimview;
 
 import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
@@ -8,7 +8,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 
-import static io.mozib.simview.Common.*;
+import static io.mozib.slimview.Common.*;
 
 public class ImageModel {
 

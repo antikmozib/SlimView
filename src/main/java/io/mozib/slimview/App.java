@@ -1,8 +1,8 @@
-package io.mozib.simview;
+package io.mozib.slimview;
 
 public class App
 {
     public static void main(String[] args) {
-        SimView.main(args);
+        SlimView.main(args);
     }
 }
