@@ -1,4 +1,4 @@
-# SimView
+# SlimView
 A simple, cross-platform image viewer.
 
 <h2>Building</h2>
