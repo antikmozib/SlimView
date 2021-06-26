@@ -424,14 +424,12 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuZoomIn_onAction(ActionEvent actionEvent) {
-        viewStyleProperty.set(ViewStyle.ORIGINAL);
-        mainViewModel.zoomIn();
+        zoomIn();
     }
 
     @FXML
     public void menuZoomOut_onAction(ActionEvent actionEvent) {
-        viewStyleProperty.set(ViewStyle.ORIGINAL);
-        mainViewModel.zoomOut();
+        zoomOut();
     }
 
     private enum ViewStyle {
@@ -448,5 +446,15 @@ public class MainWindowController implements Initializable {
         statusBar.setVisible(!setFullScreen);
         isViewingFullScreen.set(setFullScreen);
         menuFullScreen.setSelected(setFullScreen);
+    }
+
+    private void zoomIn() {
+        viewStyleProperty.set(ViewStyle.ORIGINAL);
+        mainViewModel.zoomIn();
+    }
+
+    private void zoomOut() {
+        viewStyleProperty.set(ViewStyle.ORIGINAL);
+        mainViewModel.zoomOut();
     }
 }

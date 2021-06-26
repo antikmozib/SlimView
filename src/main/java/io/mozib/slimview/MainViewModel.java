@@ -32,12 +32,10 @@ import java.util.Date;
 public class MainViewModel {
 
     private List<ImageModel> imageModels = new ArrayList<>();
-    private Integer currentIndex = 0;
     private LoadDirectory loadDirectory;
     private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper();
     private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
     private final double zoomStep = 0.25; // how much to zoom on each step
-    private ImageModel originalUnedited = null;
 
     public ReadOnlyObjectProperty<ImageModel> selectedImageModelProperty() {
         return selectedImageModelWrapper.getReadOnlyProperty();
@@ -66,34 +64,34 @@ public class MainViewModel {
 
     public void showFirstImage() {
         if (directoryScanComplete() && imageModels.size() > 0) {
-            currentIndex = 0;
-            setSelectedImage(imageModels.get(currentIndex));
+            setSelectedImage(imageModels.get(0));
         }
     }
 
     public void showLastImage() {
         if (directoryScanComplete() && imageModels.size() > 0) {
-            currentIndex = imageModels.size() - 1;
-            setSelectedImage(imageModels.get(currentIndex));
+            setSelectedImage(imageModels.get(imageModels.size() - 1));
         }
     }
 
     public void showNextImage() {
         if (directoryScanComplete() && imageModels.size() > 0) {
-            if (++currentIndex >= imageModels.size()) {
-                currentIndex = 0;
+            if (getCurrentIndex() + 1 > imageModels.size() - 1) {
+                setSelectedImage(imageModels.get(0));
+            } else {
+                setSelectedImage(imageModels.get(getCurrentIndex() + 1));
             }
-            setSelectedImage(imageModels.get(currentIndex));
             unloadInvisibleImages();
         }
     }
 
     public void showPreviousImage() {
         if (directoryScanComplete() && imageModels.size() > 0) {
-            if (--currentIndex < 0) {
-                currentIndex = imageModels.size() - 1;
+            if (getCurrentIndex() - 1 < 0) {
+                setSelectedImage(imageModels.get(imageModels.size() - 1));
+            } else {
+                setSelectedImage(imageModels.get(getCurrentIndex() - 1));
             }
-            setSelectedImage(imageModels.get(currentIndex));
             unloadInvisibleImages();
         }
     }
@@ -132,9 +130,18 @@ public class MainViewModel {
 
     public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
         var file = new File(Paths.get(cacheDirectory(), imageModel.getShortName()).toString());
-        var image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
+        BufferedImage image;
+
+        // resample image to ensure best resizing quality
+        if (imageModel.getResampleImageModel() == null) {
+            imageModel.setResamplePath(imageModel.getPath());
+            image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
+        } else {
+            image = SwingFXUtils.fromFXImage(imageModel.getResampleImageModel().getImage(), null);
+        }
+
         var resized = Scalr.resize(image, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
-        editImage(resized, file);
+        editImage(resized, file, imageModel.getResamplePath());
     }
 
     public void saveImage(ImageModel imageModel, String destination) {
@@ -204,13 +211,10 @@ public class MainViewModel {
     }
 
     private boolean isEdited(ImageModel imageModel) {
-        if (imageModel.getPath().contains(cacheDirectory())) {
-            return true;
-        }
-        return false;
+        return imageModel.getPath().contains(cacheDirectory());
     }
 
-    private void editImage(BufferedImage edited, File file) {
+    private void editImage(BufferedImage edited, File file, String resamplePath) {
         String format = FilenameUtils.getExtension(file.getPath());
         try {
             file.createNewFile();
@@ -218,7 +222,7 @@ public class MainViewModel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setSelectedImage(new ImageModel(file.getPath()));
+        setSelectedImage(new ImageModel(file.getPath(), resamplePath));
     }
 
     private static class LoadDirectory extends Service<List<ImageModel>> {
@@ -257,9 +261,8 @@ public class MainViewModel {
 
     private void setSelectedImage(ImageModel imageModel) {
         selectedImageModelWrapper.set(imageModel);
-        currentIndex = imageModels.indexOf(imageModel);
         status.unbind();
-        status.set((currentIndex + 1) + " / " + imageModels.size()
+        status.set((getCurrentIndex() + 1) + " / " + imageModels.size()
                 + "  |  Resolution: " + imageModel.getResolution()
                 + "  |  Format: " + imageModel.getFormat()
                 + "  |  Size: " + imageModel.getFormattedFileSize()
@@ -268,11 +271,11 @@ public class MainViewModel {
     }
 
     private void unloadInvisibleImages() {
-        if (currentIndex > 0) {
-            imageModels.get(currentIndex - 1).unsetImage();
+        if (getCurrentIndex() > 0) {
+            imageModels.get(getCurrentIndex() - 1).unsetImage();
         }
-        if (currentIndex < imageModels.size() - 1) {
-            imageModels.get(currentIndex + 1).unsetImage();
+        if (getCurrentIndex() < imageModels.size() - 1) {
+            imageModels.get(getCurrentIndex() + 1).unsetImage();
         }
     }
 
@@ -285,6 +288,23 @@ public class MainViewModel {
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
         var file = new File(Paths.get(cacheDirectory(), imageModel.getShortName()).toString());
         var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(imageModel.getImage(), null), rotation);
-        editImage(rotated, file);
+        editImage(rotated, file, imageModel.getResamplePath());
+    }
+
+    private int getCurrentIndex() {
+        if (imageModels != null) {
+            if (getSelectedImageModel().getResampleImageModel() != null) {
+                return imageModels.indexOf(imageModels.stream()
+                        .filter(item -> getSelectedImageModel().getResamplePath().equals(item.getPath()))
+                        .findAny()
+                        .orElse(null));
+            } else {
+                return imageModels.indexOf(imageModels.stream()
+                        .filter(item -> getSelectedImageModel().getPath().equals(item.getPath()))
+                        .findAny()
+                        .orElse(null));
+            }
+        }
+        return 0;
     }
 }

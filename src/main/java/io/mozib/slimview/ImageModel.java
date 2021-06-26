@@ -1,10 +1,8 @@
 package io.mozib.slimview;
 
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,8 +11,6 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
 
-import static io.mozib.slimview.Common.*;
-
 public class ImageModel {
 
     private final String fullPath;
@@ -22,9 +18,15 @@ public class ImageModel {
     private Image image = null;
     private final long dateModified;
     private final long dateCreated;
+    private String resamplePath;
 
     ImageModel(String fullPath) {
+        this(fullPath, null);
+    }
+
+    ImageModel(String fullPath, String resamplePath) {
         this.fullPath = fullPath;
+        this.resamplePath = resamplePath;
         this.shortName = Path.of(fullPath).getFileName().toString();
         Path path = Paths.get(fullPath);
         BasicFileAttributes fileAttributes = null;
@@ -106,5 +108,20 @@ public class ImageModel {
 
     public long getDateCreated() {
         return dateCreated;
+    }
+
+    public void setResamplePath(String resamplePath) {
+        this.resamplePath = resamplePath;
+    }
+
+    public String getResamplePath() {
+        return resamplePath;
+    }
+
+    public ImageModel getResampleImageModel() {
+        if (getResamplePath() == null || getResamplePath().equals("")) {
+            return null;
+        }
+        return new ImageModel(getResamplePath());
     }
 }
