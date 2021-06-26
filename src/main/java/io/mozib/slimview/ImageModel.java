@@ -1,11 +1,16 @@
 package io.mozib.slimview;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
 
 import static io.mozib.slimview.Common.*;
@@ -15,10 +20,26 @@ public class ImageModel {
     private final String fullPath;
     private final String shortName;
     private Image image = null;
+    private final long dateModified;
+    private final long dateCreated;
 
     ImageModel(String fullPath) {
         this.fullPath = fullPath;
         this.shortName = Path.of(fullPath).getFileName().toString();
+        Path path = Paths.get(fullPath);
+        BasicFileAttributes fileAttributes = null;
+        try {
+            fileAttributes = Files.readAttributes(path, BasicFileAttributes.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (fileAttributes != null) {
+            this.dateModified = fileAttributes.lastModifiedTime().toMillis();
+            this.dateCreated = fileAttributes.creationTime().toMillis();
+        } else {
+            this.dateModified = 0;
+            this.dateCreated = 0;
+        }
     }
 
     public String getPath() {
@@ -38,32 +59,6 @@ public class ImageModel {
 
     public void unsetImage() {
         image = null;
-    }
-
-    public void openInEditor() {
-        if (getOSType() == OSType.Windows) {
-            try {
-                Runtime.getRuntime().exec("mspaint \"" + getPath() + "\"");
-            } catch (Exception ignored) {
-
-            }
-        }
-    }
-
-    public void openContainingFolder() {
-        if (getOSType() == OSType.Windows) {
-            try {
-                Runtime.getRuntime().exec("explorer.exe /select, \"\"" + getPath() + "\"\"");
-            } catch (Exception ignored) {
-
-            }
-        } else {
-            try {
-                Desktop.getDesktop().open(getContainingFolder());
-            } catch (Exception ignored) {
-
-            }
-        }
     }
 
     public File getContainingFolder() {
@@ -90,11 +85,11 @@ public class ImageModel {
         }
     }
 
-    public double getOriginalWidth() {
+    public double getWidth() {
         return getImage().getWidth();
     }
 
-    public double getOriginalHeight() {
+    public double getHeight() {
         return getImage().getHeight();
     }
 
@@ -103,5 +98,13 @@ public class ImageModel {
             image = null;
             getImage();
         }
+    }
+
+    public long getDateModified() {
+        return dateModified;
+    }
+
+    public long getDateCreated() {
+        return dateCreated;
     }
 }

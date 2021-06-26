@@ -1,16 +1,17 @@
-module io.mozib.simview {
+module io.mozib.slimview {
     requires transitive javafx.controls;
-    requires javafx.fxml;
-    requires org.apache.commons.io;
     requires transitive javafx.graphics;
-    requires javafx.base;
     requires java.base;
     requires java.desktop;
-    requires imgscalr.lib;
+    requires javafx.fxml;
+    requires javafx.base;
     requires javafx.swing;
+    requires imgscalr.lib;
+    requires org.apache.commons.io;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.dataformat.xml;
+    requires org.jfxtras.styles.jmetro;
 
     opens io.mozib.slimview to javafx.fxml, com.fasterxml.jackson.databind;
     exports io.mozib.slimview;

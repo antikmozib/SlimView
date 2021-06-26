@@ -18,6 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import jfxtras.styles.jmetro.JMetro;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +26,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static io.mozib.slimview.Common.loadRecentFiles;
+import static io.mozib.slimview.SlimView.globalAppStyle;
 
 public class MainWindowController implements Initializable {
+
     @FXML
     public HBox hBoxMain;
     @FXML
@@ -65,7 +68,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuResize_onAction(ActionEvent actionEvent) {
-
+        JMetro jMetro = new JMetro(globalAppStyle);
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("resizeWindow.fxml"));
         Parent root = null;
         try {
@@ -75,16 +78,16 @@ public class MainWindowController implements Initializable {
         }
 
         Scene scene = new Scene(root);
+        jMetro.setScene(scene);
         Stage resizeWindow = new Stage();
         ResizeViewModel resizeViewModel = new ResizeViewModel(
-                mainViewModel.getSelectedImageModel().getOriginalWidth(),
-                mainViewModel.getSelectedImageModel().getOriginalHeight());
+                mainViewModel.getSelectedImageModel().getWidth(),
+                mainViewModel.getSelectedImageModel().getHeight());
         resizeWindow.setScene(scene);
         resizeWindow.setTitle("Resize");
         resizeWindow.initModality(Modality.WINDOW_MODAL);
         resizeWindow.initStyle(StageStyle.UTILITY);
         resizeWindow.initOwner(imageViewMain.getScene().getWindow());
-        resizeWindow.setResizable(false);
         ResizeWindowController controller = fxmlLoader.getController();
         controller.setViewModel(resizeViewModel);
         resizeWindow.showAndWait();
@@ -146,7 +149,9 @@ public class MainWindowController implements Initializable {
         });
 
         viewStyleProperty.addListener(((ObservableValue<? extends ViewStyle> observable, ViewStyle oldValue, ViewStyle newValue) -> {
-            if (newValue == null) return;
+            if (newValue == null) {
+                return;
+            }
 
             imageViewMain.fitWidthProperty().unbind();
             imageViewMain.fitHeightProperty().unbind();
@@ -158,8 +163,8 @@ public class MainWindowController implements Initializable {
             mainScrollPane.setFitToWidth(true);
 
             if (imageViewMain.getImage() != null) {
-                imageViewMain.setFitWidth(mainViewModel.getSelectedImageModel().getOriginalWidth());
-                imageViewMain.setFitHeight(mainViewModel.getSelectedImageModel().getOriginalHeight());
+                imageViewMain.setFitWidth(mainViewModel.getSelectedImageModel().getWidth());
+                imageViewMain.setFitHeight(mainViewModel.getSelectedImageModel().getHeight());
             }
 
             imageViewMain.setPreserveRatio(true);
@@ -173,23 +178,25 @@ public class MainWindowController implements Initializable {
 
                 case FIT_TO_WINDOW:
                     menuFitToWindow.setSelected(true);
-
-                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(scrollPaneOffset));
-                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(scrollPaneOffset));
+                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
+                            scrollPaneOffset));
+                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
+                            scrollPaneOffset));
                     break;
 
                 case STRETCHED:
                     menuStretched.setSelected(true);
                     imageViewMain.setPreserveRatio(false);
-
-                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(scrollPaneOffset));
-                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(scrollPaneOffset));
+                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
+                            scrollPaneOffset));
+                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
+                            scrollPaneOffset));
                     break;
             }
         }));
 
-        mainViewModel.selectedImageModelProperty().addListener((
-                (ObservableValue<? extends ImageModel> observableValue, ImageModel imageModel, ImageModel t1) -> {
+        mainViewModel.selectedImageModelProperty().addListener(
+                ((ObservableValue<? extends ImageModel> observableValue, ImageModel imageModel, ImageModel t1) -> {
                     // force trigger change listener
                     var oldViewStyle = viewStyleProperty.get();
                     viewStyleProperty.set(null);
@@ -198,7 +205,7 @@ public class MainWindowController implements Initializable {
         viewStyleProperty.set(ViewStyle.FIT_TO_WINDOW);
 
         // load recent files
-        RecentFiles recentFiles=loadRecentFiles();
+        RecentFiles recentFiles = loadRecentFiles();
         for (RecentFiles.RecentFile recentFile : recentFiles.recentFileList) {
             MenuItem menuItem = new MenuItem(recentFile.getPath());
             menuItem.setOnAction(event -> {
@@ -235,16 +242,16 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
+        JMetro jMetro = new JMetro(globalAppStyle);
         FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("aboutWindow.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
         Stage aboutWindow = new Stage();
+        jMetro.setScene(scene);
         aboutWindow.setScene(scene);
         aboutWindow.initModality(Modality.WINDOW_MODAL);
         aboutWindow.initStyle(StageStyle.UTILITY);
         aboutWindow.initOwner(imageViewMain.getScene().getWindow());
-        aboutWindow.setResizable(false);
-        aboutWindow.setIconified(false);
         aboutWindow.setTitle("About");
         aboutWindow.show();
     }
@@ -294,14 +301,14 @@ public class MainWindowController implements Initializable {
     @FXML
     public void menuOpenContainingFolder_onAction(ActionEvent actionEvent) {
         if (mainViewModel.getSelectedImageModel() != null) {
-            mainViewModel.getSelectedImageModel().openContainingFolder();
+            mainViewModel.openContainingFolder(mainViewModel.getSelectedImageModel());
         }
     }
 
     @FXML
     public void menuOpenInExternalEditor_onAction(ActionEvent actionEvent) {
         if (mainViewModel.getSelectedImageModel() != null) {
-            mainViewModel.getSelectedImageModel().openInEditor();
+            mainViewModel.openInEditor(mainViewModel.getSelectedImageModel());
         }
     }
 
@@ -329,7 +336,6 @@ public class MainWindowController implements Initializable {
                 menuBar.requestFocus();
             }
         } else {
-
             switch (keyEvent.getCode()) {
                 case LEFT:
                 case PAGE_DOWN:
@@ -355,6 +361,14 @@ public class MainWindowController implements Initializable {
                     } else {
                         Platform.exit();
                     }
+                case ADD:
+                case EQUALS:
+                    mainViewModel.zoomIn();
+                    break;
+                case UNDERSCORE:
+                case SUBTRACT:
+                    mainViewModel.zoomOut();
+                    break;
             }
         }
     }
@@ -392,13 +406,32 @@ public class MainWindowController implements Initializable {
     @FXML
     public void buttonEdit_onAction(ActionEvent actionEvent) {
         if (mainViewModel.getSelectedImageModel() != null) {
-            mainViewModel.getSelectedImageModel().openInEditor();
+            mainViewModel.openInEditor(mainViewModel.getSelectedImageModel());
         }
     }
 
     @FXML
     public void menuDelete_onAction(ActionEvent actionEvent) {
         mainViewModel.trashImage(mainViewModel.getSelectedImageModel());
+    }
+
+    @FXML
+    public void menuCopy_onAction(ActionEvent actionEvent) {
+        if (mainViewModel.getSelectedImageModel() != null) {
+            mainViewModel.copyToClipboard(mainViewModel.getSelectedImageModel());
+        }
+    }
+
+    @FXML
+    public void menuZoomIn_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.ORIGINAL);
+        mainViewModel.zoomIn();
+    }
+
+    @FXML
+    public void menuZoomOut_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.ORIGINAL);
+        mainViewModel.zoomOut();
     }
 
     private enum ViewStyle {

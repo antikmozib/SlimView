@@ -25,6 +25,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.mozib.slimview.Common.*;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainViewModel {
 
     private List<ImageModel> imageModels = new ArrayList<>();
@@ -32,6 +36,8 @@ public class MainViewModel {
     private LoadDirectory loadDirectory;
     private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper();
     private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
+    private final double zoomStep = 0.25; // how much to zoom on each step
+    private ImageModel originalUnedited = null;
 
     public ReadOnlyObjectProperty<ImageModel> selectedImageModelProperty() {
         return selectedImageModelWrapper.getReadOnlyProperty();
@@ -39,59 +45,6 @@ public class MainViewModel {
 
     public ReadOnlyStringProperty statusProperty() {
         return status.getReadOnlyProperty();
-    }
-
-    private static class LoadDirectory extends Service<List<ImageModel>> {
-
-        private final String directoryPath;
-        private final AtomicInteger fileCount = new AtomicInteger(0);
-        private final List<ImageModel> images = new ArrayList<>();
-
-        public LoadDirectory(String directoryPath) {
-            this.directoryPath = directoryPath;
-        }
-
-        public Integer getFileCount() {
-            return fileCount.get();
-        }
-
-        @Override
-        protected Task<List<ImageModel>> createTask() {
-            return new Task<>() {
-                @Override
-                protected List<ImageModel> call() {
-                    Iterator<File> iterator = FileUtils.iterateFiles(
-                            new File(directoryPath), new String[]{"jpg", "jpeg", "png", "gif"}, false);
-                    while (iterator.hasNext()) {
-                        ImageModel image = new ImageModel(iterator.next().getPath());
-                        images.add(image);
-                        fileCount.addAndGet(1);
-                        updateMessage("Scanning " + directoryPath + "... " + image.getShortName());
-                    }
-                    updateMessage("Found " + getFileCount() + " files.");
-                    return images;
-                }
-            };
-        }
-    }
-
-    private void setSelectedImage(ImageModel imageModel) {
-        selectedImageModelWrapper.set(imageModel);
-        currentIndex = imageModels.indexOf(imageModel);
-        status.unbind();
-        status.set((currentIndex + 1) + " / " + imageModels.size() + " | Resolution: "
-                + imageModel.getResolution() + " | Format: " + imageModel.getFormat()
-                + " | Size: " + imageModel.getFormattedFileSize());
-        //editedImage = null;
-    }
-
-    private void unloadInvisibleImages() {
-        if (currentIndex > 0) {
-            imageModels.get(currentIndex - 1).unsetImage();
-        }
-        if (currentIndex < imageModels.size() - 1) {
-            imageModels.get(currentIndex + 1).unsetImage();
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -169,10 +122,12 @@ public class MainViewModel {
         rotateImage(getSelectedImageModel(), Scalr.Rotation.FLIP_HORZ);
     }
 
-    private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
-        var file = new File(Paths.get(cacheDirectory(), imageModel.getShortName()).toString());
-        var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(imageModel.getImage(), null), rotation);
-        editImage(rotated, file);
+    public void zoomIn() {
+        zoomImage(getSelectedImageModel(), zoomStep);
+    }
+
+    public void zoomOut() {
+        zoomImage(getSelectedImageModel(), -zoomStep);
     }
 
     public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
@@ -180,6 +135,79 @@ public class MainViewModel {
         var image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
         var resized = Scalr.resize(image, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
         editImage(resized, file);
+    }
+
+    public void saveImage(ImageModel imageModel, String destination) {
+        File file = new File(destination);
+        try {
+            file.createNewFile();
+            ImageIO.write(
+                    SwingFXUtils.fromFXImage(imageModel.getImage(), null),
+                    FilenameUtils.getExtension(destination),
+                    file
+            );
+        } catch (IOException ignored) {
+
+        }
+    }
+
+    public void trashImage(ImageModel imageModel) {
+        try {
+            Desktop.getDesktop().moveToTrash(new File(imageModel.getPath()));
+            // remove from list
+            imageModels.remove(imageModel);
+            showNextImage();
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    public void openInEditor(ImageModel imageModel) {
+        if (getOSType() == OSType.Windows) {
+            try {
+                Runtime.getRuntime().exec("mspaint \"" + imageModel.getPath() + "\"");
+            } catch (IOException ignored) {
+
+            }
+        }
+    }
+
+    public void openContainingFolder(ImageModel imageModel) {
+        if (getOSType() == OSType.Windows) {
+            try {
+                Runtime.getRuntime().exec("explorer.exe /select, \"\"" + imageModel.getPath() + "\"\"");
+            } catch (IOException ignored) {
+
+            }
+        } else {
+            try {
+                Desktop.getDesktop().open(imageModel.getContainingFolder());
+            } catch (IOException ignored) {
+
+            }
+        }
+    }
+
+    public void copyToClipboard(ImageModel imageModel) {
+        if (imageModel.getImage() == null) {
+            return;
+        }
+        var transformedImage = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
+        var transferableImage = new ImageTransferable(transformedImage);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferableImage, null);
+    }
+
+    private String formatTime(long time) {
+        Date date = new Date(time);
+        Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(date);
+    }
+
+    private boolean isEdited(ImageModel imageModel) {
+        if (imageModel.getPath().contains(cacheDirectory())) {
+            return true;
+        }
+        return false;
     }
 
     private void editImage(BufferedImage edited, File file) {
@@ -193,28 +221,70 @@ public class MainViewModel {
         setSelectedImage(new ImageModel(file.getPath()));
     }
 
-    public void saveImage(ImageModel imageModel, String destination) {
-        File file = new File(destination);
-        try {
-            file.createNewFile();
-            ImageIO.write(
-                    SwingFXUtils.fromFXImage(imageModel.getImage(), null),
-                    FilenameUtils.getExtension(destination),
-                    file
-            );
-        } catch (IOException e) {
+    private static class LoadDirectory extends Service<List<ImageModel>> {
 
+        private final String directoryPath;
+        private final AtomicInteger fileCount = new AtomicInteger(0);
+        private final List<ImageModel> images = new ArrayList<>();
+
+        public LoadDirectory(String directoryPath) {
+            this.directoryPath = directoryPath;
+        }
+
+        public Integer getFileCount() {
+            return fileCount.get();
+        }
+
+        @Override
+        protected Task<List<ImageModel>> createTask() {
+            return new Task<>() {
+                @Override
+                protected List<ImageModel> call() {
+                    Iterator<File> iterator = FileUtils.iterateFiles(
+                            new File(directoryPath), new String[]{"jpg", "jpeg", "png", "gif"}, false);
+                    while (iterator.hasNext()) {
+                        ImageModel image = new ImageModel(iterator.next().getPath());
+                        images.add(image);
+                        fileCount.addAndGet(1);
+                        updateMessage("Scanning " + directoryPath + "... " + image.getShortName());
+                    }
+                    updateMessage("Found " + getFileCount() + " files.");
+                    return images;
+                }
+            };
         }
     }
 
-    public void trashImage(ImageModel imageModel) {
-        try {
-            Desktop.getDesktop().moveToTrash(new File(imageModel.getPath()));
-            // remove from list
-            imageModels.remove(imageModel);
-            showNextImage();
-        } catch (Exception e) {
+    private void setSelectedImage(ImageModel imageModel) {
+        selectedImageModelWrapper.set(imageModel);
+        currentIndex = imageModels.indexOf(imageModel);
+        status.unbind();
+        status.set((currentIndex + 1) + " / " + imageModels.size()
+                + "  |  Resolution: " + imageModel.getResolution()
+                + "  |  Format: " + imageModel.getFormat()
+                + "  |  Size: " + imageModel.getFormattedFileSize()
+                + "  |  Created: " + formatTime(imageModel.getDateCreated())
+                + "  |  Last Modified: " + formatTime(imageModel.getDateModified()));
+    }
 
+    private void unloadInvisibleImages() {
+        if (currentIndex > 0) {
+            imageModels.get(currentIndex - 1).unsetImage();
         }
+        if (currentIndex < imageModels.size() - 1) {
+            imageModels.get(currentIndex + 1).unsetImage();
+        }
+    }
+
+    private void zoomImage(ImageModel imageModel, double percentage) {
+        double newWidth = imageModel.getWidth() + imageModel.getWidth() * percentage;
+        double newHeight = imageModel.getHeight() + imageModel.getHeight() * percentage;
+        resizeImage(imageModel, (int) newWidth, (int) newHeight);
+    }
+
+    private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
+        var file = new File(Paths.get(cacheDirectory(), imageModel.getShortName()).toString());
+        var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(imageModel.getImage(), null), rotation);
+        editImage(rotated, file);
     }
 }

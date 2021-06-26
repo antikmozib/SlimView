@@ -54,6 +54,6 @@ public class ResizeWindowController implements Initializable {
 
     @FXML
     public void buttonCancel_onAction(ActionEvent actionEvent) {
-        ((Stage) ((Node) actionEvent.getSource()).getScene().getWindow()).close();        
+        ((Stage) ((Node) actionEvent.getSource()).getScene().getWindow()).close();
     }
 }

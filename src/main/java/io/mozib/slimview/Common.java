@@ -3,6 +3,10 @@ package io.mozib.slimview;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +30,8 @@ public class Common {
     }
 
     public static String cacheDirectory() {
-        Path path = Paths.get(System.getProperty("user.home"), ".simview", "cache");
+        createSettingsDir(); // ensure settings directory exists
+        Path path = Paths.get(System.getProperty("user.home"), ".slimview", "cache");
         if (!Files.exists(path)) {
             try {
                 Files.createDirectory(path);
@@ -34,11 +39,12 @@ public class Common {
                 e.printStackTrace();
             }
         }
-        return Paths.get(System.getProperty("user.home"), ".simview", "cache").toString();
+        return Paths.get(System.getProperty("user.home"), ".slimview", "cache").toString();
     }
 
     public static String recentFilesCache() {
-        Path path = Paths.get(System.getProperty("user.home"), ".simview", "recent.xml");
+        createSettingsDir();
+        Path path = Paths.get(System.getProperty("user.home"), ".slimview", "recent.xml");
         // create file if not exists
         try {
             new File(path.toString()).createNewFile();
@@ -98,7 +104,6 @@ public class Common {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public static RecentFiles loadRecentFiles() {
@@ -116,5 +121,40 @@ public class Common {
             recentFiles = new RecentFiles();
         }
         return recentFiles;
+    }
+
+    private static void createSettingsDir() {
+        Path path = Paths.get(System.getProperty("user.home"), ".slimview");
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectory(path);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static class ImageTransferable implements Transferable {
+        private final Image image;
+
+        public ImageTransferable(Image image) {
+            this.image = image;
+        }
+
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+            if (isDataFlavorSupported(flavor)) {
+                return image;
+            } else {
+                throw new UnsupportedFlavorException(flavor);
+            }
+        }
+
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return flavor == DataFlavor.imageFlavor;
+        }
+
+        public DataFlavor[] getTransferDataFlavors() {
+            return new DataFlavor[]{DataFlavor.imageFlavor};
+        }
     }
 }

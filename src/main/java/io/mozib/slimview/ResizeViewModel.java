@@ -3,7 +3,6 @@ package io.mozib.slimview;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
-
 import java.text.DecimalFormat;
 
 public class ResizeViewModel {
@@ -23,7 +22,8 @@ public class ResizeViewModel {
                 (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                     if (preserveAspectRatioProperty.get()) {
                         double currentAspectRatio = getWidth() / getHeight();
-                        if (decimalFormat.format(currentAspectRatio).equals(decimalFormat.format(originalAspectRatio))) {
+                        if (decimalFormat.format(currentAspectRatio).equals(
+                                decimalFormat.format(originalAspectRatio))) {
                             return;
                         }
 

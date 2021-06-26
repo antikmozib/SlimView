@@ -55,7 +55,7 @@
                 </Menu>
                 <Menu text="_Edit">
                     <items>
-                        <MenuItem id="menuCopy" text="_Copy">
+                        <MenuItem id="menuCopy" fx:id="menuCopy" onAction="#menuCopy_onAction" text="_Copy">
                             <accelerator>
                                 <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
@@ -97,12 +97,12 @@
                             </accelerator>
                         </RadioMenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem id="menuZoomIn" text="Zoom _In">
+                        <MenuItem id="menuZoomIn" fx:id="menuZoomIn" onAction="#menuZoomIn_onAction" text="Zoom _In">
                             <accelerator>
                                 <KeyCodeCombination alt="UP" code="ADD" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
-                        <MenuItem id="menuZoomOut" text="Zoom Ou_t">
+                        <MenuItem id="menuZoomOut" fx:id="menuZoomOut" onAction="#menuZoomOut_onAction" text="Zoom Ou_t">
                             <accelerator>
                                 <KeyCodeCombination alt="UP" code="SUBTRACT" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
@@ -168,7 +168,7 @@
                 </Button>
             </items>
         </ToolBar>
-        <ScrollPane id="mainScrollPane" fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" onKeyPressed="#mainScrollPane_onKeyPress" onMouseClicked="#mainScrollPane_onClick" onScroll="#mainScrollPane_onScroll" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+        <ScrollPane id="mainScrollPane" fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" onKeyPressed="#mainScrollPane_onKeyPress" onMouseClicked="#mainScrollPane_onClick" onScroll="#mainScrollPane_onScroll" pannable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
             <content>
                 <StackPane id="stackPaneMain" fx:id="stackPaneMain" prefHeight="150.0" prefWidth="200.0">
                     <children>
