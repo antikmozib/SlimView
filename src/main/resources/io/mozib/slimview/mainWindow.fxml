@@ -104,9 +104,14 @@
                         </MenuItem>
                         <MenuItem id="menuZoomOut" fx:id="menuZoomOut" onAction="#menuZoomOut_onAction" text="Zoom Ou_t">
                             <accelerator>
-                                <KeyCodeCombination alt="UP" code="SUBTRACT" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                <KeyCodeCombination alt="UP" code="MINUS" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
+                  <MenuItem fx:id="menuResetZoom" onAction="#menuResetZoom_onAction" text="_Reset Zoom">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="DIGIT0" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
                     </items>
                 </Menu>
                 <Menu text="_Help">

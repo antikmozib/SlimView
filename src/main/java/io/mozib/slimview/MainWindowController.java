@@ -18,7 +18,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import jfxtras.styles.jmetro.JMetro;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,12 +25,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static io.mozib.slimview.Common.loadRecentFiles;
-import static io.mozib.slimview.SlimView.globalAppStyle;
 
 public class MainWindowController implements Initializable {
 
-    @FXML
-    public HBox hBoxMain;
     @FXML
     public RadioMenuItem menuStretched;
     @FXML
@@ -68,7 +64,6 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuResize_onAction(ActionEvent actionEvent) {
-        JMetro jMetro = new JMetro(globalAppStyle);
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("resizeWindow.fxml"));
         Parent root = null;
         try {
@@ -78,7 +73,6 @@ public class MainWindowController implements Initializable {
         }
 
         Scene scene = new Scene(root);
-        jMetro.setScene(scene);
         Stage resizeWindow = new Stage();
         ResizeViewModel resizeViewModel = new ResizeViewModel(
                 mainViewModel.getSelectedImageModel().getWidth(),
@@ -148,52 +142,57 @@ public class MainWindowController implements Initializable {
             }
         });
 
-        viewStyleProperty.addListener(((ObservableValue<? extends ViewStyle> observable, ViewStyle oldValue, ViewStyle newValue) -> {
-            if (newValue == null) {
-                return;
-            }
+        viewStyleProperty.addListener(
+                ((ObservableValue<? extends ViewStyle> observable, ViewStyle oldValue, ViewStyle newValue) -> {
+                    if (newValue == null) {
+                        if (oldValue != null) {
+                            newValue = oldValue;
+                        } else {
+                            newValue = ViewStyle.FIT_TO_WINDOW;
+                        }
+                    }
 
-            imageViewMain.fitWidthProperty().unbind();
-            imageViewMain.fitHeightProperty().unbind();
+                    imageViewMain.fitWidthProperty().unbind();
+                    imageViewMain.fitHeightProperty().unbind();
 
-            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+                    mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+                    mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-            mainScrollPane.setFitToHeight(true);
-            mainScrollPane.setFitToWidth(true);
+                    mainScrollPane.setFitToHeight(true);
+                    mainScrollPane.setFitToWidth(true);
 
-            if (imageViewMain.getImage() != null) {
-                imageViewMain.setFitWidth(mainViewModel.getSelectedImageModel().getWidth());
-                imageViewMain.setFitHeight(mainViewModel.getSelectedImageModel().getHeight());
-            }
+                    if (imageViewMain.getImage() != null) {
+                        imageViewMain.setFitWidth(mainViewModel.getSelectedImageModel().getWidth());
+                        imageViewMain.setFitHeight(mainViewModel.getSelectedImageModel().getHeight());
+                    }
 
-            imageViewMain.setPreserveRatio(true);
+                    imageViewMain.setPreserveRatio(true);
 
-            switch (newValue) {
-                case ORIGINAL:
-                    menuOriginalSize.setSelected(true);
-                    mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                    mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                    break;
+                    switch (newValue) {
+                        case ORIGINAL:
+                            menuOriginalSize.setSelected(true);
+                            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                            mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                            break;
 
-                case FIT_TO_WINDOW:
-                    menuFitToWindow.setSelected(true);
-                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
-                            scrollPaneOffset));
-                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
-                            scrollPaneOffset));
-                    break;
+                        case FIT_TO_WINDOW:
+                            menuFitToWindow.setSelected(true);
+                            imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
+                                    scrollPaneOffset));
+                            imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
+                                    scrollPaneOffset));
+                            break;
 
-                case STRETCHED:
-                    menuStretched.setSelected(true);
-                    imageViewMain.setPreserveRatio(false);
-                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
-                            scrollPaneOffset));
-                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
-                            scrollPaneOffset));
-                    break;
-            }
-        }));
+                        case STRETCHED:
+                            menuStretched.setSelected(true);
+                            imageViewMain.setPreserveRatio(false);
+                            imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
+                                    scrollPaneOffset));
+                            imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
+                                    scrollPaneOffset));
+                            break;
+                    }
+                }));
 
         mainViewModel.selectedImageModelProperty().addListener(
                 ((ObservableValue<? extends ImageModel> observableValue, ImageModel imageModel, ImageModel t1) -> {
@@ -242,12 +241,10 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
-        JMetro jMetro = new JMetro(globalAppStyle);
         FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("aboutWindow.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
         Stage aboutWindow = new Stage();
-        jMetro.setScene(scene);
         aboutWindow.setScene(scene);
         aboutWindow.initModality(Modality.WINDOW_MODAL);
         aboutWindow.initStyle(StageStyle.UTILITY);
@@ -363,11 +360,11 @@ public class MainWindowController implements Initializable {
                     }
                 case ADD:
                 case EQUALS:
-                    mainViewModel.zoomIn();
+                    zoomIn();
                     break;
                 case UNDERSCORE:
                 case SUBTRACT:
-                    mainViewModel.zoomOut();
+                    zoomOut();
                     break;
             }
         }
@@ -432,6 +429,11 @@ public class MainWindowController implements Initializable {
         zoomOut();
     }
 
+    @FXML
+    public void menuResetZoom_onAction(ActionEvent actionEvent) {
+        resetZoom();
+    }
+
     private enum ViewStyle {
         FIT_TO_WINDOW, ORIGINAL, STRETCHED
     }
@@ -456,5 +458,10 @@ public class MainWindowController implements Initializable {
     private void zoomOut() {
         viewStyleProperty.set(ViewStyle.ORIGINAL);
         mainViewModel.zoomOut();
+    }
+
+    private void resetZoom() {
+        viewStyleProperty.set(ViewStyle.ORIGINAL);
+        mainViewModel.resetZoom();
     }
 }

@@ -118,10 +118,11 @@ public class ImageModel {
         return resamplePath;
     }
 
-    public ImageModel getResampleImageModel() {
+    public Image getResampleImage() {
         if (getResamplePath() == null || getResamplePath().equals("")) {
             return null;
         }
-        return new ImageModel(getResamplePath());
+
+        return new Image(new File(getResamplePath()).toURI().toString());
     }
 }

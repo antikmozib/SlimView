@@ -7,22 +7,18 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import static io.mozib.slimview.Common.*;
+import static io.mozib.slimview.Common.cacheDirectory;
 
 public class SlimView extends Application {
     private static String[] cmdLineArgs;
-    public static final Style globalAppStyle = Style.LIGHT; // style to use for JMetro
 
     @Override
     public void start(Stage stage) throws IOException {
-        JMetro jMetro = new JMetro(globalAppStyle);
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));
         Parent root = fxmlLoader.load();
         MainWindowController controller = fxmlLoader.getController();
@@ -30,7 +26,6 @@ public class SlimView extends Application {
         Scene scene = new Scene(root);
         scene.getStylesheets().add(
                 Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
-        jMetro.setScene(scene);
         stage.setScene(scene);
         stage.setTitle("SlimView");
         stage.getIcons().add(
