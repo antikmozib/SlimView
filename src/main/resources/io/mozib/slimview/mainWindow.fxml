@@ -11,6 +11,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.input.KeyCodeCombination?>
@@ -85,9 +86,9 @@
                     <items>
                         <RadioMenuItem fx:id="menuFitToWindow" onAction="#menuFitToWindow_onAction" text="Fit To _Window" />
                         <RadioMenuItem fx:id="menuOriginalSize" onAction="#menuOriginalSize_onAction" text="_Original Size">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="H" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="H" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                            </accelerator>
                         </RadioMenuItem>
                         <RadioMenuItem fx:id="menuStretched" onAction="#menuStretched_onAction" text="_Stretched" />
                         <SeparatorMenuItem mnemonicParsing="false" />
@@ -107,11 +108,11 @@
                                 <KeyCodeCombination alt="UP" code="MINUS" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
-                  <MenuItem fx:id="menuResetZoom" onAction="#menuResetZoom_onAction" text="_Reset Zoom">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="DIGIT0" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
+                        <MenuItem fx:id="menuResetZoom" onAction="#menuResetZoom_onAction" text="_Reset Zoom">
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="DIGIT0" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                            </accelerator>
+                        </MenuItem>
                     </items>
                 </Menu>
                 <Menu text="_Help">
@@ -125,7 +126,47 @@
         </MenuBar>
         <ToolBar fx:id="toolBar" prefHeight="40.0" prefWidth="200.0">
             <items>
+                <Button id="buttonOpen" fx:id="buttonOpen" mnemonicParsing="false" onAction="#buttonOpen_onAction">
+                    <tooltip>
+                        <Tooltip text="Open" />
+                    </tooltip>
+                    <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@icons/open.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button id="buttonSave" fx:id="buttonSave" mnemonicParsing="false" onAction="#buttonSave_onAction">
+                    <tooltip>
+                        <Tooltip text="Save" />
+                    </tooltip>
+                    <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@icons/save.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button id="buttonCopy" fx:id="buttonCopy" mnemonicParsing="false" onAction="#buttonCopy_onAction">
+                    <tooltip>
+                        <Tooltip text="Copy" />
+                    </tooltip>
+                    <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@icons/copy.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Separator prefWidth="8.0" />
                 <Button fx:id="buttonFirst" mnemonicParsing="false" onAction="#buttonFirst_onAction" prefHeight="32.0">
+                    <tooltip>
+                        <Tooltip text="First" />
+                    </tooltip>
                     <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -135,6 +176,9 @@
                     </graphic>
                 </Button>
                 <Button fx:id="buttonPrevious" mnemonicParsing="false" onAction="#buttonPrevious_onAction" prefHeight="32.0">
+                    <tooltip>
+                        <Tooltip text="Previous" />
+                    </tooltip>
                     <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -144,6 +188,9 @@
                     </graphic>
                 </Button>
                 <Button fx:id="buttonNext" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonNext_onAction" prefHeight="32.0">
+                    <tooltip>
+                        <Tooltip text="Next" />
+                    </tooltip>
                     <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -153,6 +200,9 @@
                     </graphic>
                 </Button>
                 <Button fx:id="buttonLast" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonLast_onAction" prefHeight="32.0">
+                    <tooltip>
+                        <Tooltip text="Last" />
+                    </tooltip>
                     <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -162,7 +212,72 @@
                     </graphic>
                 </Button>
                 <Separator prefWidth="8.0" />
+                <Button id="buttonZoomIn" fx:id="buttonZoomIn" mnemonicParsing="false" onAction="#buttonZoomIn_onAction">
+                    <tooltip>
+                        <Tooltip text="Zoom In" />
+                    </tooltip>
+                    <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@icons/zoomin.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button id="buttonZoomOut" fx:id="buttonZoomOut" mnemonicParsing="false" onAction="#buttonZoomOut_onAction">
+                    <tooltip>
+                        <Tooltip text="Zoom Out" />
+                    </tooltip>
+                    <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@icons/zoomout.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button id="buttonResetZoom" fx:id="buttonResetZoom" mnemonicParsing="false" onAction="#buttonResetZoom_onAction">
+                    <tooltip>
+                        <Tooltip text="Reset Zoom" />
+                    </tooltip>
+                    <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@icons/reset.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            <Separator orientation="VERTICAL" />
+            <Button fx:id="buttonRotateLeft" mnemonicParsing="false" onAction="#buttonRotateLeft_onAction">
+                <tooltip>
+                    <Tooltip text="Rotate Left" />
+                </tooltip>
+               <graphic>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/rotateleft.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="buttonRotateRight" mnemonicParsing="false" onAction="#buttonRotateRight_onAction">
+                <tooltip>
+                    <Tooltip text="Rotate Right" />
+                </tooltip>
+               <graphic>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/rotateright.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+                <Separator prefWidth="8.0" />
                 <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#buttonEdit_onAction" prefHeight="32.0">
+                    <tooltip>
+                        <Tooltip text="Edit" />
+                    </tooltip>
                     <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                             <image>

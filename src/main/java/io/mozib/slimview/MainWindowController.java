@@ -98,21 +98,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuSaveAs_onAction(ActionEvent actionEvent) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("JPEG Image", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG Image", "*.png"),
-                new FileChooser.ExtensionFilter("GIF Image", "*.gif")
-        );
-        fileChooser.setInitialFileName(mainViewModel.getSelectedImageModel().getShortName());
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        File file = fileChooser.showSaveDialog(imageViewMain.getScene().getWindow());
-        if (file != null) {
-            mainViewModel.saveImage(
-                    mainViewModel.getSelectedImageModel(),
-                    file.getPath()
-            );
-        }
+        saveAs();
     }
 
     @FXML
@@ -216,12 +202,12 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuRotateLeft_onAction(ActionEvent actionEvent) {
-        mainViewModel.rotateLeft();
+        rotateLeft();
     }
 
     @FXML
     public void menuRotateRight_onAction(ActionEvent actionEvent) {
-        mainViewModel.rotateRight();
+        rotateRight();
     }
 
     @FXML
@@ -285,14 +271,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuOpen_onAction(ActionEvent actionEvent) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.jpg;*.jpeg;*.png;*.gif")
-        );
-        File file = fileChooser.showOpenDialog(imageViewMain.getScene().getWindow());
-        if (file != null) {
-            mainViewModel.loadImage(new ImageModel(file.getPath()));
-        }
+        open();
     }
 
     @FXML
@@ -414,9 +393,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuCopy_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null) {
-            mainViewModel.copyToClipboard(mainViewModel.getSelectedImageModel());
-        }
+        copy();
     }
 
     @FXML
@@ -432,6 +409,46 @@ public class MainWindowController implements Initializable {
     @FXML
     public void menuResetZoom_onAction(ActionEvent actionEvent) {
         resetZoom();
+    }
+
+    @FXML
+    public void buttonResetZoom_onAction(ActionEvent actionEvent) {
+        resetZoom();
+    }
+
+    @FXML
+    public void buttonZoomOut_onAction(ActionEvent actionEvent) {
+        zoomOut();
+    }
+
+    @FXML
+    public void buttonZoomIn_onAction(ActionEvent actionEvent) {
+        zoomIn();
+    }
+
+    @FXML
+    public void buttonSave_onAction(ActionEvent actionEvent) {
+        saveAs();
+    }
+
+    @FXML
+    public void buttonOpen_onAction(ActionEvent actionEvent) {
+        open();
+    }
+
+    @FXML
+    public void buttonCopy_onAction(ActionEvent actionEvent) {
+        copy();
+    }
+
+    @FXML
+    public void buttonRotateRight_onAction(ActionEvent actionEvent) {
+        rotateLeft();
+    }
+
+    @FXML
+    public void buttonRotateLeft_onAction(ActionEvent actionEvent) {
+        rotateRight();
     }
 
     private enum ViewStyle {
@@ -463,5 +480,48 @@ public class MainWindowController implements Initializable {
     private void resetZoom() {
         viewStyleProperty.set(ViewStyle.ORIGINAL);
         mainViewModel.resetZoom();
+    }
+
+    private void open() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Images", "*.jpg;*.jpeg;*.png;*.gif")
+        );
+        File file = fileChooser.showOpenDialog(imageViewMain.getScene().getWindow());
+        if (file != null) {
+            mainViewModel.loadImage(new ImageModel(file.getPath()));
+        }
+    }
+
+    private void saveAs() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JPEG Image", "*.jpg"),
+                new FileChooser.ExtensionFilter("PNG Image", "*.png"),
+                new FileChooser.ExtensionFilter("GIF Image", "*.gif")
+        );
+        fileChooser.setInitialFileName(mainViewModel.getSelectedImageModel().getShortName());
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        File file = fileChooser.showSaveDialog(imageViewMain.getScene().getWindow());
+        if (file != null) {
+            mainViewModel.saveImage(
+                    mainViewModel.getSelectedImageModel(),
+                    file.getPath()
+            );
+        }
+    }
+
+    private void copy() {
+        if (mainViewModel.getSelectedImageModel() != null) {
+            mainViewModel.copyToClipboard(mainViewModel.getSelectedImageModel());
+        }
+    }
+
+    private void rotateLeft() {
+        mainViewModel.rotateLeft();
+    }
+
+    private void rotateRight() {
+        mainViewModel.rotateRight();
     }
 }

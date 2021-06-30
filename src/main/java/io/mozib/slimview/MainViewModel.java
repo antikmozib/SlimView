@@ -275,7 +275,7 @@ public class MainViewModel {
         selectedImageModelWrapper.set(imageModel);
         status.unbind();
         status.set((getCurrentIndex() + 1) + " / " + imageModels.size()
-                + "  |  Resolution: " + imageModel.getResolution()
+                + "  |  Resolution: " + imageModel.getResolution() + ", " + imageModel.getColorDepth() + "-bit"
                 + "  |  Format: " + imageModel.getFormat()
                 + "  |  Size: " + imageModel.getFormattedFileSize()
                 + "  |  Created: " + formatTime(imageModel.getDateCreated())

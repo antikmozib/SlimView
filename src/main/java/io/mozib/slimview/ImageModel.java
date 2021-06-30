@@ -1,8 +1,10 @@
 package io.mozib.slimview;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
 
+import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -124,5 +126,10 @@ public class ImageModel {
         }
 
         return new Image(new File(getResamplePath()).toURI().toString());
+    }
+
+    public String getColorDepth() {
+        ColorModel colorModel = SwingFXUtils.fromFXImage(getImage(), null).getColorModel();
+        return String.valueOf(colorModel.getPixelSize());
     }
 }
