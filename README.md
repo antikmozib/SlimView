@@ -6,6 +6,6 @@ A super-fast and simple directory-based image viewer and browser for Windows, ma
 
 <h1>Building</h1>
 
-_Requires Maven_
+_Requires [Maven](https://maven.apache.org/)_
 
 `clone` the repository, `cd` into the root directory and execute `mvn clean`.
