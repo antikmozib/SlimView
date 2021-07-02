@@ -20,7 +20,7 @@ public class ImageModel {
     private Image image = null;
     private final long dateModified;
     private final long dateCreated;
-    private String resamplePath;
+    private String resamplePath; // resamplePath is the path to the original, unedited file
 
     ImageModel(String fullPath) {
         this(fullPath, null);
@@ -77,6 +77,9 @@ public class ImageModel {
         return FilenameUtils.getExtension(getPath()).toUpperCase();
     }
 
+    /**
+     * @return Converts bytes to context-sensitive KB/MB
+     */
     public String getFormattedFileSize() {
         long fileSize = new File(getPath()).length();
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
@@ -116,6 +119,13 @@ public class ImageModel {
         this.resamplePath = resamplePath;
     }
 
+    public void removeResamplePath() {
+        this.resamplePath = null;
+    }
+
+    /**
+     * @return The path to the original, unedited file.
+     */
     public String getResamplePath() {
         return resamplePath;
     }
@@ -131,5 +141,9 @@ public class ImageModel {
     public String getColorDepth() {
         ColorModel colorModel = SwingFXUtils.fromFXImage(getImage(), null).getColorModel();
         return String.valueOf(colorModel.getPixelSize());
+    }
+
+    public boolean hasOriginal() {
+        return getResamplePath() != null && !getResamplePath().equals("");
     }
 }

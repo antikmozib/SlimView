@@ -18,8 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,14 +26,14 @@ import static io.mozib.slimview.Common.*;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class MainViewModel {
 
     private List<ImageModel> imageModels = new ArrayList<>();
     private LoadDirectory loadDirectory;
-    private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper();
+    private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper("Ready.");
     private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyObjectWrapper<SortStyle> selectedSortStyleWrapper = new ReadOnlyObjectWrapper<>(SortStyle.NAME);
     private final double zoomStep = 0.1; // how much to zoom on each step
 
     public ReadOnlyObjectProperty<ImageModel> selectedImageModelProperty() {
@@ -43,6 +42,10 @@ public class MainViewModel {
 
     public ReadOnlyStringProperty statusProperty() {
         return status.getReadOnlyProperty();
+    }
+
+    public ReadOnlyObjectProperty<SortStyle> selectedSortStyleProperty() {
+        return selectedSortStyleWrapper.getReadOnlyProperty();
     }
 
     @SuppressWarnings("unchecked")
@@ -54,6 +57,7 @@ public class MainViewModel {
         loadDirectory = new LoadDirectory(new File(imageModel.getPath()).getParent());
         loadDirectory.setOnSucceeded((WorkerStateEvent event) -> {
             imageModels = (List<ImageModel>) event.getSource().getValue();
+            sortImages(selectedSortStyleProperty().get());
             setSelectedImage(imageModels.stream().filter(
                     image -> image.getPath().equals(imageModel.getPath())).findFirst().orElse(null));
         });
@@ -143,7 +147,7 @@ public class MainViewModel {
         BufferedImage image;
 
         // resample image to ensure best resizing quality
-        if (imageModel.getResamplePath() == null || imageModel.getResamplePath().equals("")) {
+        if (!imageModel.hasOriginal()) {
             imageModel.setResamplePath(imageModel.getPath());
             image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
         } else {
@@ -163,6 +167,7 @@ public class MainViewModel {
                     FilenameUtils.getExtension(destination),
                     file
             );
+            loadImage(new ImageModel(destination));
         } catch (IOException ignored) {
 
         }
@@ -214,14 +219,40 @@ public class MainViewModel {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferableImage, null);
     }
 
+    public enum SortStyle {
+        NAME, DATE_CREATED, DATE_MODIFIED
+    }
+
+    public void sortImages(SortStyle sortStyle) {
+        if (imageModels.size() > 0) {
+            System.out.println(imageModels.get(0).getShortName());
+            switch (sortStyle) {
+                case DATE_MODIFIED:
+                    imageModels.sort((o1, o2) -> Long.compare(o2.getDateModified(), o1.getDateModified()));
+                    break;
+                case DATE_CREATED:
+                    imageModels.sort((o1, o2) -> Long.compare(o2.getDateCreated(), o1.getDateCreated()));
+                    break;
+                case NAME:
+                    imageModels.sort(Comparator.comparing(ImageModel::getShortName));
+                    break;
+                default:
+                    break;
+            }
+            setSelectedImage(getSelectedImageModel()); // refresh status and index
+            System.out.println(imageModels.get(0).getShortName());
+        }
+        selectedSortStyleWrapper.set(sortStyle);
+    }
+
+    public String getImageInfo(ImageModel imageModel) {
+        return null;
+    }
+
     private String formatTime(long time) {
         Date date = new Date(time);
         Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return format.format(date);
-    }
-
-    private boolean isEdited(ImageModel imageModel) {
-        return imageModel.getPath().contains(cacheDirectory());
     }
 
     private void editImage(BufferedImage edited, File file, String resamplePath) {
@@ -270,16 +301,18 @@ public class MainViewModel {
     }
 
     private void setSelectedImage(ImageModel imageModel) {
-        if (imageModel == null) return;
+        if (imageModel == null) {
+            return;
+        }
 
         selectedImageModelWrapper.set(imageModel);
         status.unbind();
         status.set((getCurrentIndex() + 1) + " / " + imageModels.size()
-                + "  |  Resolution: " + imageModel.getResolution() + ", " + imageModel.getColorDepth() + "-bit"
+                + "  |  Resolution: " + imageModel.getResolution() + " @ " + imageModel.getColorDepth() + "-bits"
                 + "  |  Format: " + imageModel.getFormat()
                 + "  |  Size: " + imageModel.getFormattedFileSize()
                 + "  |  Created: " + formatTime(imageModel.getDateCreated())
-                + "  |  Last Modified: " + formatTime(imageModel.getDateModified()));
+                + "  |  Modified: " + formatTime(imageModel.getDateModified()));
     }
 
     private void unloadInvisibleImages() {
@@ -300,13 +333,20 @@ public class MainViewModel {
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
         var file = new File(Paths.get(cacheDirectory(), imageModel.getShortName()).toString());
         var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(imageModel.getImage(), null), rotation);
-        editImage(rotated, file, imageModel.getResamplePath());
+        String resamplePath;
+
+        if (imageModel.hasOriginal()) {
+            resamplePath = imageModel.getResamplePath();
+        } else {
+            resamplePath = imageModel.getPath();
+        }
+
+        editImage(rotated, file, resamplePath);
     }
 
     private int getCurrentIndex() {
         if (imageModels != null && getSelectedImageModel() != null) {
-            if (getSelectedImageModel().getResamplePath() == null ||
-                    getSelectedImageModel().getResamplePath().equals("")) {
+            if (!getSelectedImageModel().hasOriginal()) {
                 return imageModels.indexOf(imageModels.stream()
                         .filter(item -> getSelectedImageModel().getPath().equals(item.getPath()))
                         .findAny()

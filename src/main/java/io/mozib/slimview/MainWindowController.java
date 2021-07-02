@@ -39,6 +39,12 @@ public class MainWindowController implements Initializable {
     @FXML
     public RadioMenuItem menuFullScreen;
     @FXML
+    public RadioMenuItem menuSortByName;
+    @FXML
+    public RadioMenuItem menuSortByCreated;
+    @FXML
+    public RadioMenuItem menuSortByModified;
+    @FXML
     public ScrollPane mainScrollPane;
     @FXML
     public Label labelStatus;
@@ -58,9 +64,11 @@ public class MainWindowController implements Initializable {
     public Button buttonNext;
 
     private final int scrollPaneOffset = 6; // to force correct clipping of scroll pane
-    private final ToggleGroup toggleGroup = new ToggleGroup();
+    private final ToggleGroup toggleGroupViewStyle = new ToggleGroup();
+    private final ToggleGroup toggleGroupSortStyle = new ToggleGroup();
     public MainViewModel mainViewModel = new MainViewModel();
     private final SimpleBooleanProperty isViewingFullScreen = new SimpleBooleanProperty(false);
+    private final SimpleObjectProperty<ViewStyle> viewStyleProperty = new SimpleObjectProperty<>(ViewStyle.ORIGINAL);
 
     @FXML
     public void menuResize_onAction(ActionEvent actionEvent) {
@@ -87,11 +95,11 @@ public class MainWindowController implements Initializable {
         resizeWindow.showAndWait();
 
         if (resizeViewModel.useNewValues.get()) {
+            viewStyleProperty.set(ViewStyle.ORIGINAL);
             mainViewModel.resizeImage(
                     mainViewModel.getSelectedImageModel(),
                     Integer.parseInt(resizeViewModel.newWidthProperty.get()),
                     Integer.parseInt(resizeViewModel.newHeightProperty.get()));
-            System.out.println("Resize image!");
         }
 
     }
@@ -108,9 +116,12 @@ public class MainWindowController implements Initializable {
         imageViewMain.requestFocus();
 
         // menubar toggle group
-        menuStretched.setToggleGroup(toggleGroup);
-        menuFitToWindow.setToggleGroup(toggleGroup);
-        menuOriginalSize.setToggleGroup(toggleGroup);
+        menuStretched.setToggleGroup(toggleGroupViewStyle);
+        menuFitToWindow.setToggleGroup(toggleGroupViewStyle);
+        menuOriginalSize.setToggleGroup(toggleGroupViewStyle);
+        menuSortByName.setToggleGroup(toggleGroupSortStyle);
+        menuSortByCreated.setToggleGroup(toggleGroupSortStyle);
+        menuSortByModified.setToggleGroup(toggleGroupSortStyle);
 
         // bindings for fullscreen viewing
         toolBar.managedProperty().bind(toolBar.visibleProperty());
@@ -187,7 +198,25 @@ public class MainWindowController implements Initializable {
                     viewStyleProperty.set(null);
                     viewStyleProperty.set(oldViewStyle);
                 }));
+
+        mainViewModel.selectedSortStyleProperty().addListener(
+                ((observable, oldValue, newValue) -> {
+                    switch (newValue) {
+                        case NAME:
+                            menuSortByName.setSelected(true);
+                            break;
+                        case DATE_CREATED:
+                            menuSortByCreated.setSelected(true);
+                            break;
+                        case DATE_MODIFIED:
+                            menuSortByModified.setSelected(true);
+                            break;
+                    }
+                })
+        );
+
         viewStyleProperty.set(ViewStyle.FIT_TO_WINDOW);
+        sortByDateModified(); // setup default sorting
 
         // load recent files
         RecentFiles recentFiles = loadRecentFiles();
@@ -451,11 +480,34 @@ public class MainWindowController implements Initializable {
         rotateRight();
     }
 
+    @FXML
+    public void menuSortByName_onAction(ActionEvent actionEvent) {
+        sortByName();
+    }
+
+    @FXML
+    public void menuSortByCreated_onAction(ActionEvent actionEvent) {
+        sortByDateCreated();
+    }
+
+    @FXML
+    public void menuSortByModified_onAction(ActionEvent actionEvent) {
+        sortByDateModified();
+    }
+
+    @FXML
+    public void menuImageInfo_onAction(ActionEvent actionEvent) throws IOException {
+        viewImageInfo();
+    }
+
+    @FXML
+    public void buttonImageInfo_onAction(ActionEvent actionEvent) throws IOException {
+        viewImageInfo();
+    }
+
     private enum ViewStyle {
         FIT_TO_WINDOW, ORIGINAL, STRETCHED
     }
-
-    private final SimpleObjectProperty<ViewStyle> viewStyleProperty = new SimpleObjectProperty<>(ViewStyle.ORIGINAL);
 
     private void toggleFullScreen() {
         boolean setFullScreen = !isViewingFullScreen.get();
@@ -487,6 +539,15 @@ public class MainWindowController implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Images", "*.jpg;*.jpeg;*.png;*.gif")
         );
+        if (mainViewModel.getSelectedImageModel() != null) {
+            if (mainViewModel.getSelectedImageModel().hasOriginal()) {
+                fileChooser.setInitialDirectory(
+                        new File(mainViewModel.getSelectedImageModel().getResamplePath()).getParentFile());
+            } else {
+                fileChooser.setInitialDirectory(
+                        new File(mainViewModel.getSelectedImageModel().getPath()).getParentFile());
+            }
+        }
         File file = fileChooser.showOpenDialog(imageViewMain.getScene().getWindow());
         if (file != null) {
             mainViewModel.loadImage(new ImageModel(file.getPath()));
@@ -523,5 +584,30 @@ public class MainWindowController implements Initializable {
 
     private void rotateRight() {
         mainViewModel.rotateRight();
+    }
+
+    private void sortByName() {
+        mainViewModel.sortImages(MainViewModel.SortStyle.NAME);
+    }
+
+    private void sortByDateCreated() {
+        mainViewModel.sortImages(MainViewModel.SortStyle.DATE_CREATED);
+    }
+
+    private void sortByDateModified() {
+        mainViewModel.sortImages(MainViewModel.SortStyle.DATE_MODIFIED);
+    }
+
+    private void viewImageInfo() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("imageInfoWindow.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root);
+        Stage imageInfoWindow = new Stage();
+        imageInfoWindow.setScene(scene);
+        imageInfoWindow.initModality(Modality.WINDOW_MODAL);
+        imageInfoWindow.initStyle(StageStyle.UTILITY);
+        imageInfoWindow.initOwner(imageViewMain.getScene().getWindow());
+        imageInfoWindow.setTitle("Image Information");
+        imageInfoWindow.show();
     }
 }
