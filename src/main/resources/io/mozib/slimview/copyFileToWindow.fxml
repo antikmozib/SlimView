@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.CopyFileToWindowController">
+   <children>
+      <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="56.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
+         <children>
+            <ListView fx:id="listViewMain" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <VBox spacing="8.0">
+               <children>
+                  <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#buttonAdd_onAction" prefWidth="32.0" text="+" />
+                  <Button fx:id="buttonRemove" mnemonicParsing="false" onAction="#buttonRemove_onAction" prefWidth="32.0" text="-" />
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets left="8.0" />
+               </padding>
+            </VBox>
+         </children>
+      </HBox>
+      <AnchorPane AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
+         <children>
+            <HBox alignment="CENTER" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="On Conflict:" />
+                  <ComboBox fx:id="comboBoxOnConflict" onAction="#comboBoxOnConflict_onAction" prefWidth="120.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Button fx:id="buttonCopy" defaultButton="true" onAction="#buttonCopy_onAction" prefWidth="80.0" text="_Copy" />
+                  <Button fx:id="buttonClose" cancelButton="true" onAction="#buttonClose_onAction" prefWidth="80.0" text="C_lose" />
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

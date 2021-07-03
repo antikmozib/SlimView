@@ -12,6 +12,7 @@ module io.mozib.slimview {
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.dataformat.xml;
     requires org.jfxtras.styles.jmetro;
+    requires java.prefs;
 
     opens io.mozib.slimview to javafx.fxml, com.fasterxml.jackson.databind;
     exports io.mozib.slimview;

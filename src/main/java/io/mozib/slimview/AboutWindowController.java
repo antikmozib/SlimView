@@ -32,7 +32,7 @@ public class AboutWindowController implements Initializable {
         try {
             textAcknowledgements.setText(Files.readString(Paths.get("acknowledgements.txt")));
         } catch (IOException e) {
-            e.printStackTrace();
+            textAcknowledgements.setText("Failed to load the acknowledgements file.");
         }
     }
 

@@ -54,6 +54,18 @@ public class Common {
         return path.toString();
     }
 
+    public static String copyToDestinationsCache() {
+        createSettingsDir();
+        Path path = Paths.get(System.getProperty("user.home"), ".slimview", "copytodestinations.xml");
+        // create file if not exists
+        try {
+            new File(path.toString()).createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return path.toString();
+    }
+
     public static String inputStreamToString(InputStream is) {
         StringBuilder sb = new StringBuilder();
         String line = null;

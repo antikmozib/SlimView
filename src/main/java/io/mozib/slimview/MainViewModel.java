@@ -18,14 +18,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.mozib.slimview.Common.*;
-
-import java.text.Format;
-import java.text.SimpleDateFormat;
 
 public class MainViewModel {
 
@@ -33,7 +32,7 @@ public class MainViewModel {
     private LoadDirectory loadDirectory;
     private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper("Ready.");
     private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
-    private final ReadOnlyObjectWrapper<SortStyle> selectedSortStyleWrapper = new ReadOnlyObjectWrapper<>(SortStyle.NAME);
+    private final ReadOnlyObjectWrapper<SortStyle> selectedSortStyleWrapper = new ReadOnlyObjectWrapper<>();
     private final double zoomStep = 0.1; // how much to zoom on each step
 
     public ReadOnlyObjectProperty<ImageModel> selectedImageModelProperty() {
@@ -167,7 +166,6 @@ public class MainViewModel {
                     FilenameUtils.getExtension(destination),
                     file
             );
-            loadImage(new ImageModel(destination));
         } catch (IOException ignored) {
 
         }
