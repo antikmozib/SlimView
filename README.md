@@ -14,5 +14,5 @@ _Java, Maven and [JavaFX jmods](https://openjfx.io/openjfx-docs/) (required for 
 
 Three Windows batch files are provided to ease building and running:
 
-* `build.bat` and `run.bat`: Builds and runs the program using Maven.
+* `build.bat` and `run.bat`: Builds the program using Maven and runs with the system JDK.
 * `jlink-run.bat`: Builds the program using Maven, produces a native jlink image and uses that to run the program.
