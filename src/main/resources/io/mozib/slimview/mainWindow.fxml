@@ -93,12 +93,6 @@
                         </RadioMenuItem>
                         <RadioMenuItem fx:id="menuStretched" onAction="#menuStretched_onAction" text="_Stretched" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <RadioMenuItem fx:id="menuFullScreen" onAction="#menuFullScreen_onAction" text="_Full Screen">
-                            <accelerator>
-                                <KeyCodeCombination alt="UP" code="F11" control="UP" meta="UP" shift="UP" shortcut="ANY" />
-                            </accelerator>
-                        </RadioMenuItem>
-                        <SeparatorMenuItem mnemonicParsing="false" />
                         <Menu id="menuRotate" fx:id="menuRotate" text="Ro_tate">
                             <items>
                                 <MenuItem id="menuRotateLeft" fx:id="menuRotateLeft" onAction="#menuRotateLeft_onAction" text="Rotate _Left">
@@ -143,6 +137,12 @@
                                 <KeyCodeCombination alt="UP" code="DIGIT0" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <RadioMenuItem fx:id="menuFullScreen" onAction="#menuFullScreen_onAction" text="_Full Screen">
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="F11" control="UP" meta="UP" shift="UP" shortcut="ANY" />
+                            </accelerator>
+                        </RadioMenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <Menu text="Sor_t">
                             <items>
