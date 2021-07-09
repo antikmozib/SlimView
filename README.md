@@ -6,7 +6,7 @@ A super-fast and simple directory-based image viewer and browser for Windows, ma
 
 <h1>Building</h1>
 
-**Tested on Windows only**
+**Tested on Windows with Java 11 only**
 
 _Java, Maven and [JavaFX jmods](https://openjfx.io/openjfx-docs/) (`%PATH_TO_FX_MODS%`) must be set as environment variables_
 
