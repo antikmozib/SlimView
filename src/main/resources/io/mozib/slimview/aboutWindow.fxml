@@ -43,7 +43,7 @@
                   prefHeight="567.0" prefWidth="1022.0" wrapText="true" AnchorPane.bottomAnchor="56.0"
                   AnchorPane.leftAnchor="96.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="147.0"/>
         <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" layoutX="1026.0" layoutY="256.0"
-                minWidth="92.0" mnemonicParsing="false" onAction="#buttonOK_onAction" text="OK"
+                minWidth="80.0" mnemonicParsing="false" onAction="#buttonOK_onAction" text="OK"
                 AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="16.0"/>
     </children>
 </AnchorPane>

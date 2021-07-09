@@ -29,8 +29,8 @@
       <TextField id="textHeight" fx:id="textHeight" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3">
          <children>
-            <Button fx:id="buttonOK" defaultButton="true" minWidth="72.0" mnemonicParsing="false" onAction="#buttonOK_onAction" text="OK" />
-            <Button fx:id="buttonCancel" cancelButton="true" minWidth="72.0" mnemonicParsing="false" onAction="#buttonCancel_onAction" text="Cancel" />
+            <Button fx:id="buttonOK" defaultButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#buttonOK_onAction" text="OK" />
+            <Button fx:id="buttonCancel" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#buttonCancel_onAction" text="Cancel" />
          </children>
       </HBox>
       <CheckBox fx:id="checkBoxPreserveAspectRatio" selected="true" text="_Preserve aspect ratio" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />

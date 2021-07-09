@@ -142,7 +142,7 @@ public class MainViewModel {
     }
 
     public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
-        var file = new File(Paths.get(cacheDirectory(), imageModel.getShortName()).toString());
+        var file = new File(Paths.get(tempDirectory(), imageModel.getShortName()).toString());
         BufferedImage image;
 
         // resample image to ensure best resizing quality
@@ -223,7 +223,7 @@ public class MainViewModel {
 
     public void sortImages(SortStyle sortStyle) {
         if (imageModels.size() > 0) {
-            System.out.println(imageModels.get(0).getShortName());
+            // System.out.println(imageModels.get(0).getShortName());
             switch (sortStyle) {
                 case DATE_MODIFIED:
                     imageModels.sort((o1, o2) -> Long.compare(o2.getDateModified(), o1.getDateModified()));
@@ -238,13 +238,9 @@ public class MainViewModel {
                     break;
             }
             setSelectedImage(getSelectedImageModel()); // refresh status and index
-            System.out.println(imageModels.get(0).getShortName());
+            // System.out.println(imageModels.get(0).getShortName());
         }
         selectedSortStyleWrapper.set(sortStyle);
-    }
-
-    public String getImageInfo(ImageModel imageModel) {
-        return null;
     }
 
     private String formatTime(long time) {
@@ -329,7 +325,7 @@ public class MainViewModel {
     }
 
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
-        var file = new File(Paths.get(cacheDirectory(), imageModel.getShortName()).toString());
+        var file = new File(Paths.get(tempDirectory(), imageModel.getShortName()).toString());
         var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(imageModel.getImage(), null), rotation);
         String resamplePath;
 

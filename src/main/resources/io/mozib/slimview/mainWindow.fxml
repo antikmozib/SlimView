@@ -67,13 +67,16 @@
                                 <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
-                  <MenuItem fx:id="menuCopyFileTo" onAction="#menuCopyFileTo_onAction" text="Copy File _To">
+                  <MenuItem fx:id="menuCopyFileTo" onAction="#menuCopyFileTo_onAction" text="Copy File _To...">
                      <accelerator>
-                        <KeyCodeCombination alt="DOWN" code="C" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                        <KeyCodeCombination alt="ANY" code="F8" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem id="menuResize" fx:id="menuResize" onAction="#menuResize_onAction" text="R_esize" />
+                        <MenuItem id="menuResize" fx:id="menuResize" onAction="#menuResize_onAction" text="R_esize">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
                     </items>
                 </Menu>
                 <Menu text="_View">
@@ -100,12 +103,12 @@
                             <items>
                                 <MenuItem id="menuRotateLeft" fx:id="menuRotateLeft" onAction="#menuRotateLeft_onAction" text="Rotate _Left">
                                     <accelerator>
-                                        <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                        <KeyCodeCombination alt="ANY" code="L" control="UP" meta="UP" shift="UP" shortcut="UP" />
                                     </accelerator>
                                 </MenuItem>
                                 <MenuItem id="menuRotateRight" fx:id="menuRotateRight" onAction="#menuRotateRight_onAction" text="Rotate _Right">
                                     <accelerator>
-                                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                        <KeyCodeCombination alt="ANY" code="R" control="UP" meta="UP" shift="UP" shortcut="UP" />
                                     </accelerator>
                                 </MenuItem>
                             </items>
@@ -114,12 +117,12 @@
                             <items>
                                 <MenuItem id="menuFlipVertically" fx:id="menuFlipVertically" onAction="#menuFlipVertically_onAction" text="Flip _Vertically">
                                     <accelerator>
-                                        <KeyCodeCombination alt="UP" code="V" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                        <KeyCodeCombination alt="ANY" code="V" control="UP" meta="UP" shift="UP" shortcut="UP" />
                                     </accelerator>
                                 </MenuItem>
                                 <MenuItem id="menuFlipHorizontally" fx:id="menuFlipHorizontally" onAction="#menuFlipHorizontally_onAction" text="Flip _Horizontally">
                                     <accelerator>
-                                        <KeyCodeCombination alt="UP" code="H" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                        <KeyCodeCombination alt="ANY" code="H" control="UP" meta="UP" shift="UP" shortcut="UP" />
                                     </accelerator>
                                 </MenuItem>
                             </items>
@@ -127,12 +130,12 @@
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem id="menuZoomIn" fx:id="menuZoomIn" onAction="#menuZoomIn_onAction" text="Zoom _In">
                             <accelerator>
-                                <KeyCodeCombination alt="UP" code="ADD" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                <KeyCodeCombination alt="ANY" code="ADD" control="UP" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
                         <MenuItem id="menuZoomOut" fx:id="menuZoomOut" onAction="#menuZoomOut_onAction" text="Zoom Ou_t">
                             <accelerator>
-                                <KeyCodeCombination alt="UP" code="MINUS" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                <KeyCodeCombination alt="ANY" code="MINUS" control="UP" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
                         <MenuItem fx:id="menuResetZoom" onAction="#menuResetZoom_onAction" text="_Reset Zoom">
@@ -323,7 +326,7 @@
                 </Button>
                 <Button fx:id="buttonImageInfo" mnemonicParsing="false" onAction="#buttonImageInfo_onAction">
                     <tooltip>
-                        <Tooltip text="Image Information" />
+                        <Tooltip text="Information" />
                     </tooltip>
                     <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
