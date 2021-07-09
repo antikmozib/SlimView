@@ -6,7 +6,7 @@ A super-fast and simple directory-based image viewer and browser for Windows, ma
 
 <h1>Building</h1>
 
-_Requires [Maven](https://maven.apache.org/)_
+_Java, Maven and JavaFX jmods (`%PATH_TO_FX_MODS%`) must be set as environment variables_
 
 `clone` the repository, `cd` into the root directory and execute `mvn clean`.
 
