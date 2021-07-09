@@ -8,7 +8,7 @@ A super-fast and simple directory-based image viewer and browser for Windows, ma
 
 **Tested on Windows with Java 11 only**
 
-_Java, Maven and [JavaFX jmods](https://openjfx.io/openjfx-docs/) (`%PATH_TO_FX_MODS%`) must be set as environment variables_
+_Java, Maven and [JavaFX jmods](https://openjfx.io/openjfx-docs/) (`%PATH_TO_FX_MODS%`) must be set as environment variables. Alternatively, use an IDE like IntelliJ IDEA to import as a Maven project._
 
 `clone` the repository, `cd` into the root directory and execute `mvn clean`.
 
