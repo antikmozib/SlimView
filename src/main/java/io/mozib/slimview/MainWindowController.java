@@ -24,15 +24,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import io.mozib.slimview.SlimView;
-
 import static io.mozib.slimview.Common.loadRecentFiles;
-
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 public class MainWindowController implements Initializable {
 
@@ -83,7 +77,6 @@ public class MainWindowController implements Initializable {
     public void menuResize_onAction(ActionEvent actionEvent) {
         if (mainViewModel.getSelectedImageModel() == null) return;
 
-        JMetro jMetro = new JMetro(Style.LIGHT);
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("resizeWindow.fxml"));
         Parent root = null;
         try {
@@ -93,7 +86,6 @@ public class MainWindowController implements Initializable {
         }
 
         Scene scene = new Scene(root);
-        jMetro.setScene(scene);
         Stage resizeWindow = new Stage();
         ResizeViewModel resizeViewModel = new ResizeViewModel(
                 mainViewModel.getSelectedImageModel().getWidth(),
@@ -200,7 +192,8 @@ public class MainWindowController implements Initializable {
                     }
 
                     preferences.put("LastViewStyle", newValue.toString());
-                }));
+                })
+        );
 
         mainViewModel.selectedImageModelProperty().addListener(
                 ((ObservableValue<? extends ImageModel> observableValue, ImageModel imageModel, ImageModel t1) -> {
@@ -208,7 +201,8 @@ public class MainWindowController implements Initializable {
                     var oldViewStyle = viewStyleProperty.get();
                     viewStyleProperty.set(null);
                     viewStyleProperty.set(oldViewStyle);
-                }));
+                })
+        );
 
         mainViewModel.selectedSortStyleProperty().addListener(
                 ((observable, oldValue, newValue) -> {
@@ -269,9 +263,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
-        JMetro jMetro = new JMetro(Style.LIGHT);
         Scene scene = new Scene(loadParent("aboutWindow"));
-        jMetro.setScene(scene);
         Stage aboutWindow = new Stage();
         aboutWindow.setScene(scene);
         aboutWindow.initModality(Modality.WINDOW_MODAL);
@@ -618,32 +610,33 @@ public class MainWindowController implements Initializable {
     private void viewImageInfo() throws IOException {
         if (mainViewModel.getSelectedImageModel() == null) return;
 
-        JMetro jMetro = new JMetro(Style.LIGHT);
-        Scene scene = new Scene(loadParent("imageInfoWindow"));
-        jMetro.setScene(scene);
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("imageInfoWindow.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root);
+        ImageInfoWindowController controller = fxmlLoader.getController();
         Stage imageInfoWindow = new Stage();
         imageInfoWindow.setScene(scene);
         imageInfoWindow.initModality(Modality.WINDOW_MODAL);
         imageInfoWindow.initStyle(StageStyle.UTILITY);
         imageInfoWindow.initOwner(imageViewMain.getScene().getWindow());
-        imageInfoWindow.setTitle("Image Information");
+        imageInfoWindow.setTitle("Image Information - " + mainViewModel.getSelectedImageModel().getShortName());
+        controller.loadInfo(mainViewModel.getSelectedImageModel());
         imageInfoWindow.show();
     }
 
     private void copyFileTo() throws IOException {
         if (mainViewModel.getSelectedImageModel() == null) return;
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("copyFileToWindow.fxml"));
         Parent root = fxmlLoader.load();
-        JMetro jMetro = new JMetro(Style.LIGHT);
+        CopyFileToWindowController controller = fxmlLoader.getController();
         Scene scene = new Scene(root);
-        jMetro.setScene(scene);
         Stage copyFileToWindow = new Stage();
         copyFileToWindow.setScene(scene);
         copyFileToWindow.initModality(Modality.WINDOW_MODAL);
         copyFileToWindow.initStyle(StageStyle.UTILITY);
         copyFileToWindow.initOwner(imageViewMain.getScene().getWindow());
-        copyFileToWindow.setTitle("Copy \"" + mainViewModel.getSelectedImageModel().getShortName() +  "\" To");
-        CopyFileToWindowController controller = fxmlLoader.getController();
+        copyFileToWindow.setTitle("Copy \"" + mainViewModel.getSelectedImageModel().getShortName() + "\" To");
         controller.setViewModel(new CopyFileToViewModel(mainViewModel.getSelectedImageModel()));
         copyFileToWindow.show();
     }

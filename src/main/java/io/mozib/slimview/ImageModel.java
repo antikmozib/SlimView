@@ -100,13 +100,6 @@ public class ImageModel {
         return getImage().getHeight();
     }
 
-    public void refresh() {
-        if (image != null) {
-            image = null;
-            getImage();
-        }
-    }
-
     public long getDateModified() {
         return dateModified;
     }
@@ -117,10 +110,6 @@ public class ImageModel {
 
     public void setResamplePath(String resamplePath) {
         this.resamplePath = resamplePath;
-    }
-
-    public void removeResamplePath() {
-        this.resamplePath = null;
     }
 
     /**
@@ -144,6 +133,8 @@ public class ImageModel {
     }
 
     public boolean hasOriginal() {
-        return getResamplePath() != null && !getResamplePath().equals("");
+        return getResamplePath() != null &&
+                !getResamplePath().equals("") &&
+                !getResamplePath().equalsIgnoreCase(getPath());
     }
 }

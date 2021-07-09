@@ -6,3 +6,6 @@ https://www.flaticon.com/authors/smashicons
 ---
 JMetro by Pixel Duke
 https://pixelduke.com/java-javafx-theme-jmetro/
+---
+metadata-extractor by Drew Noakes
+https://github.com/drewnoakes/metadata-extractor

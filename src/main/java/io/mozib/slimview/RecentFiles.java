@@ -26,7 +26,7 @@ public class RecentFiles implements Serializable {
             return path;
         }
 
-        public void setNew(String path) {
+        public void setPath(String path) {
             this.path = path;
             this.lastSeen = System.currentTimeMillis();
         }

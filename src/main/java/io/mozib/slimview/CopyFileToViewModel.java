@@ -10,26 +10,33 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
-import static io.mozib.slimview.Common.copyToDestinationsCache;
-import static io.mozib.slimview.Common.inputStreamToString;
+import static io.mozib.slimview.Common.*;
 
 public class CopyFileToViewModel {
     public ObservableList<CopyToDestinations.CopyToDestination> destinations;
-    private ImageModel source;
+    private final ImageModel source;
 
     public enum OnConflict {
-        SKIP, OVERWRITE
+        SKIP {
+            @Override
+            public String toString() {
+                return "Skip";
+            }
+        },
+        OVERWRITE {
+            @Override
+            public String toString() {
+                return "Overwrite";
+            }
+        }
     }
 
     public CopyFileToViewModel(ImageModel source) {
         CopyToDestinations copyToDestinations = loadDestinations();
         this.destinations = FXCollections.observableList(copyToDestinations.destinations);
-        this.source=source;
+        this.source = source;
     }
 
     private CopyToDestinations loadDestinations() {
@@ -37,7 +44,7 @@ public class CopyFileToViewModel {
         String xml;
         CopyToDestinations copyToDestinations = null;
         try {
-            xml = inputStreamToString(new FileInputStream(copyToDestinationsCache()));
+            xml = inputStreamToString(new FileInputStream(getSettingsFile(SettingFileType.COPY_TO_DESTINATIONS)));
             copyToDestinations = xmlMapper.readValue(xml, CopyToDestinations.class);
         } catch (JsonProcessingException | FileNotFoundException e) {
             e.printStackTrace();
@@ -53,7 +60,7 @@ public class CopyFileToViewModel {
         CopyToDestinations copyToDestinations = new CopyToDestinations();
         copyToDestinations.destinations = destinations;
         try {
-            xmlMapper.writeValue(new File(copyToDestinationsCache()), copyToDestinations);
+            xmlMapper.writeValue(new File(getSettingsFile(SettingFileType.COPY_TO_DESTINATIONS)), copyToDestinations);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,7 +73,7 @@ public class CopyFileToViewModel {
 
             if (copied.exists() && !copied.isDirectory()) {
                 if (onConflict == OnConflict.OVERWRITE) {
-                    copied.delete();
+                    if (!copied.delete()) continue;
                 } else if (onConflict == OnConflict.SKIP) {
                     continue;
                 }
@@ -74,8 +81,7 @@ public class CopyFileToViewModel {
 
             try {
                 FileUtils.copyFile(original, copied);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
             }
         }
     }

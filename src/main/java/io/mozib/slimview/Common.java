@@ -29,7 +29,40 @@ public class Common {
         return null;
     }
 
-    public static String cacheDirectory() {
+    public enum SettingFileType {
+        RECENT_FILES, COPY_TO_DESTINATIONS
+    }
+
+    /**
+     * @return Path to the xml settings file
+     */
+    public static String getSettingsFile(SettingFileType settingFileType) {
+        createSettingsDir();
+        Path path = Paths.get(System.getProperty("user.home"), ".slimview");
+
+        switch (settingFileType) {
+            case RECENT_FILES:
+                path = Paths.get(path.toString(), "recent.xml");
+                break;
+            case COPY_TO_DESTINATIONS:
+                path = Paths.get(path.toString(), "copytodestinations.xml");
+                break;
+        }
+
+        // create file if not exists
+        try {
+            new File(path.toString()).createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return path.toString();
+    }
+
+    /**
+     * @return Path to the directory where to save temp, edited images
+     */
+    public static String tempDirectory() {
         createSettingsDir(); // ensure settings directory exists
         Path path = Paths.get(System.getProperty("user.home"), ".slimview", "cache");
         if (!Files.exists(path)) {
@@ -42,28 +75,15 @@ public class Common {
         return Paths.get(System.getProperty("user.home"), ".slimview", "cache").toString();
     }
 
-    public static String recentFilesCache() {
-        createSettingsDir();
-        Path path = Paths.get(System.getProperty("user.home"), ".slimview", "recent.xml");
-        // create file if not exists
-        try {
-            new File(path.toString()).createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private static void createSettingsDir() {
+        Path path = Paths.get(System.getProperty("user.home"), ".slimview");
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectory(path);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return path.toString();
-    }
-
-    public static String copyToDestinationsCache() {
-        createSettingsDir();
-        Path path = Paths.get(System.getProperty("user.home"), ".slimview", "copytodestinations.xml");
-        // create file if not exists
-        try {
-            new File(path.toString()).createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return path.toString();
     }
 
     public static String inputStreamToString(InputStream is) {
@@ -109,22 +129,25 @@ public class Common {
             recentFiles.recentFileList.remove(remove);
         }
         RecentFiles.RecentFile newRecent = new RecentFiles.RecentFile();
-        newRecent.setNew(path);
+        newRecent.setPath(path);
         recentFiles.recentFileList.add(newRecent);
         try {
-            xmlMapper.writeValue(new File(recentFilesCache()), recentFiles);
+            xmlMapper.writeValue(new File(getSettingsFile(SettingFileType.RECENT_FILES)), recentFiles);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * @return A list of recently opened images, saved and read from an xml
+     */
     public static RecentFiles loadRecentFiles() {
         // load recent files
         XmlMapper xmlMapper = new XmlMapper();
         String xml;
         RecentFiles recentFiles = null;
         try {
-            xml = inputStreamToString(new FileInputStream(recentFilesCache()));
+            xml = inputStreamToString(new FileInputStream(getSettingsFile(SettingFileType.RECENT_FILES)));
             recentFiles = xmlMapper.readValue(xml, RecentFiles.class);
         } catch (JsonProcessingException | FileNotFoundException e) {
             e.printStackTrace();
@@ -135,17 +158,9 @@ public class Common {
         return recentFiles;
     }
 
-    private static void createSettingsDir() {
-        Path path = Paths.get(System.getProperty("user.home"), ".slimview");
-        if (!Files.exists(path)) {
-            try {
-                Files.createDirectory(path);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
+    /**
+     * Required class to enable copying image to the system clipboard
+     */
     public static class ImageTransferable implements Transferable {
         private final Image image;
 

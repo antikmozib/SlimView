@@ -5,10 +5,13 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.Tooltip?>
 <AnchorPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.CopyFileToWindowController">
    <children>
       <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="56.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
@@ -16,8 +19,28 @@
             <ListView fx:id="listViewMain" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
             <VBox spacing="8.0">
                <children>
-                  <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#buttonAdd_onAction" prefWidth="32.0" text="+" />
-                  <Button fx:id="buttonRemove" mnemonicParsing="false" onAction="#buttonRemove_onAction" prefWidth="32.0" text="-" />
+                  <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#buttonAdd_onAction" prefWidth="32.0">
+                     <tooltip>
+                        <Tooltip text="Add"/>
+                     </tooltip>
+                     <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@icons/add.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="buttonRemove" mnemonicParsing="false" onAction="#buttonRemove_onAction" prefWidth="32.0">
+                     <tooltip>
+                        <Tooltip text="Remove"/>
+                     </tooltip>
+                     <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@icons/remove.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
                </children>
                <HBox.margin>
                   <Insets />

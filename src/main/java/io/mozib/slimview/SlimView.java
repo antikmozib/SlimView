@@ -7,15 +7,12 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.prefs.Preferences;
 
-import static io.mozib.slimview.Common.cacheDirectory;
+import static io.mozib.slimview.Common.tempDirectory;
 
 public class SlimView extends Application {
     private static String[] cmdLineArgs;
@@ -23,13 +20,10 @@ public class SlimView extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        System.out.println("On Load: " +preferences.get("LastSortStyle", MainViewModel.SortStyle.NAME.toString()));
-        JMetro jMetro = new JMetro(Style.LIGHT);
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));
         Parent root = fxmlLoader.load();
         MainWindowController controller = fxmlLoader.getController();
         Scene scene = new Scene(root);
-        jMetro.setScene(scene);
         scene.getStylesheets().add(
                 Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
         stage.setScene(scene);
@@ -53,7 +47,7 @@ public class SlimView extends Application {
     @Override
     public void stop() {
         // clear caches...
-        var files = new File(cacheDirectory());
+        var files = new File(tempDirectory());
         for (File file : Objects.requireNonNull(files.listFiles())) {
             file.delete();
         }
