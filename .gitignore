@@ -1,0 +1,6 @@
+.idea
+*.iml
+*.jar
+dependency-reduced-pom.xml
+target/
+jlink-image/
