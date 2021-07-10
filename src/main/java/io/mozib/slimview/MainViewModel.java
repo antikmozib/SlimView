@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2021 Antik Mozib. All rights reserved.
+ */
+
 package io.mozib.slimview;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
