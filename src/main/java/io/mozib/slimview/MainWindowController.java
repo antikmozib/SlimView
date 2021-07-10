@@ -12,9 +12,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
@@ -23,10 +30,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
@@ -517,6 +526,38 @@ public class MainWindowController implements Initializable {
     @FXML
     public void menuCopyFileTo_onAction(ActionEvent actionEvent) throws IOException {
         copyFileTo();
+    }
+
+    @FXML
+    public void menuCheckForUpdates_onAction(ActionEvent actionEvent) {
+        AppUpdateService appUpdateService = new AppUpdateService();
+        appUpdateService.setOnSucceeded(event -> {
+            boolean updateAvailable = (boolean) event.getSource().getValue();
+
+            Alert alert;
+            if (updateAvailable) {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Update");
+                alert.initOwner(imageViewMain.getScene().getWindow());
+                alert.setHeaderText("An update is available.");
+                alert.getDialogPane().setContentText("Would you like to download it now?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    try {
+                        Desktop.getDesktop().browse(new URL(appUpdateService.getUpdateUrl()).toURI());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Update");
+                alert.initOwner(imageViewMain.getScene().getWindow());
+                alert.setHeaderText("No updates are available.");
+                alert.showAndWait();
+            }
+        });
+        appUpdateService.start();
     }
 
     private enum ViewStyle {
