@@ -15,7 +15,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class AppUpdateService extends Service<Boolean> {
-    private ReadOnlyStringWrapper updateUrlWrapper = new ReadOnlyStringWrapper("");
+    private final ReadOnlyStringWrapper updateUrlWrapper = new ReadOnlyStringWrapper("");
+    private final String apiUrl = "https://mozib.io/downloads/update.php";
 
     public ReadOnlyStringProperty updateUrlProperty() {
         return updateUrlWrapper.getReadOnlyProperty();
@@ -27,7 +28,7 @@ public class AppUpdateService extends Service<Boolean> {
 
     @Override
     protected Task<Boolean> createTask() {
-        return new Task<Boolean>() {
+        return new Task<>() {
             @Override
             protected Boolean call() throws Exception {
                 updateUrlWrapper.set("");
@@ -49,7 +50,7 @@ public class AppUpdateService extends Service<Boolean> {
         };
     }
 
-    public String getAppVer() {
+    private String getAppVer() {
         return this.getClass().getPackage().getImplementationVersion();
     }
 }
