@@ -1,6 +1,10 @@
 .idea
 *.iml
 *.jar
+*.exe
 dependency-reduced-pom.xml
+launch4j-config.xml
+make-exe.bat
 target/
 jlink-image/
+installer/

@@ -13,6 +13,8 @@ module io.mozib.slimview {
     requires com.fasterxml.jackson.dataformat.xml;
     requires java.prefs;
     requires metadata.extractor;
+    requires org.apache.httpcomponents.httpclient;
+    requires org.apache.httpcomponents.httpcore;
 
     opens io.mozib.slimview to javafx.fxml, com.fasterxml.jackson.databind;
     exports io.mozib.slimview;
