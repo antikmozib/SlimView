@@ -4,6 +4,8 @@
 
 package io.mozib.slimview;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
@@ -25,6 +27,7 @@ public class ImageModel {
     private final long dateModified;
     private final long dateCreated;
     private String resamplePath; // resamplePath is the path to the original, unedited file
+    private ReadOnlyBooleanWrapper favoriteWrapper;
 
     ImageModel(String fullPath) {
         this(fullPath, null);
@@ -140,5 +143,17 @@ public class ImageModel {
         return getResamplePath() != null &&
                 !getResamplePath().equals("") &&
                 !getResamplePath().equalsIgnoreCase(getPath());
+    }
+
+    public ReadOnlyBooleanProperty favoriteProperty() {
+        return favoriteWrapper.getReadOnlyProperty();
+    }
+
+    public void setFavorite(boolean value) {
+        favoriteWrapper.set(value);
+    }
+
+    public boolean getFavorite() {
+        return favoriteWrapper.getValue();
     }
 }

@@ -33,12 +33,11 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
-
-import static io.mozib.slimview.Common.loadRecentFiles;
 
 public class MainWindowController implements Initializable {
 
@@ -238,7 +237,10 @@ public class MainWindowController implements Initializable {
                 preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
 
         // load recent files
-        RecentFiles recentFiles = loadRecentFiles();
+        RecentFiles recentFiles = Common.loadDataFile(RecentFiles.class, Common.SettingFileType.RECENT_FILES);
+        if (recentFiles.recentFileList==null){
+            recentFiles.recentFileList=new ArrayList<>();
+        }
         for (RecentFiles.RecentFile recentFile : recentFiles.recentFileList) {
             MenuItem menuItem = new MenuItem(recentFile.getPath());
             menuItem.setOnAction(event -> {

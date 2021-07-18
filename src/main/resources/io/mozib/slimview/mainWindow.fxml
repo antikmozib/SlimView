@@ -155,7 +155,7 @@
                 </Menu>
                 <Menu text="_Help">
                     <items>
-                        <MenuItem id="menuCheckForUpdates" fx:id="menuCheckForUpdates" onAction="#menuCheckForUpdates_onAction" text="Check For _Updates" />
+                        <MenuItem id="menuCheckForUpdates" fx:id="menuCheckForUpdates" onAction="#menuCheckForUpdates_onAction" text="Check For _Updates..." />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem fx:id="menuAbout" onAction="#menuAbout_onAction" text="_About" />
                     </items>

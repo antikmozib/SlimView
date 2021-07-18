@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import static io.mozib.slimview.Common.*;
 
@@ -38,7 +39,15 @@ public class CopyFileToViewModel {
     }
 
     public CopyFileToViewModel(ImageModel source) {
-        CopyToDestinations copyToDestinations = loadDestinations();
+        //CopyToDestinations copyToDestinations = loadDestinations();
+        CopyToDestinations copyToDestinations = Common.loadDataFile(
+                CopyToDestinations.class,
+                SettingFileType.COPY_TO_DESTINATIONS);
+
+        if (copyToDestinations.destinations == null) {
+            copyToDestinations.destinations = new ArrayList<>();
+        }
+
         this.destinations = FXCollections.observableList(copyToDestinations.destinations);
         this.source = source;
     }
@@ -89,4 +98,6 @@ public class CopyFileToViewModel {
             }
         }
     }
+
+
 }

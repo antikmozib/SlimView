@@ -12,9 +12,11 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class Common {
     public enum OSType {
@@ -107,7 +109,11 @@ public class Common {
 
     public static void addToRecent(String path) {
         XmlMapper xmlMapper = new XmlMapper();
-        RecentFiles recentFiles = loadRecentFiles();
+        RecentFiles recentFiles = Common.loadDataFile(RecentFiles.class, SettingFileType.RECENT_FILES);
+
+        if (recentFiles.recentFileList == null) {
+            recentFiles.recentFileList = new ArrayList<>();
+        }
 
         // if file already exists in recent, don't add again
         for (RecentFiles.RecentFile rf : recentFiles.recentFileList) {
@@ -116,7 +122,7 @@ public class Common {
             }
         }
 
-        if (recentFiles.recentFileList.size() > 5) {
+        if (recentFiles.recentFileList.size() >= 5) {
             long oldestSeen = System.currentTimeMillis();
             for (RecentFiles.RecentFile rf : recentFiles.recentFileList) {
                 if (rf.getLastSeen() < oldestSeen) {
@@ -140,26 +146,6 @@ public class Common {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * @return A list of recently opened images, saved and read from an xml
-     */
-    public static RecentFiles loadRecentFiles() {
-        // load recent files
-        XmlMapper xmlMapper = new XmlMapper();
-        String xml;
-        RecentFiles recentFiles = null;
-        try {
-            xml = inputStreamToString(new FileInputStream(getSettingsFile(SettingFileType.RECENT_FILES)));
-            recentFiles = xmlMapper.readValue(xml, RecentFiles.class);
-        } catch (JsonProcessingException | FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        if (recentFiles == null || recentFiles.recentFileList == null) {
-            recentFiles = new RecentFiles();
-        }
-        return recentFiles;
     }
 
     /**
@@ -187,5 +173,35 @@ public class Common {
         public DataFlavor[] getTransferDataFlavors() {
             return new DataFlavor[]{DataFlavor.imageFlavor};
         }
+    }
+
+    /**
+     * @param classType The type of object the xml mapper will map to
+     * @param settingFileType The location of the setting file, determined through its enum
+     * @param <T> Generic type
+     * @return Data read from xml file and mapped to a JavaBean
+     */
+    public static <T> T loadDataFile(Class<T> classType, SettingFileType settingFileType) {
+        XmlMapper xmlMapper = new XmlMapper();
+        String xml;
+        T data = null;
+
+        try {
+            xml = inputStreamToString(new FileInputStream(getSettingsFile(settingFileType)));
+            data = xmlMapper.readValue(xml, classType);
+            if (data == null) {
+                data = classType.getDeclaredConstructor().newInstance();
+            }
+        } catch (InstantiationException |
+                IllegalAccessException |
+                NoSuchMethodException |
+                InvocationTargetException |
+                FileNotFoundException |
+                JsonProcessingException e) {
+
+            e.printStackTrace();
+        }
+
+        return data;
     }
 }

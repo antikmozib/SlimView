@@ -19,6 +19,7 @@ public class RecentFiles implements Serializable {
         private String path;
         private long lastSeen;
 
+        // required for serialization
         public RecentFile() {
         }
 
