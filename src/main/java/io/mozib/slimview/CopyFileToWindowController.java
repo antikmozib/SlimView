@@ -11,6 +11,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -32,7 +34,7 @@ public class CopyFileToWindowController implements Initializable {
     public void setViewModel(CopyFileToViewModel copyFileToViewModel) {
         this.copyFileToViewModel = copyFileToViewModel;
         listViewMain.setItems(copyFileToViewModel.destinations);
-        
+
         // add the user's Pictures directory if destinations is empty
         if (listViewMain.getItems().size() == 0) {
             listViewMain.getItems().add(new CopyToDestinations.CopyToDestination(
@@ -92,7 +94,6 @@ public class CopyFileToWindowController implements Initializable {
         copyFileToViewModel.copy(comboBoxOnConflict.getSelectionModel().getSelectedItem(),
                 listViewMain.getSelectionModel().getSelectedItems());
         close();
-
     }
 
     private void close() {
@@ -118,5 +119,12 @@ public class CopyFileToWindowController implements Initializable {
     @FXML
     public void comboBoxOnConflict_onAction(ActionEvent actionEvent) {
         preferences.put("CopyFileToOnConflict", comboBoxOnConflict.getSelectionModel().getSelectedItem().toString());
+    }
+
+    @FXML
+    public void listViewMain_onKeyPress(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            copy();
+        }
     }
 }

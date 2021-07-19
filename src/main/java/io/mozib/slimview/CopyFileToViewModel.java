@@ -4,20 +4,17 @@
 
 package io.mozib.slimview;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import static io.mozib.slimview.Common.*;
+import static io.mozib.slimview.Common.DataFileType;
 
 public class CopyFileToViewModel {
     public ObservableList<CopyToDestinations.CopyToDestination> destinations;
@@ -35,14 +32,19 @@ public class CopyFileToViewModel {
             public String toString() {
                 return "Overwrite";
             }
+        },
+        RENAME {
+            @Override
+            public String toString() {
+                return "Rename";
+            }
         }
     }
 
     public CopyFileToViewModel(ImageModel source) {
-        //CopyToDestinations copyToDestinations = loadDestinations();
-        CopyToDestinations copyToDestinations = Common.loadDataFile(
+        CopyToDestinations copyToDestinations = Common.readDataFile(
                 CopyToDestinations.class,
-                SettingFileType.COPY_TO_DESTINATIONS);
+                DataFileType.COPY_TO_DESTINATIONS);
 
         if (copyToDestinations.destinations == null) {
             copyToDestinations.destinations = new ArrayList<>();
@@ -52,31 +54,10 @@ public class CopyFileToViewModel {
         this.source = source;
     }
 
-    private CopyToDestinations loadDestinations() {
-        XmlMapper xmlMapper = new XmlMapper();
-        String xml;
-        CopyToDestinations copyToDestinations = null;
-        try {
-            xml = inputStreamToString(new FileInputStream(getSettingsFile(SettingFileType.COPY_TO_DESTINATIONS)));
-            copyToDestinations = xmlMapper.readValue(xml, CopyToDestinations.class);
-        } catch (JsonProcessingException | FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        if (copyToDestinations == null || copyToDestinations.destinations == null) {
-            copyToDestinations = new CopyToDestinations();
-        }
-        return copyToDestinations;
-    }
-
     public void saveDestinations() {
-        XmlMapper xmlMapper = new XmlMapper();
         CopyToDestinations copyToDestinations = new CopyToDestinations();
         copyToDestinations.destinations = destinations;
-        try {
-            xmlMapper.writeValue(new File(getSettingsFile(SettingFileType.COPY_TO_DESTINATIONS)), copyToDestinations);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Common.writeDataFile(copyToDestinations, DataFileType.COPY_TO_DESTINATIONS);
     }
 
     public void copy(OnConflict onConflict, ObservableList<CopyToDestinations.CopyToDestination> destinations) {
@@ -85,10 +66,15 @@ public class CopyFileToViewModel {
             File copied = Paths.get(destination.getDestination(), source.getShortName()).toFile();
 
             if (copied.exists() && !copied.isDirectory()) {
-                if (onConflict == OnConflict.OVERWRITE) {
-                    if (!copied.delete()) continue;
-                } else if (onConflict == OnConflict.SKIP) {
-                    continue;
+                switch (onConflict) {
+                    case SKIP:
+                        continue;
+                    case RENAME:
+                        copied = new File(getNewFilePath(copied.getPath()));
+                        break;
+                    case OVERWRITE:
+                        if (!copied.delete()) continue;
+                        break;
                 }
             }
 
@@ -99,5 +85,19 @@ public class CopyFileToViewModel {
         }
     }
 
+    public String getNewFilePath(String originalFilePath) {
+        String dirPath = new File(originalFilePath).getParent();
+        String fileExt = FilenameUtils.getExtension(originalFilePath);
+        String fileNameWithoutExt = new File(originalFilePath).getName();
+        int i = 1;
 
+        while (true) {
+            String newFilename = Paths.get(dirPath, fileNameWithoutExt + " (" + i + ")." + fileExt).toString();
+            File newFile = new File(newFilename);
+            if (!newFile.isDirectory() && !newFile.exists()) {
+                return newFilename;
+            }
+            i++;
+        }
+    }
 }

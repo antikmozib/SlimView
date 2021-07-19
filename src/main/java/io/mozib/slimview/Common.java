@@ -35,18 +35,18 @@ public class Common {
         return null;
     }
 
-    public enum SettingFileType {
+    public enum DataFileType {
         RECENT_FILES, COPY_TO_DESTINATIONS
     }
 
     /**
      * @return Path to the xml settings file
      */
-    public static String getSettingsFile(SettingFileType settingFileType) {
+    public static String getDataFile(DataFileType dataFileType) {
         createSettingsDir();
         Path path = Paths.get(System.getProperty("user.home"), ".slimview");
 
-        switch (settingFileType) {
+        switch (dataFileType) {
             case RECENT_FILES:
                 path = Paths.get(path.toString(), "recent.xml");
                 break;
@@ -109,7 +109,7 @@ public class Common {
 
     public static void addToRecent(String path) {
         XmlMapper xmlMapper = new XmlMapper();
-        RecentFiles recentFiles = Common.loadDataFile(RecentFiles.class, SettingFileType.RECENT_FILES);
+        RecentFiles recentFiles = Common.readDataFile(RecentFiles.class, DataFileType.RECENT_FILES);
 
         if (recentFiles.recentFileList == null) {
             recentFiles.recentFileList = new ArrayList<>();
@@ -141,11 +141,7 @@ public class Common {
         RecentFiles.RecentFile newRecent = new RecentFiles.RecentFile();
         newRecent.setPath(path);
         recentFiles.recentFileList.add(newRecent);
-        try {
-            xmlMapper.writeValue(new File(getSettingsFile(SettingFileType.RECENT_FILES)), recentFiles);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writeDataFile(recentFiles, DataFileType.RECENT_FILES);
     }
 
     /**
@@ -176,18 +172,18 @@ public class Common {
     }
 
     /**
-     * @param classType The type of object the xml mapper will map to
-     * @param settingFileType The location of the setting file, determined through its enum
-     * @param <T> Generic type
+     * @param classType       The type of object the xml mapper will map to
+     * @param dataFileType The location of the setting file, determined through its enum
+     * @param <T>             Generic type
      * @return Data read from xml file and mapped to a JavaBean
      */
-    public static <T> T loadDataFile(Class<T> classType, SettingFileType settingFileType) {
+    public static <T> T readDataFile(Class<T> classType, DataFileType dataFileType) {
         XmlMapper xmlMapper = new XmlMapper();
         String xml;
         T data = null;
 
         try {
-            xml = inputStreamToString(new FileInputStream(getSettingsFile(settingFileType)));
+            xml = inputStreamToString(new FileInputStream(getDataFile(dataFileType)));
             data = xmlMapper.readValue(xml, classType);
             if (data == null) {
                 data = classType.getDeclaredConstructor().newInstance();
@@ -203,5 +199,18 @@ public class Common {
         }
 
         return data;
+    }
+
+    /**
+     * @param data Object to write to an xml file
+     * @param dataFileType Location of the xml file
+     */
+    public static void writeDataFile(Object data, DataFileType dataFileType) {
+        XmlMapper xmlMapper = new XmlMapper();
+        try {
+            xmlMapper.writeValue(new File(getDataFile(dataFileType)), data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

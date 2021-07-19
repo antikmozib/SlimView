@@ -237,7 +237,7 @@ public class MainWindowController implements Initializable {
                 preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
 
         // load recent files
-        RecentFiles recentFiles = Common.loadDataFile(RecentFiles.class, Common.SettingFileType.RECENT_FILES);
+        RecentFiles recentFiles = Common.readDataFile(RecentFiles.class, Common.DataFileType.RECENT_FILES);
         if (recentFiles.recentFileList==null){
             recentFiles.recentFileList=new ArrayList<>();
         }
