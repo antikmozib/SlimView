@@ -176,20 +176,46 @@ public class MainViewModel {
     }
 
     public void trashImage(ImageModel imageModel) {
-        try {
-            Desktop.getDesktop().moveToTrash(new File(imageModel.getPath()));
-            // remove from list
-            imageModels.remove(imageModel);
-            showNextImage();
-        } catch (Exception ignored) {
+        String path;
 
+        if (imageModel.hasOriginal()) {
+            path = imageModel.getResamplePath();
+        } else {
+            path = imageModel.getPath();
+        }
+
+        try {
+            Desktop.getDesktop().moveToTrash(new File(path));
+
+            // remove from list
+            ImageModel remove;
+
+            if (imageModel.hasOriginal()) {
+                remove = findByPath(imageModel.getResamplePath());
+            } else {
+                remove = imageModel;
+            }
+
+            // item must be removed after showing next image to preserve index integrity
+            showNextImage();
+            imageModels.remove(remove);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public void openInEditor(ImageModel imageModel) {
+        String path;
+
+        if (imageModel.hasOriginal()) {
+            path = imageModel.getResamplePath();
+        } else {
+            path = imageModel.getPath();
+        }
+
         if (getOSType() == OSType.Windows) {
             try {
-                Runtime.getRuntime().exec("mspaint \"" + imageModel.getPath() + "\"");
+                Runtime.getRuntime().exec("mspaint \"" + path + "\"");
             } catch (IOException ignored) {
 
             }
@@ -197,15 +223,23 @@ public class MainViewModel {
     }
 
     public void openContainingFolder(ImageModel imageModel) {
+        String path;
+
+        if (imageModel.hasOriginal()) {
+            path = imageModel.getResamplePath();
+        } else {
+            path = imageModel.getPath();
+        }
+
         if (getOSType() == OSType.Windows) {
             try {
-                Runtime.getRuntime().exec("explorer.exe /select, \"\"" + imageModel.getPath() + "\"\"");
+                Runtime.getRuntime().exec("explorer.exe /select, \"\"" + path + "\"\"");
             } catch (IOException ignored) {
 
             }
         } else {
             try {
-                Desktop.getDesktop().open(imageModel.getContainingFolder());
+                Desktop.getDesktop().open(new File(path).getParentFile());
             } catch (IOException ignored) {
 
             }
@@ -227,7 +261,6 @@ public class MainViewModel {
 
     public void sortImages(SortStyle sortStyle) {
         if (imageModels.size() > 0) {
-            // System.out.println(imageModels.get(0).getShortName());
             switch (sortStyle) {
                 case DATE_MODIFIED:
                     imageModels.sort((o1, o2) -> Long.compare(o2.getDateModified(), o1.getDateModified()));
@@ -242,7 +275,6 @@ public class MainViewModel {
                     break;
             }
             setSelectedImage(getSelectedImageModel()); // refresh status and index
-            // System.out.println(imageModels.get(0).getShortName());
         }
         selectedSortStyleWrapper.set(sortStyle);
     }
@@ -349,7 +381,6 @@ public class MainViewModel {
                         .filter(item -> getSelectedImageModel().getPath().equals(item.getPath()))
                         .findAny()
                         .orElse(null));
-
             } else {
                 return imageModels.indexOf(imageModels.stream()
                         .filter(item -> getSelectedImageModel().getResamplePath().equals(item.getPath()))
@@ -358,5 +389,15 @@ public class MainViewModel {
             }
         }
         return 0;
+    }
+
+    private ImageModel findByPath(String path) {
+        for (ImageModel imageModel : imageModels) {
+            if (imageModel.getPath().equals(path)) {
+                return imageModel;
+            }
+        }
+
+        return null;
     }
 }
