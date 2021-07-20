@@ -32,6 +32,7 @@ import static io.mozib.slimview.Common.*;
 
 public class MainViewModel {
 
+    private final FavoritesController favoritesController = new FavoritesController();
     private List<ImageModel> imageModels = new ArrayList<>();
     private LoadDirectory loadDirectory;
     private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper("Ready.");
@@ -246,6 +247,29 @@ public class MainViewModel {
         }
     }
 
+    public void setAsFavorite(ImageModel imageModel, boolean value) {
+
+        if (value &&
+                (((imageModel.hasOriginal() && !favoritesController.exists(imageModel.getResamplePath()))) ||
+                        (!imageModel.hasOriginal() && !favoritesController.exists(imageModel.getPath())))) {
+
+            if (imageModel.hasOriginal()) {
+                favoritesController.add(imageModel.getResamplePath());
+            } else {
+                favoritesController.add(imageModel.getPath());
+            }
+        } else if (!value) {
+
+            if (imageModel.hasOriginal()) {
+                favoritesController.remove(imageModel.getResamplePath());
+            } else {
+                favoritesController.remove(imageModel.getPath());
+            }
+        }
+
+        //imageModel.getFavoriteProperty().set(value);
+    }
+
     public void copyToClipboard(ImageModel imageModel) {
         if (imageModel.getImage() == null) {
             return;
@@ -335,6 +359,8 @@ public class MainViewModel {
             return;
         }
 
+        imageModel.setIsFavorite(isFavorite(imageModel));
+
         selectedImageModelWrapper.set(imageModel);
         status.unbind();
         status.set((getCurrentIndex() + 1) + " / " + imageModels.size()
@@ -374,6 +400,9 @@ public class MainViewModel {
         editImage(rotated, file, resamplePath);
     }
 
+    /**
+     * @return The index of the currently displayed image from the list of images
+     */
     private int getCurrentIndex() {
         if (imageModels != null && getSelectedImageModel() != null) {
             if (!getSelectedImageModel().hasOriginal()) {
@@ -399,5 +428,13 @@ public class MainViewModel {
         }
 
         return null;
+    }
+
+    private boolean isFavorite(ImageModel imageModel) {
+        if (imageModel.hasOriginal()) {
+            return favoritesController.exists(imageModel.getResamplePath());
+        } else {
+            return favoritesController.exists(imageModel.getPath());
+        }
     }
 }

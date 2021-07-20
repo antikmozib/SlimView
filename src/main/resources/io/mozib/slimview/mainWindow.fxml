@@ -10,6 +10,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
@@ -336,6 +337,18 @@
                         </ImageView>
                     </graphic>
                 </Button>
+            <ToggleButton fx:id="tButtonFavorite" mnemonicParsing="false" onAction="#tButtonFavorite_onAction">
+                <tooltip>
+                    <Tooltip text="Favorite" />
+                </tooltip>
+               <graphic>
+                  <ImageView fx:id="tButtonFavoriteImageView" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/favorite.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </ToggleButton>
             </items>
         </ToolBar>
         <ScrollPane id="mainScrollPane" fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" onKeyPressed="#mainScrollPane_onKeyPress" onMouseClicked="#mainScrollPane_onClick" onScroll="#mainScrollPane_onScroll" pannable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">

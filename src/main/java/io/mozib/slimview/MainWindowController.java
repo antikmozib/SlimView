@@ -21,6 +21,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
@@ -75,7 +76,13 @@ public class MainWindowController implements Initializable {
     public Button buttonPrevious;
     @FXML
     public Button buttonNext;
+    @FXML
+    public ToggleButton tButtonFavorite;
+    @FXML
+    public ImageView tButtonFavoriteImageView;
 
+    private final Image favoriteOutline = new Image(getClass().getResourceAsStream("icons/favorite.png"));
+    private final Image favoriteSolid = new Image(getClass().getResourceAsStream("icons/favorite-solid.png"));
     private final int scrollPaneOffset = 6; // to force correct clipping of scroll pane
     private final ToggleGroup toggleGroupViewStyle = new ToggleGroup();
     private final ToggleGroup toggleGroupSortStyle = new ToggleGroup();
@@ -144,14 +151,23 @@ public class MainWindowController implements Initializable {
         statusBar.managedProperty().bind(statusBar.visibleProperty());
         menuBar.managedProperty().bind(menuBar.visibleProperty());
 
-        // bind ImageView to selectedImage
+        // bind ImageView and Favorite Button to selectedImage
         mainViewModel.selectedImageModelProperty().addListener((observable, oldValue, newValue) -> {
+            tButtonFavorite.setSelected(newValue.getIsFavorite());
             imageViewMain.setImage(newValue.getImage());
             imageViewMain.requestFocus();
             try {
                 ((Stage) imageViewMain.getScene().getWindow()).setTitle(newValue.getShortName() + " - SlimView");
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        });
+
+        tButtonFavorite.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                tButtonFavoriteImageView.setImage(favoriteSolid);
+            } else {
+                tButtonFavoriteImageView.setImage(favoriteOutline);
             }
         });
 
@@ -238,8 +254,8 @@ public class MainWindowController implements Initializable {
 
         // load recent files
         RecentFiles recentFiles = Common.readDataFile(RecentFiles.class, Common.DataFileType.RECENT_FILES);
-        if (recentFiles.recentFileList==null){
-            recentFiles.recentFileList=new ArrayList<>();
+        if (recentFiles.recentFileList == null) {
+            recentFiles.recentFileList = new ArrayList<>();
         }
         for (RecentFiles.RecentFile recentFile : recentFiles.recentFileList) {
             MenuItem menuItem = new MenuItem(recentFile.getPath());
@@ -560,6 +576,15 @@ public class MainWindowController implements Initializable {
         });
         appUpdateService.start();
     }
+
+    @FXML
+    public void tButtonFavorite_onAction(ActionEvent actionEvent) {
+        mainViewModel.setAsFavorite(mainViewModel.getSelectedImageModel(), ((ToggleButton) actionEvent.getSource()).isSelected());
+    }
+
+    /*@FXML
+    public void tButtonFavorite_onAction(ActionEvent actionEvent) {
+    }*/
 
     private enum ViewStyle {
         FIT_TO_WINDOW, ORIGINAL, STRETCHED

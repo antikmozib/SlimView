@@ -36,7 +36,7 @@ public class Common {
     }
 
     public enum DataFileType {
-        RECENT_FILES, COPY_TO_DESTINATIONS
+        RECENT_FILES, COPY_TO_DESTINATIONS, FAVORITES
     }
 
     /**
@@ -52,6 +52,9 @@ public class Common {
                 break;
             case COPY_TO_DESTINATIONS:
                 path = Paths.get(path.toString(), "copytodestinations.xml");
+                break;
+            case FAVORITES:
+                path = Paths.get(path.toString(),"favorites.xml");
                 break;
         }
 
