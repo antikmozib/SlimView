@@ -40,6 +40,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
+import static io.mozib.slimview.Common.getOSType;
+
 public class MainWindowController implements Initializable {
 
     @FXML
@@ -582,7 +584,8 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void tButtonFavorite_onAction(ActionEvent actionEvent) {
-        mainViewModel.setAsFavorite(mainViewModel.getSelectedImageModel(), ((ToggleButton) actionEvent.getSource()).isSelected());
+        mainViewModel.setAsFavorite(mainViewModel.getSelectedImageModel(),
+                ((ToggleButton) actionEvent.getSource()).isSelected());
     }
 
     @FXML
@@ -596,7 +599,7 @@ public class MainWindowController implements Initializable {
         favoritesWindow.initModality(Modality.WINDOW_MODAL);
         favoritesWindow.initStyle(StageStyle.UTILITY);
         favoritesWindow.initOwner(imageViewMain.getScene().getWindow());
-        favoritesWindow.setTitle("Favorites");
+        favoritesWindow.setTitle("Favorites Manager");
         controller.setFavoritesController(mainViewModel.getFavoritesController());
         favoritesWindow.showAndWait();
 
@@ -637,9 +640,25 @@ public class MainWindowController implements Initializable {
 
     private void open() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.jpg;*.jpeg;*.png;*.gif")
-        );
+
+        if (getOSType() == Common.OSType.Windows) {
+
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Images", "*.jpg;*.jpeg;*.png;*.gif"),
+                    new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
+        } else {
+
+            // *nix doesn't like Windows-style extension filters
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("JPG Image", "*.jpg"),
+                    new FileChooser.ExtensionFilter("JPEG Image", "*.jpeg"),
+                    new FileChooser.ExtensionFilter("PNG Image", "*.png"),
+                    new FileChooser.ExtensionFilter("GIF Image", "*.gif"),
+                    new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
+        }
+
         if (mainViewModel.getSelectedImageModel() != null) {
             if (mainViewModel.getSelectedImageModel().hasOriginal()) {
                 fileChooser.setInitialDirectory(

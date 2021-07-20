@@ -9,6 +9,8 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,6 +22,9 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class FavoritesWindowController implements Initializable {
@@ -37,6 +42,10 @@ public class FavoritesWindowController implements Initializable {
     public void setFavoritesController(FavoritesController favoritesController) {
         this.favoritesController = favoritesController;
         listViewFavorites.setItems(favoritesController.getFavorites());
+
+        if (listViewFavorites.getItems().size() > 0) {
+            listViewFavorites.getSelectionModel().select(0);
+        }
     }
 
     public ReadOnlyObjectProperty<FavoritesModel.FavoriteModel> getSelectedFavorite() {
@@ -56,9 +65,13 @@ public class FavoritesWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         listViewFavorites.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
-            var preview = new Image(new File(newValue.toString()).toURI().toString());
+            imageViewPreview.setImage(null);
             imageViewPreview.fitHeightProperty().unbind();
             imageViewPreview.fitWidthProperty().unbind();
+
+            if (newValue == null) return;
+
+            var preview = new Image(new File(newValue.toString()).toURI().toString());
             imageViewPreview.setImage(preview);
             imageViewPreview.fitHeightProperty().bind(stackPanePreview.heightProperty());
             imageViewPreview.fitWidthProperty().bind(stackPanePreview.widthProperty());
@@ -66,6 +79,10 @@ public class FavoritesWindowController implements Initializable {
     }
 
     private void open() {
+        if (listViewFavorites.getSelectionModel().getSelectedItem() == null) {
+            return;
+        }
+
         selectedFavorite.set(listViewFavorites.getSelectionModel().getSelectedItem());
         close();
     }
@@ -103,7 +120,33 @@ public class FavoritesWindowController implements Initializable {
 
     @FXML
     public void menuRemoveAll_onAction(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(imageViewPreview.getScene().getWindow());
+        alert.setTitle("Remove All");
+        alert.setHeaderText("Are you sure you want to remove all favorites?");
+        alert.setContentText("This action is irreversible.");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() != ButtonType.OK) {
+            return;
+        }
+
         listViewFavorites.getItems().clear();
+        favoritesController.saveFavorites();
+    }
+
+    @FXML
+    public void menuRemoveMissing_onAction(ActionEvent actionEvent) {
+        List<FavoritesModel.FavoriteModel> removeThese = new ArrayList<>();
+        for (FavoritesModel.FavoriteModel favoriteModel : listViewFavorites.getItems()) {
+            File file = new File(favoriteModel.getPath());
+            if (!file.isDirectory() && !file.exists()) {
+                removeThese.add(favoriteModel);
+            }
+        }
+
+        listViewFavorites.getItems().removeAll(removeThese);
         favoritesController.saveFavorites();
     }
 }

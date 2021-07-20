@@ -32,10 +32,6 @@
                             </accelerator>
                         </MenuItem>
                         <Menu id="menuOpenRecent" fx:id="menuRecent" text="Open _Recent" />
-                  <MenuItem fx:id="menuViewFavorites" onAction="#menuViewFavorites_onAction" text="View _Favorites">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
-                     </accelerator></MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem id="menuOpenContainingFolder" fx:id="menuOpenContainingFolder" onAction="#menuOpenContainingFolder_onAction" text="Open _Containing Folder" />
                         <MenuItem id="menuOpenInExternalEditor" fx:id="menuOpenInExternalEditor" onAction="#menuOpenInExternalEditor_onAction" text="Open in _External Editor" />
@@ -43,12 +39,6 @@
                         <MenuItem id="menuSaveAs" fx:id="menuSaveAs" onAction="#menuSaveAs_onAction" text="_Save As...">
                             <accelerator>
                                 <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                            </accelerator>
-                        </MenuItem>
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="menuImageInfo" onAction="#menuImageInfo_onAction" text="Image _Information...">
-                            <accelerator>
-                                <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
@@ -158,6 +148,20 @@
                         </Menu>
                     </items>
                 </Menu>
+            <Menu text="_Tools">
+              <items>
+                        <MenuItem fx:id="menuImageInfo" onAction="#menuImageInfo_onAction" text="Image _Information...">
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                            </accelerator>
+                        </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="menuViewFavorites" onAction="#menuViewFavorites_onAction" text="_Favorites Manager">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></MenuItem>
+              </items>
+            </Menu>
                 <Menu text="_Help">
                     <items>
                         <MenuItem id="menuCheckForUpdates" fx:id="menuCheckForUpdates" onAction="#menuCheckForUpdates_onAction" text="Check For _Updates..." />

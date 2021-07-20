@@ -92,7 +92,8 @@ public class CopyFileToViewModel {
     public String getNewFilePath(String originalFilePath) {
         String dirPath = new File(originalFilePath).getParent();
         String fileExt = FilenameUtils.getExtension(originalFilePath);
-        String fileNameWithoutExt = new File(originalFilePath).getName();
+        String fileNameWithExt = new File(originalFilePath).getName();
+        String fileNameWithoutExt = fileNameWithExt.substring(0, fileNameWithExt.length() - fileExt.length() - 1);
         int i = 1;
 
         while (true) {

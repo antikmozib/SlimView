@@ -98,13 +98,21 @@ public class CopyFileToWindowController implements Initializable {
         File selectedDirectory = directoryChooser.showDialog(listViewMain.getScene().getWindow());
 
         if (selectedDirectory != null) {
-            listViewMain.getItems().add(
-                    new CopyToDestinations.CopyToDestination(selectedDirectory.getPath()));
+            CopyToDestinations.CopyToDestination newItem =
+                    new CopyToDestinations.CopyToDestination((selectedDirectory.getPath()));
+            listViewMain.getItems().add(newItem);
             copyFileToViewModel.saveDestinations();
+            listViewMain.getSelectionModel().clearAndSelect(listViewMain.getItems().indexOf(newItem));
+            listViewMain.requestFocus();
         }
     }
 
     private void copy() {
+        if (listViewMain.getSelectionModel().getSelectedItem() == null) {
+            return;
+        }
+
+        //preferences.put("SelectedDestinations",listViewMain.getSelectionModel().getSelectedItems().toArray(new String[0]).toString());
         copyFileToViewModel.copy(comboBoxOnConflict.getSelectionModel().getSelectedItem(),
                 listViewMain.getSelectionModel().getSelectedItems());
         close();
