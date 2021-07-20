@@ -303,6 +303,10 @@ public class MainViewModel {
         selectedSortStyleWrapper.set(sortStyle);
     }
 
+    public FavoritesController getFavoritesController() {
+        return favoritesController;
+    }
+
     private String formatTime(long time) {
         Date date = new Date(time);
         Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

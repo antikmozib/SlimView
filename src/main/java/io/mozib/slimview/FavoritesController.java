@@ -4,20 +4,20 @@
 
 package io.mozib.slimview;
 
-import java.util.ArrayList;
-import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class FavoritesController {
-    private final List<String> favorites = new ArrayList<>();
+    private final ObservableList<FavoritesModel.FavoriteModel> favorites = FXCollections.observableArrayList();
 
     public void add(String path) {
-        favorites.add(path);
+        favorites.add(new FavoritesModel.FavoriteModel(path));
         saveFavorites();
     }
 
     public void remove(String path) {
-        for (String favorite : favorites) {
-            if (favorite.equals(path)) {
+        for (FavoritesModel.FavoriteModel favorite : favorites) {
+            if (favorite.getPath().equals(path)) {
                 favorites.remove(favorite);
                 break;
             }
@@ -26,12 +26,16 @@ public class FavoritesController {
     }
 
     public boolean exists(String path) {
-        for (String favorite : favorites) {
-            if (favorite.equals(path)) {
+        for (FavoritesModel.FavoriteModel favorite : favorites) {
+            if (favorite.getPath().equals(path)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public ObservableList<FavoritesModel.FavoriteModel> getFavorites() {
+        return favorites;
     }
 
     public FavoritesController() {
@@ -44,16 +48,12 @@ public class FavoritesController {
             return;
         }
 
-        for (FavoritesModel.FavoriteModel favoriteModel : favoritesModel.favoritesList) {
-            favorites.add(favoriteModel.path);
-        }
+        favorites.addAll(favoritesModel.favoritesList);
     }
 
-    private void saveFavorites() {
+    public void saveFavorites() {
         FavoritesModel favoritesModel = new FavoritesModel();
-        for (String favorite : favorites) {
-            favoritesModel.favoritesList.add(new FavoritesModel.FavoriteModel(favorite));
-        }
+        favoritesModel.favoritesList.addAll(favorites);
         Common.writeDataFile(favoritesModel, Common.DataFileType.FAVORITES);
     }
 }

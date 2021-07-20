@@ -1,3 +1,7 @@
 #stackPaneMain {
-    -fx-background-color: #cccccc;
+    -fx-background-color: #cccccc
+}
+
+.tooltip {
+	-fx-font-size: 14
 }

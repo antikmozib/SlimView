@@ -51,10 +51,10 @@ public class Common {
                 path = Paths.get(path.toString(), "recent.xml");
                 break;
             case COPY_TO_DESTINATIONS:
-                path = Paths.get(path.toString(), "copytodestinations.xml");
+                path = Paths.get(path.toString(), "copy-to-destinations.xml");
                 break;
             case FAVORITES:
-                path = Paths.get(path.toString(),"favorites.xml");
+                path = Paths.get(path.toString(), "favorites.xml");
                 break;
         }
 
@@ -111,8 +111,11 @@ public class Common {
     }
 
     public static void addToRecent(String path) {
-        XmlMapper xmlMapper = new XmlMapper();
         RecentFiles recentFiles = Common.readDataFile(RecentFiles.class, DataFileType.RECENT_FILES);
+
+        if (recentFiles == null) {
+            recentFiles = new RecentFiles();
+        }
 
         if (recentFiles.recentFileList == null) {
             recentFiles.recentFileList = new ArrayList<>();
@@ -175,9 +178,9 @@ public class Common {
     }
 
     /**
-     * @param classType       The type of object the xml mapper will map to
+     * @param classType    The type of object the xml mapper will map to
      * @param dataFileType The location of the setting file, determined through its enum
-     * @param <T>             Generic type
+     * @param <T>          Generic type
      * @return Data read from xml file and mapped to a JavaBean
      */
     public static <T> T readDataFile(Class<T> classType, DataFileType dataFileType) {
@@ -205,7 +208,7 @@ public class Common {
     }
 
     /**
-     * @param data Object to write to an xml file
+     * @param data         Object to write to an xml file
      * @param dataFileType Location of the xml file
      */
     public static void writeDataFile(Object data, DataFileType dataFileType) {

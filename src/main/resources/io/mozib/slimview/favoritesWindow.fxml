@@ -1,18 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 
 <!--
   ~ Copyright (C) 2021 Antik Mozib. All rights reserved.
   -->
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="io.mozib.slimview.FavoritesWindowController"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.FavoritesWindowController">
+   <children>
+      <SplitPane dividerPositions="0.6" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <ListView fx:id="listViewFavorites" onKeyPressed="#listViewFavorites_onKeyPress" onMouseClicked="#listViewFavorites_onClick" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="289.0">
+               <children>
+                  <StackPane fx:id="stackPanePreview" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <ImageView fx:id="imageViewPreview" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </StackPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+      <HBox alignment="CENTER_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+               <children>
+                  <SplitMenuButton fx:id="buttonRemove" onAction="#buttonRemove_onAction" prefWidth="96.0" text="_Remove">
+                    <items>
+                      <MenuItem fx:id="menuRemoveAll" onAction="#menuRemoveAll_onAction" text="Remove _All" />
+                    </items>
+                  </SplitMenuButton>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" spacing="8.0">
+               <children>
+                  <Button fx:id="buttonOpen" defaultButton="true" onAction="#buttonOpen_onAction" prefWidth="80.0" text="_Open" />
+                  <Button fx:id="btnCancel" cancelButton="true" onAction="#btnCancel_onAction" prefWidth="80.0" text="_Cancel" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </children>
 </AnchorPane>

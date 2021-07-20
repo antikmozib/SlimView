@@ -15,7 +15,6 @@ public class FavoritesModel implements Serializable {
     public List<FavoriteModel> favoritesList = new ArrayList<>();
 
     public FavoritesModel() {
-
     }
 
     public FavoritesModel(List<FavoriteModel> favoritesList) {
@@ -42,11 +41,15 @@ public class FavoritesModel implements Serializable {
         }
 
         public FavoriteModel() {
-
         }
 
         public FavoriteModel(String path) {
             this.path = path;
+        }
+
+        @Override
+        public String toString() {
+            return path;
         }
     }
 }

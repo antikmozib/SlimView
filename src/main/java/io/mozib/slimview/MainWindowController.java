@@ -254,6 +254,9 @@ public class MainWindowController implements Initializable {
 
         // load recent files
         RecentFiles recentFiles = Common.readDataFile(RecentFiles.class, Common.DataFileType.RECENT_FILES);
+        if (recentFiles == null) {
+            recentFiles = new RecentFiles();
+        }
         if (recentFiles.recentFileList == null) {
             recentFiles.recentFileList = new ArrayList<>();
         }
@@ -582,9 +585,26 @@ public class MainWindowController implements Initializable {
         mainViewModel.setAsFavorite(mainViewModel.getSelectedImageModel(), ((ToggleButton) actionEvent.getSource()).isSelected());
     }
 
-    /*@FXML
-    public void tButtonFavorite_onAction(ActionEvent actionEvent) {
-    }*/
+    @FXML
+    public void menuViewFavorites_onAction(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("favoritesWindow.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root);
+        FavoritesWindowController controller = fxmlLoader.getController();
+        Stage favoritesWindow = new Stage();
+        favoritesWindow.setScene(scene);
+        favoritesWindow.initModality(Modality.WINDOW_MODAL);
+        favoritesWindow.initStyle(StageStyle.UTILITY);
+        favoritesWindow.initOwner(imageViewMain.getScene().getWindow());
+        favoritesWindow.setTitle("Favorites");
+        controller.setFavoritesController(mainViewModel.getFavoritesController());
+        favoritesWindow.showAndWait();
+
+        if (controller.getSelectedFavorite().get() != null) {
+            ImageModel selectedImage = new ImageModel(controller.getSelectedFavorite().get().toString());
+            mainViewModel.loadImage(selectedImage);
+        }
+    }
 
     private enum ViewStyle {
         FIT_TO_WINDOW, ORIGINAL, STRETCHED

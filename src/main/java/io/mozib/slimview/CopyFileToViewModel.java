@@ -46,6 +46,10 @@ public class CopyFileToViewModel {
                 CopyToDestinations.class,
                 DataFileType.COPY_TO_DESTINATIONS);
 
+        if (copyToDestinations == null) {
+            copyToDestinations = new CopyToDestinations();
+        }
+
         if (copyToDestinations.destinations == null) {
             copyToDestinations.destinations = new ArrayList<>();
         }

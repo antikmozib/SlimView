@@ -71,6 +71,20 @@ public class CopyFileToWindowController implements Initializable {
     }
 
     @FXML
+    public void comboBoxOnConflict_onAction(ActionEvent actionEvent) {
+        preferences.put("CopyFileToOnConflict", comboBoxOnConflict.getSelectionModel().getSelectedItem().toString());
+    }
+
+    @FXML
+    public void listViewMain_onKeyPress(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            copy();
+        } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
+            close();
+        }
+    }
+
+    @FXML
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         listViewMain.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -100,7 +114,6 @@ public class CopyFileToWindowController implements Initializable {
         ((Stage) listViewMain.getScene().getWindow()).close();
     }
 
-    @FXML
     private void remove() {
         ObservableList<Integer> selectedIndices = listViewMain.getSelectionModel().getSelectedIndices();
         List<Integer> sortableItems = new ArrayList<>(selectedIndices);
@@ -114,17 +127,5 @@ public class CopyFileToWindowController implements Initializable {
 
         listViewMain.refresh();
         copyFileToViewModel.saveDestinations();
-    }
-
-    @FXML
-    public void comboBoxOnConflict_onAction(ActionEvent actionEvent) {
-        preferences.put("CopyFileToOnConflict", comboBoxOnConflict.getSelectionModel().getSelectedItem().toString());
-    }
-
-    @FXML
-    public void listViewMain_onKeyPress(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.ENTER) {
-            copy();
-        }
     }
 }
