@@ -41,7 +41,11 @@ public class CopyFileToWindowController implements Initializable {
                     Paths.get(System.getProperty("user.home"), "Pictures").toString()));
         }
 
-        listViewMain.getSelectionModel().select(0);
+        // select previously chosen locations
+        String[] selectedDestinations = preferences.get("SelectedDestinations", "").split(";");
+        for (String selectedDestination : selectedDestinations) {
+            selectItemByName(selectedDestination);
+        }
     }
 
     @FXML
@@ -112,7 +116,17 @@ public class CopyFileToWindowController implements Initializable {
             return;
         }
 
-        //preferences.put("SelectedDestinations",listViewMain.getSelectionModel().getSelectedItems().toArray(new String[0]).toString());
+        // save selected locations
+        String selectedDestinations = "";
+        for (CopyToDestinations.CopyToDestination cd : listViewMain.getSelectionModel().getSelectedItems()) {
+            selectedDestinations = selectedDestinations + cd.getDestination() + ";";
+        }
+        // remove last semicolon
+        if (selectedDestinations.length() > 1) {
+            selectedDestinations = selectedDestinations.substring(0, selectedDestinations.length() - 1);
+        }
+        preferences.put("SelectedDestinations", selectedDestinations);
+
         copyFileToViewModel.copy(comboBoxOnConflict.getSelectionModel().getSelectedItem(),
                 listViewMain.getSelectionModel().getSelectedItems());
         close();
@@ -135,5 +149,14 @@ public class CopyFileToWindowController implements Initializable {
 
         listViewMain.refresh();
         copyFileToViewModel.saveDestinations();
+    }
+
+    private void selectItemByName(String name) {
+        for (CopyToDestinations.CopyToDestination cp : listViewMain.getItems()) {
+            if (cp.getDestination().equals(name)) {
+                listViewMain.getSelectionModel().select(cp);
+                return;
+            }
+        }
     }
 }
