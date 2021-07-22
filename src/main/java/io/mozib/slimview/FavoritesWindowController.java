@@ -6,12 +6,14 @@ package io.mozib.slimview;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -34,14 +36,18 @@ public class FavoritesWindowController implements Initializable {
     public ImageView imageViewPreview;
     @FXML
     public StackPane stackPanePreview;
+    @FXML
+    public TextField textFieldSearch;
 
+    private FilteredList<FavoritesModel.FavoriteModel> filteredList;
     private FavoritesController favoritesController;
     private final ReadOnlyObjectWrapper<FavoritesModel.FavoriteModel> selectedFavorite =
             new ReadOnlyObjectWrapper<>(null);
 
     public void setFavoritesController(FavoritesController favoritesController) {
         this.favoritesController = favoritesController;
-        listViewFavorites.setItems(favoritesController.getFavorites());
+        this.filteredList = new FilteredList<>(favoritesController.getFavorites(), favoriteModel -> true);
+        listViewFavorites.setItems(filteredList);
 
         if (listViewFavorites.getItems().size() > 0) {
             listViewFavorites.getSelectionModel().select(0);
@@ -75,6 +81,15 @@ public class FavoritesWindowController implements Initializable {
             imageViewPreview.setImage(preview);
             imageViewPreview.fitHeightProperty().bind(stackPanePreview.heightProperty());
             imageViewPreview.fitWidthProperty().bind(stackPanePreview.widthProperty());
+        }));
+
+        textFieldSearch.textProperty().addListener(((observable, oldValue, newValue) -> {
+            filteredList.setPredicate(favoriteModel -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                return favoriteModel.getPath().toLowerCase().contains(newValue.toLowerCase());
+            });
         }));
     }
 
@@ -114,7 +129,8 @@ public class FavoritesWindowController implements Initializable {
 
     @FXML
     public void buttonRemove_onAction(ActionEvent actionEvent) {
-        listViewFavorites.getItems().remove(listViewFavorites.getSelectionModel().getSelectedIndex());
+        favoritesController.getFavorites().remove(filteredList.getSourceIndexFor(
+                favoritesController.getFavorites(), listViewFavorites.getSelectionModel().getSelectedIndex()));
         favoritesController.saveFavorites();
     }
 
@@ -132,7 +148,7 @@ public class FavoritesWindowController implements Initializable {
             return;
         }
 
-        listViewFavorites.getItems().clear();
+        favoritesController.getFavorites().clear();
         favoritesController.saveFavorites();
     }
 
@@ -146,7 +162,12 @@ public class FavoritesWindowController implements Initializable {
             }
         }
 
-        listViewFavorites.getItems().removeAll(removeThese);
+        favoritesController.getFavorites().removeAll(removeThese);
         favoritesController.saveFavorites();
+    }
+
+    @FXML
+    public void textFieldSearch_onAction(ActionEvent actionEvent) {
+
     }
 }
