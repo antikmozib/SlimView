@@ -12,7 +12,7 @@ import java.util.List;
  * Class to serialize favorites to an xml file
  */
 public class FavoritesModel implements Serializable {
-    public List<FavoriteModel> favoritesList = new ArrayList<>();
+    private List<FavoriteModel> favoritesList = new ArrayList<>();
 
     public FavoritesModel() {
     }
@@ -30,7 +30,7 @@ public class FavoritesModel implements Serializable {
     }
 
     public static class FavoriteModel implements Serializable {
-        public String path;
+        private String path;
 
         public String getPath() {
             return path;

@@ -44,16 +44,16 @@ public class FavoritesController {
 
     private void loadFavorites() {
         FavoritesModel favoritesModel = Util.readDataFile(FavoritesModel.class, Util.DataFileType.FAVORITES);
-        if (favoritesModel == null || favoritesModel.favoritesList == null) {
+        if (favoritesModel == null || favoritesModel.getFavoritesList() == null) {
             return;
         }
 
-        favorites.addAll(favoritesModel.favoritesList);
+        favorites.addAll(favoritesModel.getFavoritesList());
     }
 
     public void saveFavorites() {
         FavoritesModel favoritesModel = new FavoritesModel();
-        favoritesModel.favoritesList.addAll(favorites);
+        favoritesModel.getFavoritesList().addAll(favorites);
         Util.writeDataFile(favoritesModel, Util.DataFileType.FAVORITES);
     }
 }
