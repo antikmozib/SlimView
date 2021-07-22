@@ -255,7 +255,7 @@ public class MainWindowController implements Initializable {
                 preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
 
         // load recent files
-        RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileType.RECENT_FILES);
+        RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileLocation.RECENT_FILES);
         if (recentFiles == null) {
             recentFiles = new RecentFiles();
         }
@@ -659,17 +659,12 @@ public class MainWindowController implements Initializable {
             );
         }
 
-        if (mainViewModel.getSelectedImageModel() != null) {
-            if (mainViewModel.getSelectedImageModel().hasOriginal()) {
-                fileChooser.setInitialDirectory(
-                        new File(mainViewModel.getSelectedImageModel().getResamplePath()).getParentFile());
-            } else {
-                fileChooser.setInitialDirectory(
-                        new File(mainViewModel.getSelectedImageModel().getPath()).getParentFile());
-            }
-        }
+        fileChooser.setInitialDirectory(
+                new File(preferences.get("OpenLocation", System.getProperty("user.home"))));
+
         File file = fileChooser.showOpenDialog(imageViewMain.getScene().getWindow());
         if (file != null) {
+            preferences.put("OpenLocation", file.getParentFile().getPath());
             mainViewModel.loadImage(new ImageModel(file.getPath()));
         }
     }
@@ -683,10 +678,14 @@ public class MainWindowController implements Initializable {
                 new FileChooser.ExtensionFilter("PNG Image", "*.png"),
                 new FileChooser.ExtensionFilter("GIF Image", "*.gif")
         );
+
         fileChooser.setInitialFileName(mainViewModel.getSelectedImageModel().getShortName());
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setInitialDirectory(
+                new File(preferences.get("SaveAsLocation", System.getProperty("user.home"))));
+
         File file = fileChooser.showSaveDialog(imageViewMain.getScene().getWindow());
         if (file != null) {
+            preferences.put("SaveAsLocation", file.getParentFile().getPath());
             mainViewModel.saveImage(mainViewModel.getSelectedImageModel(), file.getPath());
         }
     }

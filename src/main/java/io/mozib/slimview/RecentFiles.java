@@ -31,10 +31,6 @@ public class RecentFiles implements Serializable {
         public RecentFile() {
         }
 
-        public long getLastSeen() {
-            return lastSeen;
-        }
-
         public String getPath() {
             return path;
         }
@@ -42,6 +38,14 @@ public class RecentFiles implements Serializable {
         public void setPath(String path) {
             this.path = path;
             this.lastSeen = System.currentTimeMillis();
+        }
+
+        public long getLastSeen() {
+            return lastSeen;
+        }
+
+        public void setLastSeen(long lastSeen) {
+            this.lastSeen = lastSeen;
         }
     }
 }

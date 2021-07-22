@@ -150,4 +150,12 @@ public class ImageModel {
     public boolean getIsFavorite() {
         return isFavorite;
     }
+
+    public String getBestPath() {
+        if (hasOriginal()) {
+            return getResamplePath();
+        }
+
+        return getPath();
+    }
 }

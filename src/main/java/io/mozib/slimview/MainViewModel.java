@@ -206,17 +206,9 @@ public class MainViewModel {
     }
 
     public void openInEditor(ImageModel imageModel) {
-        String path;
-
-        if (imageModel.hasOriginal()) {
-            path = imageModel.getResamplePath();
-        } else {
-            path = imageModel.getPath();
-        }
-
         if (getOSType() == OSType.Windows) {
             try {
-                Runtime.getRuntime().exec("mspaint \"" + path + "\"");
+                Runtime.getRuntime().exec("mspaint \"" + imageModel.getBestPath() + "\"");
             } catch (IOException ignored) {
 
             }
@@ -224,23 +216,15 @@ public class MainViewModel {
     }
 
     public void openContainingFolder(ImageModel imageModel) {
-        String path;
-
-        if (imageModel.hasOriginal()) {
-            path = imageModel.getResamplePath();
-        } else {
-            path = imageModel.getPath();
-        }
-
         if (getOSType() == OSType.Windows) {
             try {
-                Runtime.getRuntime().exec("explorer.exe /select, \"\"" + path + "\"\"");
+                Runtime.getRuntime().exec("explorer.exe /select, \"\"" + imageModel.getBestPath() + "\"\"");
             } catch (IOException ignored) {
 
             }
         } else {
             try {
-                Desktop.getDesktop().open(new File(path).getParentFile());
+                Desktop.getDesktop().open(new File(imageModel.getBestPath()).getParentFile());
             } catch (IOException ignored) {
 
             }
@@ -248,26 +232,11 @@ public class MainViewModel {
     }
 
     public void setAsFavorite(ImageModel imageModel, boolean value) {
-
-        if (value &&
-                (((imageModel.hasOriginal() && !favoritesController.exists(imageModel.getResamplePath()))) ||
-                        (!imageModel.hasOriginal() && !favoritesController.exists(imageModel.getPath())))) {
-
-            if (imageModel.hasOriginal()) {
-                favoritesController.add(imageModel.getResamplePath());
-            } else {
-                favoritesController.add(imageModel.getPath());
-            }
+        if (value && !favoritesController.exists(imageModel.getBestPath())) {
+            favoritesController.add(imageModel.getBestPath());
         } else if (!value) {
-
-            if (imageModel.hasOriginal()) {
-                favoritesController.remove(imageModel.getResamplePath());
-            } else {
-                favoritesController.remove(imageModel.getPath());
-            }
+            favoritesController.remove(imageModel.getBestPath());
         }
-
-        //imageModel.getFavoriteProperty().set(value);
     }
 
     public void copyToClipboard(ImageModel imageModel) {
@@ -393,15 +362,7 @@ public class MainViewModel {
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
         var file = new File(Paths.get(tempDirectory(), imageModel.getShortName()).toString());
         var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(imageModel.getImage(), null), rotation);
-        String resamplePath;
-
-        if (imageModel.hasOriginal()) {
-            resamplePath = imageModel.getResamplePath();
-        } else {
-            resamplePath = imageModel.getPath();
-        }
-
-        editImage(rotated, file, resamplePath);
+        editImage(rotated, file, imageModel.getBestPath());
     }
 
     /**
@@ -409,17 +370,11 @@ public class MainViewModel {
      */
     private int getCurrentIndex() {
         if (imageModels != null && getSelectedImageModel() != null) {
-            if (!getSelectedImageModel().hasOriginal()) {
-                return imageModels.indexOf(imageModels.stream()
-                        .filter(item -> getSelectedImageModel().getPath().equals(item.getPath()))
-                        .findAny()
-                        .orElse(null));
-            } else {
-                return imageModels.indexOf(imageModels.stream()
-                        .filter(item -> getSelectedImageModel().getResamplePath().equals(item.getPath()))
-                        .findAny()
-                        .orElse(null));
-            }
+
+            return imageModels.indexOf(imageModels.stream()
+                    .filter(item -> getSelectedImageModel().getBestPath().equals(item.getPath()))
+                    .findAny()
+                    .orElse(null));
         }
         return 0;
     }
@@ -435,10 +390,7 @@ public class MainViewModel {
     }
 
     private boolean isFavorite(ImageModel imageModel) {
-        if (imageModel.hasOriginal()) {
-            return favoritesController.exists(imageModel.getResamplePath());
-        } else {
-            return favoritesController.exists(imageModel.getPath());
-        }
+
+        return favoritesController.exists(imageModel.getBestPath());
     }
 }

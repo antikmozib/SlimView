@@ -43,7 +43,7 @@ public class FavoritesController {
     }
 
     private void loadFavorites() {
-        FavoritesModel favoritesModel = Util.readDataFile(FavoritesModel.class, Util.DataFileType.FAVORITES);
+        FavoritesModel favoritesModel = Util.readDataFile(FavoritesModel.class, Util.DataFileLocation.FAVORITES);
         if (favoritesModel == null || favoritesModel.getFavoritesList() == null) {
             return;
         }
@@ -54,6 +54,6 @@ public class FavoritesController {
     public void saveFavorites() {
         FavoritesModel favoritesModel = new FavoritesModel();
         favoritesModel.getFavoritesList().addAll(favorites);
-        Util.writeDataFile(favoritesModel, Util.DataFileType.FAVORITES);
+        Util.writeDataFile(favoritesModel, Util.DataFileLocation.FAVORITES);
     }
 }

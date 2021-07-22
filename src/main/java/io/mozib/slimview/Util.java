@@ -18,6 +18,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+/**
+ * A collection of various static utility methods
+ */
 public class Util {
     public enum OSType {
         Windows, Mac, Linux
@@ -35,18 +38,18 @@ public class Util {
         return null;
     }
 
-    public enum DataFileType {
+    public enum DataFileLocation {
         RECENT_FILES, COPY_TO_DESTINATIONS, FAVORITES
     }
 
     /**
      * @return Path to the xml settings file
      */
-    public static String getDataFile(DataFileType dataFileType) {
+    public static String getDataFile(DataFileLocation dataFileLocation) {
         createSettingsDir();
         Path path = Paths.get(System.getProperty("user.home"), ".slimview");
 
-        switch (dataFileType) {
+        switch (dataFileLocation) {
             case RECENT_FILES:
                 path = Paths.get(path.toString(), "recent.xml");
                 break;
@@ -111,7 +114,7 @@ public class Util {
     }
 
     public static void addToRecent(String path) {
-        RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, DataFileType.RECENT_FILES);
+        RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, DataFileLocation.RECENT_FILES);
 
         if (recentFiles == null) {
             recentFiles = new RecentFiles();
@@ -147,7 +150,7 @@ public class Util {
         RecentFiles.RecentFile newRecent = new RecentFiles.RecentFile();
         newRecent.setPath(path);
         recentFiles.getRecentFiles().add(newRecent);
-        writeDataFile(recentFiles, DataFileType.RECENT_FILES);
+        writeDataFile(recentFiles, DataFileLocation.RECENT_FILES);
     }
 
     /**
@@ -178,18 +181,18 @@ public class Util {
     }
 
     /**
-     * @param classType    The type of object the xml mapper will map to
-     * @param dataFileType The location of the setting file, determined through its enum
-     * @param <T>          Generic type
+     * @param classType        The type of object the xml mapper will map to
+     * @param dataFileLocation The location of the setting file, determined through its enum
+     * @param <T>              Generic type
      * @return Data read from xml file and mapped to a JavaBean
      */
-    public static <T> T readDataFile(Class<T> classType, DataFileType dataFileType) {
+    public static <T> T readDataFile(Class<T> classType, DataFileLocation dataFileLocation) {
         XmlMapper xmlMapper = new XmlMapper();
         String xml;
         T data = null;
 
         try {
-            xml = inputStreamToString(new FileInputStream(getDataFile(dataFileType)));
+            xml = inputStreamToString(new FileInputStream(getDataFile(dataFileLocation)));
             data = xmlMapper.readValue(xml, classType);
             if (data == null) {
                 data = classType.getDeclaredConstructor().newInstance();
@@ -208,13 +211,13 @@ public class Util {
     }
 
     /**
-     * @param data         Object to write to an xml file
-     * @param dataFileType Location of the xml file
+     * @param data             Object to write to an xml file
+     * @param dataFileLocation Location of the xml file
      */
-    public static void writeDataFile(Object data, DataFileType dataFileType) {
+    public static void writeDataFile(Object data, DataFileLocation dataFileLocation) {
         XmlMapper xmlMapper = new XmlMapper();
         try {
-            xmlMapper.writeValue(new File(getDataFile(dataFileType)), data);
+            xmlMapper.writeValue(new File(getDataFile(dataFileLocation)), data);
         } catch (IOException e) {
             e.printStackTrace();
         }

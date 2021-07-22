@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.mozib.slimview.Util.DataFileType;
+import static io.mozib.slimview.Util.DataFileLocation;
 
 public class CopyFileToViewModel {
     public ObservableList<CopyToDestinations.CopyToDestination> destinations;
@@ -45,7 +45,7 @@ public class CopyFileToViewModel {
     public CopyFileToViewModel(ImageModel source) {
         CopyToDestinations copyToDestinations = Util.readDataFile(
                 CopyToDestinations.class,
-                DataFileType.COPY_TO_DESTINATIONS);
+                DataFileLocation.COPY_TO_DESTINATIONS);
 
         if (copyToDestinations == null) {
             copyToDestinations = new CopyToDestinations();
@@ -62,7 +62,7 @@ public class CopyFileToViewModel {
     public void saveDestinations() {
         CopyToDestinations copyToDestinations = new CopyToDestinations();
         copyToDestinations.setDestinations( destinations);
-        Util.writeDataFile(copyToDestinations, DataFileType.COPY_TO_DESTINATIONS);
+        Util.writeDataFile(copyToDestinations, DataFileLocation.COPY_TO_DESTINATIONS);
     }
 
     /**

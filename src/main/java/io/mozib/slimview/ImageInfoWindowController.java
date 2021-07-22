@@ -26,11 +26,7 @@ public class ImageInfoWindowController {
         StringBuilder info = new StringBuilder();
         String path;
 
-        if (imageModel.hasOriginal()) {
-            path = imageModel.getResamplePath();
-        } else {
-            path = imageModel.getPath();
-        }
+        path = imageModel.getBestPath();
 
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(new File(path));
