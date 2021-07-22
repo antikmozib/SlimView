@@ -40,7 +40,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
-import static io.mozib.slimview.Common.getOSType;
+import static io.mozib.slimview.Util.getOSType;
 
 public class MainWindowController implements Initializable {
 
@@ -255,7 +255,7 @@ public class MainWindowController implements Initializable {
                 preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
 
         // load recent files
-        RecentFiles recentFiles = Common.readDataFile(RecentFiles.class, Common.DataFileType.RECENT_FILES);
+        RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileType.RECENT_FILES);
         if (recentFiles == null) {
             recentFiles = new RecentFiles();
         }
@@ -641,7 +641,7 @@ public class MainWindowController implements Initializable {
     private void open() {
         FileChooser fileChooser = new FileChooser();
 
-        if (getOSType() == Common.OSType.Windows) {
+        if (getOSType() == Util.OSType.Windows) {
 
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("Images", "*.jpg;*.jpeg;*.png;*.gif"),

@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.prefs.Preferences;
 
-import static io.mozib.slimview.Common.tempDirectory;
+import static io.mozib.slimview.Util.tempDirectory;
 
 public class SlimView extends Application {
     private static String[] cmdLineArgs;

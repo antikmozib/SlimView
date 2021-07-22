@@ -13,8 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
-import static io.mozib.slimview.Common.DataFileType;
+import static io.mozib.slimview.Util.DataFileType;
 
 public class CopyFileToViewModel {
     public ObservableList<CopyToDestinations.CopyToDestination> destinations;
@@ -42,7 +43,7 @@ public class CopyFileToViewModel {
     }
 
     public CopyFileToViewModel(ImageModel source) {
-        CopyToDestinations copyToDestinations = Common.readDataFile(
+        CopyToDestinations copyToDestinations = Util.readDataFile(
                 CopyToDestinations.class,
                 DataFileType.COPY_TO_DESTINATIONS);
 
@@ -61,11 +62,14 @@ public class CopyFileToViewModel {
     public void saveDestinations() {
         CopyToDestinations copyToDestinations = new CopyToDestinations();
         copyToDestinations.destinations = destinations;
-        Common.writeDataFile(copyToDestinations, DataFileType.COPY_TO_DESTINATIONS);
+        Util.writeDataFile(copyToDestinations, DataFileType.COPY_TO_DESTINATIONS);
     }
 
-    public void copy(OnConflict onConflict, ObservableList<CopyToDestinations.CopyToDestination> destinations) {
+    public List<IOException> copy(OnConflict onConflict,
+                                  ObservableList<CopyToDestinations.CopyToDestination> destinations) {
+        List<IOException> exceptions = new ArrayList<>();
         File original = new File(source.getPath());
+
         for (CopyToDestinations.CopyToDestination destination : destinations) {
             File copied = Paths.get(destination.getDestination(), source.getShortName()).toFile();
 
@@ -84,9 +88,12 @@ public class CopyFileToViewModel {
 
             try {
                 FileUtils.copyFile(original, copied);
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                exceptions.add(e);
             }
         }
+
+        return exceptions;
     }
 
     public String getNewFilePath(String originalFilePath) {

@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.mozib.slimview.Common.*;
+import static io.mozib.slimview.Util.*;
 
 public class MainViewModel {
 

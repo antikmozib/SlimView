@@ -8,15 +8,16 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -111,24 +112,52 @@ public class CopyFileToWindowController implements Initializable {
         }
     }
 
+    @FXML
     private void copy() {
         if (listViewMain.getSelectionModel().getSelectedItem() == null) {
             return;
         }
 
         // save selected locations
-        String selectedDestinations = "";
+        StringBuilder selectedDestinations = new StringBuilder();
         for (CopyToDestinations.CopyToDestination cd : listViewMain.getSelectionModel().getSelectedItems()) {
-            selectedDestinations = selectedDestinations + cd.getDestination() + ";";
+            selectedDestinations.append(cd.getDestination()).append(";");
         }
         // remove last semicolon
         if (selectedDestinations.length() > 1) {
-            selectedDestinations = selectedDestinations.substring(0, selectedDestinations.length() - 1);
+            selectedDestinations = new StringBuilder(selectedDestinations.substring(0, selectedDestinations.length() - 1));
         }
-        preferences.put("SelectedDestinations", selectedDestinations);
+        preferences.put("SelectedDestinations", selectedDestinations.toString());
 
-        copyFileToViewModel.copy(comboBoxOnConflict.getSelectionModel().getSelectedItem(),
+        var result = copyFileToViewModel.copy(comboBoxOnConflict.getSelectionModel().getSelectedItem(),
                 listViewMain.getSelectionModel().getSelectedItems());
+
+        if (result.size() > 0) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Copying Files");
+            alert.initOwner(listViewMain.getScene().getWindow());
+            alert.setHeaderText(result.size() + " error(s) occurred");
+
+            StringBuilder contentText = new StringBuilder();
+            for (IOException e : result) {
+                contentText.append(e.getMessage()).append("\n");
+            }
+
+            TextArea textArea = new TextArea(contentText.toString());
+            textArea.setEditable(false);
+            textArea.setWrapText(false);
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(textArea, 0, 0);
+
+            alert.getDialogPane().setExpandableContent(expContent);
+            alert.showAndWait();
+        }
+
         close();
     }
 

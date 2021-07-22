@@ -18,7 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class Common {
+public class Util {
     public enum OSType {
         Windows, Mac, Linux
     }
@@ -111,7 +111,7 @@ public class Common {
     }
 
     public static void addToRecent(String path) {
-        RecentFiles recentFiles = Common.readDataFile(RecentFiles.class, DataFileType.RECENT_FILES);
+        RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, DataFileType.RECENT_FILES);
 
         if (recentFiles == null) {
             recentFiles = new RecentFiles();
