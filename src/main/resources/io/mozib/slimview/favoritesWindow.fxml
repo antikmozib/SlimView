@@ -24,7 +24,7 @@
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TextField fx:id="textFieldSearch" onAction="#textFieldSearch_onAction" promptText="Type to search..." />
+                        <TextField fx:id="textFieldSearch" onAction="#textFieldSearch_onAction" onKeyPressed="#textFieldSearch_onKeyPress" promptText="Type to search..." />
                         <ListView fx:id="listViewFavorites" onKeyPressed="#listViewFavorites_onKeyPress" onMouseClicked="#listViewFavorites_onClick" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>

@@ -16,6 +16,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -169,5 +170,12 @@ public class FavoritesWindowController implements Initializable {
     @FXML
     public void textFieldSearch_onAction(ActionEvent actionEvent) {
 
+    }
+
+    @FXML
+    public void textFieldSearch_onKeyPress(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.DOWN) {
+            listViewFavorites.requestFocus();
+        }
     }
 }

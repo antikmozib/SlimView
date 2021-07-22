@@ -586,6 +586,7 @@ public class MainWindowController implements Initializable {
     public void tButtonFavorite_onAction(ActionEvent actionEvent) {
         mainViewModel.setAsFavorite(mainViewModel.getSelectedImageModel(),
                 ((ToggleButton) actionEvent.getSource()).isSelected());
+        imageViewMain.requestFocus();
     }
 
     @FXML
@@ -659,8 +660,11 @@ public class MainWindowController implements Initializable {
             );
         }
 
-        fileChooser.setInitialDirectory(
-                new File(preferences.get("OpenLocation", System.getProperty("user.home"))));
+        File initialDirectory = new File(preferences.get("OpenLocation", System.getProperty("user.home")));
+        if (!initialDirectory.exists() || !initialDirectory.isDirectory()) {
+            initialDirectory = new File(System.getProperty("user.home"));
+        }
+        fileChooser.setInitialDirectory(initialDirectory);
 
         File file = fileChooser.showOpenDialog(imageViewMain.getScene().getWindow());
         if (file != null) {
@@ -680,8 +684,12 @@ public class MainWindowController implements Initializable {
         );
 
         fileChooser.setInitialFileName(mainViewModel.getSelectedImageModel().getShortName());
-        fileChooser.setInitialDirectory(
-                new File(preferences.get("SaveAsLocation", System.getProperty("user.home"))));
+
+        File initialDirectory = new File(preferences.get("SaveAsLocation", System.getProperty("user.home")));
+        if (!initialDirectory.exists() || !initialDirectory.isDirectory()) {
+            initialDirectory = new File(System.getProperty("user.home"));
+        }
+        fileChooser.setInitialDirectory(initialDirectory);
 
         File file = fileChooser.showSaveDialog(imageViewMain.getScene().getWindow());
         if (file != null) {

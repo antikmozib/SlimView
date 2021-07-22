@@ -68,26 +68,6 @@
                      </accelerator>
                   </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem id="menuResize" fx:id="menuResize" onAction="#menuResize_onAction" text="R_esize">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator></MenuItem>
-                    </items>
-                </Menu>
-                <Menu text="_View">
-                    <items>
-                        <RadioMenuItem fx:id="menuFitToWindow" onAction="#menuFitToWindow_onAction" text="Fit To _Window">
-                            <accelerator>
-                                <KeyCodeCombination alt="DOWN" code="F" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                            </accelerator>
-                        </RadioMenuItem>
-                        <RadioMenuItem fx:id="menuOriginalSize" onAction="#menuOriginalSize_onAction" text="_Original Size">
-                            <accelerator>
-                                <KeyCodeCombination alt="DOWN" code="H" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                            </accelerator>
-                        </RadioMenuItem>
-                        <RadioMenuItem fx:id="menuStretched" onAction="#menuStretched_onAction" text="_Stretched" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
                         <Menu id="menuRotate" fx:id="menuRotate" text="Ro_tate">
                             <items>
                                 <MenuItem id="menuRotateLeft" fx:id="menuRotateLeft" onAction="#menuRotateLeft_onAction" text="Rotate _Left">
@@ -117,6 +97,34 @@
                             </items>
                         </Menu>
                         <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem id="menuResize" fx:id="menuResize" onAction="#menuResize_onAction" text="R_esize">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <Menu text="Sor_t">
+                            <items>
+                                <RadioMenuItem fx:id="menuSortByName" onAction="#menuSortByName_onAction" text="Sort By _Name" />
+                                <RadioMenuItem fx:id="menuSortByCreated" onAction="#menuSortByCreated_onAction" text="Sort By Date _Created" />
+                                <RadioMenuItem fx:id="menuSortByModified" onAction="#menuSortByModified_onAction" text="Sort By Date _Modified" />
+                            </items>
+                        </Menu>
+                    </items>
+                </Menu>
+                <Menu text="_View">
+                    <items>
+                        <RadioMenuItem fx:id="menuFitToWindow" onAction="#menuFitToWindow_onAction" text="Fit To _Window">
+                            <accelerator>
+                                <KeyCodeCombination alt="DOWN" code="F" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                            </accelerator>
+                        </RadioMenuItem>
+                        <RadioMenuItem fx:id="menuOriginalSize" onAction="#menuOriginalSize_onAction" text="_Original Size">
+                            <accelerator>
+                                <KeyCodeCombination alt="DOWN" code="H" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                            </accelerator>
+                        </RadioMenuItem>
+                        <RadioMenuItem fx:id="menuStretched" onAction="#menuStretched_onAction" text="_Stretched" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem id="menuZoomIn" fx:id="menuZoomIn" onAction="#menuZoomIn_onAction" text="Zoom _In">
                             <accelerator>
                                 <KeyCodeCombination alt="ANY" code="ADD" control="UP" meta="UP" shift="UP" shortcut="UP" />
@@ -138,14 +146,6 @@
                                 <KeyCodeCombination alt="UP" code="F11" control="UP" meta="UP" shift="UP" shortcut="ANY" />
                             </accelerator>
                         </RadioMenuItem>
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <Menu text="Sor_t">
-                            <items>
-                                <RadioMenuItem fx:id="menuSortByName" onAction="#menuSortByName_onAction" text="Sort By _Name" />
-                                <RadioMenuItem fx:id="menuSortByCreated" onAction="#menuSortByCreated_onAction" text="Sort By Date _Created" />
-                                <RadioMenuItem fx:id="menuSortByModified" onAction="#menuSortByModified_onAction" text="Sort By Date _Modified" />
-                            </items>
-                        </Menu>
                     </items>
                 </Menu>
             <Menu text="_Tools">
