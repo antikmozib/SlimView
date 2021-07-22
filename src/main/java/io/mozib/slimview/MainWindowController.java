@@ -259,10 +259,10 @@ public class MainWindowController implements Initializable {
         if (recentFiles == null) {
             recentFiles = new RecentFiles();
         }
-        if (recentFiles.recentFileList == null) {
-            recentFiles.recentFileList = new ArrayList<>();
+        if (recentFiles.getRecentFiles() == null) {
+            recentFiles.setRecentFiles(new ArrayList<>());
         }
-        for (RecentFiles.RecentFile recentFile : recentFiles.recentFileList) {
+        for (RecentFiles.RecentFile recentFile : recentFiles.getRecentFiles()) {
             MenuItem menuItem = new MenuItem(recentFile.getPath());
             menuItem.setOnAction(event -> {
                 mainViewModel.loadImage(new ImageModel(menuItem.getText()));

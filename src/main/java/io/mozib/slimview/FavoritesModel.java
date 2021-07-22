@@ -17,10 +17,6 @@ public class FavoritesModel implements Serializable {
     public FavoritesModel() {
     }
 
-    public FavoritesModel(List<FavoriteModel> favoritesList) {
-        this.favoritesList = favoritesList;
-    }
-
     public void setFavoritesList(List<FavoriteModel> favoritesList) {
         this.favoritesList = favoritesList;
     }

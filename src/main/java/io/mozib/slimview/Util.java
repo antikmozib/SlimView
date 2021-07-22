@@ -117,36 +117,36 @@ public class Util {
             recentFiles = new RecentFiles();
         }
 
-        if (recentFiles.recentFileList == null) {
-            recentFiles.recentFileList = new ArrayList<>();
+        if (recentFiles.getRecentFiles() == null) {
+            recentFiles.setRecentFiles(new ArrayList<>());
         }
 
         // if file already exists in recent, don't add again
-        for (RecentFiles.RecentFile rf : recentFiles.recentFileList) {
+        for (RecentFiles.RecentFile rf : recentFiles.getRecentFiles()) {
             if (rf.getPath().equals(path)) {
                 return;
             }
         }
 
-        if (recentFiles.recentFileList.size() >= 5) {
+        if (recentFiles.getRecentFiles().size() >= 5) {
             long oldestSeen = System.currentTimeMillis();
-            for (RecentFiles.RecentFile rf : recentFiles.recentFileList) {
+            for (RecentFiles.RecentFile rf : recentFiles.getRecentFiles()) {
                 if (rf.getLastSeen() < oldestSeen) {
                     oldestSeen = rf.getLastSeen();
                 }
             }
             RecentFiles.RecentFile remove = null;
-            for (RecentFiles.RecentFile rf : recentFiles.recentFileList) {
+            for (RecentFiles.RecentFile rf : recentFiles.getRecentFiles()) {
                 if (rf.getLastSeen() == oldestSeen) {
                     remove = rf;
                     break;
                 }
             }
-            recentFiles.recentFileList.remove(remove);
+            recentFiles.getRecentFiles().remove(remove);
         }
         RecentFiles.RecentFile newRecent = new RecentFiles.RecentFile();
         newRecent.setPath(path);
-        recentFiles.recentFileList.add(newRecent);
+        recentFiles.getRecentFiles().add(newRecent);
         writeDataFile(recentFiles, DataFileType.RECENT_FILES);
     }
 

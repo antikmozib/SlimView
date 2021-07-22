@@ -9,10 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecentFiles implements Serializable {
-    public List<RecentFile> recentFileList = new ArrayList<>();
+    private List<RecentFile> recentFiles = new ArrayList<>();
 
     // required for serialization
     public RecentFiles() {
+    }
+
+    public List<RecentFile> getRecentFiles() {
+        return recentFiles;
+    }
+
+    public void setRecentFiles(List<RecentFile> recentFiles) {
+        this.recentFiles = recentFiles;
     }
 
     public static class RecentFile implements Serializable {

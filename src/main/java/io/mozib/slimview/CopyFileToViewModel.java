@@ -51,20 +51,25 @@ public class CopyFileToViewModel {
             copyToDestinations = new CopyToDestinations();
         }
 
-        if (copyToDestinations.destinations == null) {
-            copyToDestinations.destinations = new ArrayList<>();
+        if (copyToDestinations.getDestinations() == null) {
+            copyToDestinations.setDestinations(new ArrayList<>());
         }
 
-        this.destinations = FXCollections.observableList(copyToDestinations.destinations);
+        this.destinations = FXCollections.observableList(copyToDestinations.getDestinations());
         this.source = source;
     }
 
     public void saveDestinations() {
         CopyToDestinations copyToDestinations = new CopyToDestinations();
-        copyToDestinations.destinations = destinations;
+        copyToDestinations.setDestinations( destinations);
         Util.writeDataFile(copyToDestinations, DataFileType.COPY_TO_DESTINATIONS);
     }
 
+    /**
+     * @param onConflict What to do when a conflict arises
+     * @param destinations Where to copy the file to
+     * @return A list of exceptions (if any) that occurred during the copying process
+     */
     public List<IOException> copy(OnConflict onConflict,
                                   ObservableList<CopyToDestinations.CopyToDestination> destinations) {
         List<IOException> exceptions = new ArrayList<>();

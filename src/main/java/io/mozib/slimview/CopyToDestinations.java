@@ -12,14 +12,16 @@ import java.util.List;
  * Holds the list of locations/destinations the user has chosen in the Copy File To window
  */
 public class CopyToDestinations implements Serializable {
-    public List<CopyToDestination> destinations;
+    private List<CopyToDestination> destinations = new ArrayList<>();
 
     public CopyToDestinations() {
-        this.destinations = new ArrayList<>();
     }
 
-    // required for serialization
-    public CopyToDestinations(List<CopyToDestination> destinations) {
+    public List<CopyToDestination> getDestinations() {
+        return destinations;
+    }
+
+    public void setDestinations(List<CopyToDestination> destinations) {
         this.destinations = destinations;
     }
 
