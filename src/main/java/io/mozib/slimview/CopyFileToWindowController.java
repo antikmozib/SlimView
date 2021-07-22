@@ -11,6 +11,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
@@ -186,6 +188,13 @@ public class CopyFileToWindowController implements Initializable {
                 listViewMain.getSelectionModel().select(cp);
                 return;
             }
+        }
+    }
+
+    @FXML
+    public void listViewMain_onClick(MouseEvent mouseEvent) {
+        if (mouseEvent.getButton()== MouseButton.PRIMARY && mouseEvent.getClickCount()==2) {
+            copy();
         }
     }
 }

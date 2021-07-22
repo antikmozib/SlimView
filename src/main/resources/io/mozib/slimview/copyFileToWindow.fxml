@@ -16,7 +16,7 @@
    <children>
       <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
          <children>
-            <ListView fx:id="listViewMain" onKeyPressed="#listViewMain_onKeyPress" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <ListView fx:id="listViewMain" onKeyPressed="#listViewMain_onKeyPress" onMouseClicked="#listViewMain_onClick" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
             <VBox spacing="8.0">
                <children>
                   <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#buttonAdd_onAction" prefWidth="32.0">
