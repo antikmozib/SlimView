@@ -40,6 +40,15 @@ public class MainViewModel {
     private final ReadOnlyObjectWrapper<SortStyle> selectedSortStyleWrapper = new ReadOnlyObjectWrapper<>();
     private final double zoomStep = 0.1; // how much to zoom on each step
 
+    public MainViewModel() {
+        selectedImageModelProperty().addListener(((observable, oldValue, newValue) -> {
+            if (oldValue != null) {
+                // clear caches
+                oldValue.unsetImage();
+            }
+        }));
+    }
+
     public ReadOnlyObjectProperty<ImageModel> selectedImageModelProperty() {
         return selectedImageModelWrapper.getReadOnlyProperty();
     }
@@ -62,8 +71,8 @@ public class MainViewModel {
         loadDirectory.setOnSucceeded((WorkerStateEvent event) -> {
             imageModels = (List<ImageModel>) event.getSource().getValue();
             sortImages(selectedSortStyleProperty().get());
-            setSelectedImage(imageModels.stream().filter(
-                    image -> image.getPath().equals(imageModel.getPath())).findFirst().orElse(null));
+            setSelectedImage(imageModels.stream().filter(image -> image.getPath().equals(imageModel.getPath()))
+                    .findFirst().orElse(null));
         });
         status.bind(loadDirectory.messageProperty());
         loadDirectory.start();
@@ -89,7 +98,6 @@ public class MainViewModel {
             } else {
                 setSelectedImage(imageModels.get(getCurrentIndex() + 1));
             }
-            unloadInvisibleImages();
         }
     }
 
@@ -100,7 +108,6 @@ public class MainViewModel {
             } else {
                 setSelectedImage(imageModels.get(getCurrentIndex() - 1));
             }
-            unloadInvisibleImages();
         }
     }
 
@@ -140,10 +147,9 @@ public class MainViewModel {
         if (getSelectedImageModel().getResamplePath() == null) {
             return;
         }
-        setSelectedImage(imageModels.stream()
-                .filter(item -> item.getPath().equals(getSelectedImageModel().getResamplePath()))
-                .findFirst()
-                .orElse(null));
+        setSelectedImage(
+                imageModels.stream().filter(item -> item.getPath().equals(getSelectedImageModel().getResamplePath()))
+                        .findFirst().orElse(null));
     }
 
     public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
@@ -166,11 +172,8 @@ public class MainViewModel {
         File file = new File(destination);
         try {
             file.createNewFile();
-            ImageIO.write(
-                    SwingFXUtils.fromFXImage(imageModel.getImage(), null),
-                    FilenameUtils.getExtension(destination),
-                    file
-            );
+            ImageIO.write(SwingFXUtils.fromFXImage(imageModel.getImage(), null),
+                    FilenameUtils.getExtension(destination), file);
         } catch (IOException ignored) {
 
         }
@@ -312,8 +315,8 @@ public class MainViewModel {
             return new Task<>() {
                 @Override
                 protected List<ImageModel> call() {
-                    Iterator<File> iterator = FileUtils.iterateFiles(
-                            new File(directoryPath), new String[]{"jpg", "jpeg", "png", "gif"}, false);
+                    Iterator<File> iterator = FileUtils.iterateFiles(new File(directoryPath),
+                            new String[]{"jpg", "jpeg", "png", "gif"}, false);
                     while (iterator.hasNext()) {
                         ImageModel image = new ImageModel(iterator.next().getPath());
                         images.add(image);
@@ -336,21 +339,11 @@ public class MainViewModel {
 
         selectedImageModelWrapper.set(imageModel);
         status.unbind();
-        status.set((getCurrentIndex() + 1) + " / " + imageModels.size()
-                + "  |  Resolution: " + imageModel.getResolution() + " @ " + imageModel.getColorDepth() + "-bits"
-                + "  |  Format: " + imageModel.getFormat()
-                + "  |  Size: " + imageModel.getFormattedFileSize()
-                + "  |  Created: " + formatTime(imageModel.getDateCreated())
-                + "  |  Modified: " + formatTime(imageModel.getDateModified()));
-    }
-
-    private void unloadInvisibleImages() {
-        if (getCurrentIndex() > 0) {
-            imageModels.get(getCurrentIndex() - 1).unsetImage();
-        }
-        if (getCurrentIndex() < imageModels.size() - 1) {
-            imageModels.get(getCurrentIndex() + 1).unsetImage();
-        }
+        status.set((getCurrentIndex() + 1) + " / " + imageModels.size() + "  |  Resolution: "
+                + imageModel.getResolution() + " @ " + imageModel.getColorDepth() + "-bits" + "  |  Format: "
+                + imageModel.getFormat() + "  |  Size: " + imageModel.getFormattedFileSize() + "  |  Created: "
+                + formatTime(imageModel.getDateCreated()) + "  |  Modified: "
+                + formatTime(imageModel.getDateModified()));
     }
 
     private void zoomImage(ImageModel imageModel, double percentage) {
@@ -371,10 +364,9 @@ public class MainViewModel {
     private int getCurrentIndex() {
         if (imageModels != null && getSelectedImageModel() != null) {
 
-            return imageModels.indexOf(imageModels.stream()
-                    .filter(item -> getSelectedImageModel().getBestPath().equals(item.getPath()))
-                    .findAny()
-                    .orElse(null));
+            return imageModels.indexOf(
+                    imageModels.stream().filter(item -> getSelectedImageModel().getBestPath().equals(item.getPath()))
+                            .findAny().orElse(null));
         }
         return 0;
     }

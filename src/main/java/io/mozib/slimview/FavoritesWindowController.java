@@ -10,18 +10,19 @@ import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.File;
 import java.net.URL;
@@ -39,6 +40,10 @@ public class FavoritesWindowController implements Initializable {
     public StackPane stackPanePreview;
     @FXML
     public TextField textFieldSearch;
+    @FXML
+    public Label labelFilename;
+    @FXML
+    public VBox vBoxPreview;
 
     private FilteredList<FavoritesModel.FavoriteModel> filteredList;
     private FavoritesController favoritesController;
@@ -73,6 +78,7 @@ public class FavoritesWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         listViewFavorites.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
             imageViewPreview.setImage(null);
+            labelFilename.setText("");
             imageViewPreview.fitHeightProperty().unbind();
             imageViewPreview.fitWidthProperty().unbind();
 
@@ -80,9 +86,18 @@ public class FavoritesWindowController implements Initializable {
 
             var preview = new Image(new File(newValue.toString()).toURI().toString());
             imageViewPreview.setImage(preview);
-            imageViewPreview.fitHeightProperty().bind(stackPanePreview.heightProperty());
-            imageViewPreview.fitWidthProperty().bind(stackPanePreview.widthProperty());
+            labelFilename.setText(newValue.getPath());
+            imageViewPreview.fitHeightProperty().bind(vBoxPreview.heightProperty().subtract(16));
+            imageViewPreview.fitWidthProperty().bind(vBoxPreview.widthProperty());
         }));
+
+        listViewFavorites.setCellFactory(
+                new Callback<ListView<FavoritesModel.FavoriteModel>, ListCell<FavoritesModel.FavoriteModel>>() {
+                    @Override
+                    public ListCell<FavoritesModel.FavoriteModel> call(ListView<FavoritesModel.FavoriteModel> param) {
+                        return new ImagePreviewCell();
+                    }
+                });
 
         textFieldSearch.textProperty().addListener(((observable, oldValue, newValue) -> {
             filteredList.setPredicate(favoriteModel -> {
@@ -92,6 +107,33 @@ public class FavoritesWindowController implements Initializable {
                 return favoriteModel.getPath().toLowerCase().contains(newValue.toLowerCase());
             });
         }));
+    }
+
+    private static class ImagePreviewCell extends ListCell<FavoritesModel.FavoriteModel> {
+        @Override
+        protected void updateItem(FavoritesModel.FavoriteModel item, boolean empty) {
+            super.updateItem(item, empty);
+            if (item != null) {
+                HBox hBox = new HBox();
+                ImageView imageView = new ImageView();
+
+                File file = new File(item.getPath());
+                if (!file.isDirectory() && file.exists()) {
+                    imageView.setImage(new Image(file.toURI().toString()));
+                }
+
+                imageView.preserveRatioProperty().set(true);
+                imageView.setFitHeight(112);
+                Label label = new Label(new File(item.getPath()).getName());
+                hBox.getChildren().add(imageView);
+                hBox.getChildren().add(label);
+                hBox.setSpacing(8);
+                hBox.setAlignment(Pos.CENTER_LEFT);
+                setGraphic(hBox);
+            } else {
+                setGraphic(null);
+            }
+        }
     }
 
     private void open() {

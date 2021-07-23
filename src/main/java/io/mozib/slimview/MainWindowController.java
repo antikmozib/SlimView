@@ -261,6 +261,10 @@ public class MainWindowController implements Initializable {
         }
         if (recentFiles.getRecentFiles() == null) {
             recentFiles.setRecentFiles(new ArrayList<>());
+        } else {
+            recentFiles.getRecentFiles().sort(((o1, o2) -> {
+                return Long.compare(o2.getLastSeen(), o1.getLastSeen());
+            }));
         }
         for (RecentFiles.RecentFile recentFile : recentFiles.getRecentFiles()) {
             MenuItem menuItem = new MenuItem(recentFile.getPath());
