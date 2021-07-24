@@ -44,7 +44,6 @@ public class AppUpdateService extends Service<Boolean> {
             protected Boolean call() throws Exception {
                 updateUrlWrapper.set("");
 
-                BufferedReader in;
                 String response = "";
                 RequestConfig requestConfig = RequestConfig
                         .custom()
@@ -54,17 +53,18 @@ public class AppUpdateService extends Service<Boolean> {
                         .build();
                 HttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
                 HttpPost httpPost = new HttpPost(apiUrl);
-                List<NameValuePair> params = new ArrayList<>();
 
+                List<NameValuePair> params = new ArrayList<>();
                 params.add(new BasicNameValuePair("appname", "slimview"));
                 params.add(new BasicNameValuePair("version", getAppVer()));
                 httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+
                 HttpResponse httpResponse = httpClient.execute(httpPost);
                 HttpEntity httpEntity = httpResponse.getEntity();
 
                 if (httpEntity != null) {
                     InputStream inputStream = httpEntity.getContent();
-                    in = new BufferedReader(new InputStreamReader(inputStream));
+                    BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
                     String inputLine;
 
                     while ((inputLine = in.readLine()) != null) {

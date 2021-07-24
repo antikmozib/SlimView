@@ -1,0 +1,11 @@
+/*
+ * Copyright (C) 2021 Antik Mozib. All rights reserved.
+ */
+
+#labelFilename {
+    -fx-text-fill: #00ff00;
+}
+
+#anchorPanePreview {
+    -fx-background-color: #000;
+}

@@ -31,18 +31,18 @@
                   </VBox>
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="289.0">
+          <AnchorPane id="anchorPanePreview" fx:id="anchorPanePreview" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="289.0">
                <children>
-                  <VBox fx:id="vBoxPreview" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox alignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Label fx:id="labelFilename" text="Label" textAlignment="CENTER" />
-                        <StackPane fx:id="stackPanePreview" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <ImageView fx:id="imageViewPreview" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                           </children>
-                        </StackPane>
+                        <Label id="labelFilename" fx:id="labelFilename" textAlignment="CENTER" />
                      </children>
-                  </VBox>
+                  </HBox>
+                  <StackPane id="stackPanePreview" fx:id="stackPanePreview" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <ImageView fx:id="imageViewPreview" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </StackPane>
                </children>
             </AnchorPane>
         </items>

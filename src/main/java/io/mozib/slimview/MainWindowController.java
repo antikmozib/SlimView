@@ -598,6 +598,8 @@ public class MainWindowController implements Initializable {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("favoritesWindow.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(
+                Objects.requireNonNull(getClass().getResource("favoritesWindowStyle.css")).toExternalForm());
         FavoritesWindowController controller = fxmlLoader.getController();
         Stage favoritesWindow = new Stage();
         favoritesWindow.setScene(scene);

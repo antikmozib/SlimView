@@ -18,9 +18,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -43,7 +43,7 @@ public class FavoritesWindowController implements Initializable {
     @FXML
     public Label labelFilename;
     @FXML
-    public VBox vBoxPreview;
+    public AnchorPane anchorPanePreview;
 
     private FilteredList<FavoritesModel.FavoriteModel> filteredList;
     private FavoritesController favoritesController;
@@ -76,6 +76,7 @@ public class FavoritesWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        anchorPanePreview.getChildren().get(anchorPanePreview.getChildren().indexOf(stackPanePreview)).toBack();
         listViewFavorites.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
             imageViewPreview.setImage(null);
             labelFilename.setText("");
@@ -87,8 +88,8 @@ public class FavoritesWindowController implements Initializable {
             var preview = new Image(new File(newValue.toString()).toURI().toString());
             imageViewPreview.setImage(preview);
             labelFilename.setText(newValue.getPath());
-            imageViewPreview.fitHeightProperty().bind(vBoxPreview.heightProperty().subtract(16));
-            imageViewPreview.fitWidthProperty().bind(vBoxPreview.widthProperty());
+            imageViewPreview.fitHeightProperty().bind(anchorPanePreview.heightProperty());
+            imageViewPreview.fitWidthProperty().bind(anchorPanePreview.widthProperty());
         }));
 
         listViewFavorites.setCellFactory(
@@ -123,8 +124,9 @@ public class FavoritesWindowController implements Initializable {
                 }
 
                 imageView.preserveRatioProperty().set(true);
-                imageView.setFitHeight(112);
+                imageView.setFitHeight(96);
                 Label label = new Label(new File(item.getPath()).getName());
+                label.setWrapText(true);
                 hBox.getChildren().add(imageView);
                 hBox.getChildren().add(label);
                 hBox.setSpacing(8);

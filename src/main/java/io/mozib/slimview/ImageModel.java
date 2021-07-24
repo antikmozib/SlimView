@@ -158,4 +158,10 @@ public class ImageModel {
 
         return getPath();
     }
+
+    public void preCacheImage() {
+        if (image == null) {
+            getImage();
+        }
+    }
 }
