@@ -1,2 +1,2 @@
 call mvn clean package
-copy acknowledgements.txt target\acknowledgements.txt
+copy notice.txt target\notice.txt

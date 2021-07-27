@@ -4,12 +4,6 @@
 
 package io.mozib.slimview;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ResourceBundle;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -19,7 +13,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
-import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ResourceBundle;
 
 public class AboutWindowController implements Initializable {
     @FXML
@@ -34,7 +32,7 @@ public class AboutWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         labelVersion.setText("Version: " + this.getClass().getPackage().getImplementationVersion());
         try {
-            textAcknowledgements.setText(Files.readString(Paths.get("acknowledgements.txt")));
+            textAcknowledgements.setText(Files.readString(Paths.get("notice.txt")));
         } catch (IOException e) {
             textAcknowledgements.setText("Failed to load the acknowledgements file.");
         }
@@ -45,10 +43,6 @@ public class AboutWindowController implements Initializable {
     }
 
     public void hyperlinkWebsite_onAction(ActionEvent actionEvent) {
-        try {
-            Desktop.getDesktop().browse(new URL(hyperlinkWebsite.getText()).toURI());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Util.browseUrl(hyperlinkWebsite.getText());
     }
 }

@@ -4,3 +4,5 @@ make-exe.bat
 jlink-image/
 installer/
 *.iml
+/target/
+nbactions.xml

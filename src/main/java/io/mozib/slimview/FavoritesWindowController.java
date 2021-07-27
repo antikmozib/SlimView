@@ -22,7 +22,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.File;
 import java.net.URL;
@@ -92,13 +91,7 @@ public class FavoritesWindowController implements Initializable {
             imageViewPreview.fitWidthProperty().bind(anchorPanePreview.widthProperty());
         }));
 
-        listViewFavorites.setCellFactory(
-                new Callback<ListView<FavoritesModel.FavoriteModel>, ListCell<FavoritesModel.FavoriteModel>>() {
-                    @Override
-                    public ListCell<FavoritesModel.FavoriteModel> call(ListView<FavoritesModel.FavoriteModel> param) {
-                        return new ImagePreviewCell();
-                    }
-                });
+        listViewFavorites.setCellFactory(param -> new ImagePreviewCell());
 
         textFieldSearch.textProperty().addListener(((observable, oldValue, newValue) -> {
             filteredList.setPredicate(favoriteModel -> {

@@ -21,6 +21,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -180,17 +181,43 @@ public class MainViewModel {
     }
 
     public void trashImage(ImageModel imageModel) {
-        String path;
+        String path = imageModel.getPath();
+        boolean success = false;
 
-        if (imageModel.hasOriginal()) {
-            path = imageModel.getResamplePath();
-        } else {
-            path = imageModel.getPath();
+        switch (getOSType()) {
+            case Windows:
+            case Mac:
+                if (Desktop.isDesktopSupported()) {
+                    if (Desktop.getDesktop().isSupported(Desktop.Action.MOVE_TO_TRASH)) {
+                        try {
+                            Desktop.getDesktop().moveToTrash(new File(path));
+                            success = true;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                break;
+            case Linux:
+                String trashInfo = "[Trash Info]\n" +
+                        "Path=" + path + "\n" +
+                        "DeletionDate=" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
+                try {
+                    String pathToTrash =
+                            Paths.get(System.getProperty("user.home"), ".local", "share", "Trash").toString();
+                    FileUtils.writeStringToFile(new File(Paths.get(
+                                    pathToTrash, "info", FilenameUtils.getName(path) + ".trashinfo").toString()),
+                            trashInfo, Charset.defaultCharset());
+                    FileUtils.moveFile(new File(path),
+                            new File(Paths.get(pathToTrash, "files", FilenameUtils.getName(path)).toString()));
+                    success = true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
 
-        try {
-            Desktop.getDesktop().moveToTrash(new File(path));
-
+        if (success) {
             // remove from list
             ImageModel remove;
 
@@ -203,8 +230,6 @@ public class MainViewModel {
             // item must be removed after showing next image to preserve index integrity
             showNextImage();
             imageModels.remove(remove);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -215,6 +240,8 @@ public class MainViewModel {
             } catch (IOException ignored) {
 
             }
+        } else {
+            Util.browseUrl(imageModel.getBestPath());
         }
     }
 
@@ -226,11 +253,7 @@ public class MainViewModel {
 
             }
         } else {
-            try {
-                Desktop.getDesktop().open(new File(imageModel.getBestPath()).getParentFile());
-            } catch (IOException ignored) {
-
-            }
+            Util.browseUrl(imageModel.getContainingFolder().getPath());
         }
     }
 

@@ -13,6 +13,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -211,7 +213,7 @@ public class Util {
     }
 
     /**
-     * @param data             Object to write to an xml file
+     * @param data             Object to write to a xml file
      * @param dataFileLocation Location of the xml file
      */
     public static void writeDataFile(Object data, DataFileLocation dataFileLocation) {
@@ -220,6 +222,34 @@ public class Util {
             xmlMapper.writeValue(new File(getDataFile(dataFileLocation)), data);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Opens an url in the system's default browser application
+     */
+    public static void browseUrl(String url) {
+        switch (getOSType()) {
+            case Windows:
+            case Mac:
+                if (Desktop.isDesktopSupported()) {
+                    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                        try {
+                            Desktop.getDesktop().browse(new URL(url).toURI());
+                        } catch (IOException | URISyntaxException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                break;
+            case Linux:
+                try {
+                    Runtime.getRuntime().exec(new String[]{"xdg-open",url});
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 }

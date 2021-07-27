@@ -71,7 +71,7 @@ public class ImageModel {
     }
 
     public File getContainingFolder() {
-        return new File(new File(getPath()).getParent());
+        return new File(new File(getBestPath()).getParent());
     }
 
     public String getResolution() {

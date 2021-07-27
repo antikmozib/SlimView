@@ -14,12 +14,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,7 +24,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -225,7 +218,7 @@ public class MainWindowController implements Initializable {
         );
 
         mainViewModel.selectedImageModelProperty().addListener(
-                ((ObservableValue<? extends ImageModel> observableValue, ImageModel imageModel, ImageModel t1) -> {
+                ((observable, oldValue, newValue) -> {
                     // force trigger change listener
                     var oldViewStyle = viewStyleProperty.get();
                     viewStyleProperty.set(null);
@@ -569,11 +562,7 @@ public class MainWindowController implements Initializable {
                 alert.getDialogPane().setContentText("Would you like to download it now?");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
-                    try {
-                        Desktop.getDesktop().browse(new URL(appUpdateService.getUpdateUrl()).toURI());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    Util.browseUrl(appUpdateService.getUpdateUrl());
                 }
             } else {
                 alert = new Alert(Alert.AlertType.INFORMATION);
