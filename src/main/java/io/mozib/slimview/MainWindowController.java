@@ -637,7 +637,7 @@ public class MainWindowController implements Initializable {
     private void open() {
         FileChooser fileChooser = new FileChooser();
 
-        if (getOSType() == Util.OSType.Windows) {
+        if (getOSType() == Util.OSType.WINDOWS) {
 
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("Images", "*.jpg;*.jpeg;*.png;*.gif"),

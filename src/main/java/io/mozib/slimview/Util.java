@@ -25,19 +25,20 @@ import java.util.ArrayList;
  */
 public class Util {
     public enum OSType {
-        Windows, Mac, Linux
+        WINDOWS, MAC, LINUX, OTHER
     }
 
     public static OSType getOSType() {
         String platform = System.getProperty("os.name").toLowerCase();
         if (platform.contains("win")) {
-            return OSType.Windows;
+            return OSType.WINDOWS;
         } else if (platform.contains("mac")) {
-            return OSType.Mac;
+            return OSType.MAC;
         } else if (platform.contains("nux")) {
-            return OSType.Linux;
+            return OSType.LINUX;
+        } else {
+            return OSType.OTHER;
         }
-        return null;
     }
 
     public enum DataFileLocation {
@@ -225,14 +226,13 @@ public class Util {
         }
     }
 
-
     /**
      * Opens an url in the system's default browser application
      */
     public static void browseUrl(String url) {
         switch (getOSType()) {
-            case Windows:
-            case Mac:
+            case WINDOWS:
+            case MAC:
                 if (Desktop.isDesktopSupported()) {
                     if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                         try {
@@ -243,7 +243,7 @@ public class Util {
                     }
                 }
                 break;
-            case Linux:
+            case LINUX:
                 try {
                     Runtime.getRuntime().exec(new String[]{"xdg-open",url});
                 } catch (IOException e) {

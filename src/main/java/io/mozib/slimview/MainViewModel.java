@@ -166,7 +166,7 @@ public class MainViewModel {
         }
 
         var resized = Scalr.resize(image, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
-        editImage(resized, file, imageModel.getResamplePath());
+        createTempImage(resized, file, imageModel.getResamplePath());
     }
 
     public void saveImage(ImageModel imageModel, String destination) {
@@ -185,8 +185,8 @@ public class MainViewModel {
         boolean success = false;
 
         switch (getOSType()) {
-            case Windows:
-            case Mac:
+            case WINDOWS:
+            case MAC:
                 if (Desktop.isDesktopSupported()) {
                     if (Desktop.getDesktop().isSupported(Desktop.Action.MOVE_TO_TRASH)) {
                         try {
@@ -198,13 +198,13 @@ public class MainViewModel {
                     }
                 }
                 break;
-            case Linux:
+            case LINUX:
                 // in linux we've to manually trash the file by creating a .trashinfo file first
 
                 String trashInfo =
                         "[Trash Info]\n" +
-                        "Path=" + path + "\n" +
-                        "DeletionDate=" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
+                                "Path=" + path + "\n" +
+                                "DeletionDate=" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
 
                 String pathToTrash =
                         Paths.get(System.getProperty("user.home"), ".local", "share", "Trash").toString();
@@ -243,7 +243,7 @@ public class MainViewModel {
     }
 
     public void openInEditor(ImageModel imageModel) {
-        if (getOSType() == OSType.Windows) {
+        if (getOSType() == OSType.WINDOWS) {
             try {
                 Runtime.getRuntime().exec("mspaint \"" + imageModel.getBestPath() + "\"");
             } catch (IOException ignored) {
@@ -255,7 +255,7 @@ public class MainViewModel {
     }
 
     public void openContainingFolder(ImageModel imageModel) {
-        if (getOSType() == OSType.Windows) {
+        if (getOSType() == OSType.WINDOWS) {
             try {
                 Runtime.getRuntime().exec("explorer.exe /select, \"\"" + imageModel.getBestPath() + "\"\"");
             } catch (IOException ignored) {
@@ -317,7 +317,7 @@ public class MainViewModel {
         return format.format(date);
     }
 
-    private void editImage(BufferedImage edited, File file, String resamplePath) {
+    private void createTempImage(BufferedImage edited, File file, String resamplePath) {
         String format = FilenameUtils.getExtension(file.getPath());
         try {
             file.createNewFile();
@@ -347,13 +347,24 @@ public class MainViewModel {
             return new Task<>() {
                 @Override
                 protected List<ImageModel> call() {
-                    Iterator<File> iterator = FileUtils.iterateFiles(new File(directoryPath),
-                            new String[]{"jpg", "jpeg", "png", "gif"}, false);
-                    while (iterator.hasNext()) {
-                        ImageModel image = new ImageModel(iterator.next().getPath());
-                        images.add(image);
-                        fileCount.addAndGet(1);
-                        updateMessage("Scanning " + directoryPath + "... " + image.getShortName());
+                    String[] extensions = new String[]{"jpg", "jpeg", "png", "gif"};
+                    File dir = new File(directoryPath);
+                    File[] files = dir.listFiles();
+
+                    if (files != null) {
+
+                        for (File file : files) {
+                            if (file.isDirectory()) continue;
+
+                            String ext = FilenameUtils.getExtension(file.getName());
+                            if (Arrays.stream(extensions).anyMatch(s -> s.equalsIgnoreCase(ext))) {
+
+                                ImageModel image = new ImageModel(file.getPath());
+                                images.add(image);
+                                fileCount.addAndGet(1);
+                                updateMessage("Scanning " + directoryPath + "... " + image.getShortName());
+                            }
+                        }
                     }
                     updateMessage("Found " + getFileCount() + " files.");
                     return images;
@@ -363,19 +374,21 @@ public class MainViewModel {
     }
 
     private void setSelectedImage(ImageModel imageModel) {
-        if (imageModel == null) {
-            return;
-        }
-
-        imageModel.setIsFavorite(isFavorite(imageModel));
-
-        selectedImageModelWrapper.set(imageModel);
         status.unbind();
-        status.set((getCurrentIndex() + 1) + " / " + imageModels.size() + "  |  Resolution: "
-                + imageModel.getResolution() + " @ " + imageModel.getColorDepth() + "-bits" + "  |  Format: "
-                + imageModel.getFormat() + "  |  Size: " + imageModel.getFormattedFileSize() + "  |  Created: "
-                + formatTime(imageModel.getDateCreated()) + "  |  Modified: "
-                + formatTime(imageModel.getDateModified()));
+
+        if (imageModel == null) {
+            selectedImageModelWrapper.set(null);
+            status.set("Ready.");
+        } else {
+            imageModel.setIsFavorite(isFavorite(imageModel));
+
+            selectedImageModelWrapper.set(imageModel);
+            status.set((getCurrentIndex() + 1) + " / " + imageModels.size() + "  |  Resolution: "
+                    + imageModel.getResolution() + " @ " + imageModel.getColorDepth() + "-bits" + "  |  Format: "
+                    + imageModel.getFormat() + "  |  Size: " + imageModel.getFormattedFileSize() + "  |  Created: "
+                    + formatTime(imageModel.getDateCreated()) + "  |  Modified: "
+                    + formatTime(imageModel.getDateModified()));
+        }
     }
 
     private void zoomImage(ImageModel imageModel, double percentage) {
@@ -387,7 +400,7 @@ public class MainViewModel {
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
         var file = new File(Paths.get(tempDirectory(), imageModel.getShortName()).toString());
         var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(imageModel.getImage(), null), rotation);
-        editImage(rotated, file, imageModel.getBestPath());
+        createTempImage(rotated, file, imageModel.getBestPath());
     }
 
     /**
