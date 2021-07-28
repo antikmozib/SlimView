@@ -6,7 +6,7 @@ package io.mozib.slimview;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
+
 import java.text.DecimalFormat;
 
 public class ResizeViewModel {
@@ -22,20 +22,19 @@ public class ResizeViewModel {
         newHeightProperty.set(String.valueOf((int) currentHeight));
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
-        newWidthProperty.addListener(
-                (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                    if (preserveAspectRatioProperty.get()) {
-                        double currentAspectRatio = getWidth() / getHeight();
-                        if (decimalFormat.format(currentAspectRatio).equals(
-                                decimalFormat.format(originalAspectRatio))) {
-                            return;
-                        }
+        newWidthProperty.addListener((observable, oldValue, newValue) -> {
+            if (preserveAspectRatioProperty.get()) {
+                double currentAspectRatio = getWidth() / getHeight();
+                if (decimalFormat.format(currentAspectRatio).equals(
+                        decimalFormat.format(originalAspectRatio))) {
+                    return;
+                }
 
-                        double width = Double.parseDouble(newWidthProperty.get());
-                        double newHeight = width / originalAspectRatio;
-                        newHeightProperty.set(String.valueOf((int) newHeight));
-                    }
-                });
+                double width = Double.parseDouble(newWidthProperty.get());
+                double newHeight = width / originalAspectRatio;
+                newHeightProperty.set(String.valueOf((int) newHeight));
+            }
+        });
 
         newHeightProperty.addListener((observable, oldValue, newValue) -> {
             if (preserveAspectRatioProperty.get()) {

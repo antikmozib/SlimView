@@ -46,6 +46,7 @@ public class Util {
     }
 
     /**
+     * @param dataFileLocation
      * @return Path to the xml settings file
      */
     public static String getDataFile(DataFileLocation dataFileLocation) {
@@ -95,7 +96,7 @@ public class Util {
         if (!Files.exists(path)) {
             try {
                 Files.createDirectory(path);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -166,6 +167,7 @@ public class Util {
             this.image = image;
         }
 
+        @Override
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (isDataFlavorSupported(flavor)) {
                 return image;
@@ -174,10 +176,12 @@ public class Util {
             }
         }
 
+        @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
             return flavor == DataFlavor.imageFlavor;
         }
 
+        @Override
         public DataFlavor[] getTransferDataFlavors() {
             return new DataFlavor[]{DataFlavor.imageFlavor};
         }
@@ -245,7 +249,7 @@ public class Util {
                 break;
             case LINUX:
                 try {
-                    Runtime.getRuntime().exec(new String[]{"xdg-open",url});
+                    Runtime.getRuntime().exec(new String[]{"xdg-open", url});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

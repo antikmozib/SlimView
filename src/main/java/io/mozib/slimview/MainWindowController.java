@@ -7,7 +7,6 @@ package io.mozib.slimview;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -167,7 +166,7 @@ public class MainWindowController implements Initializable {
         });
 
         viewStyleProperty.addListener(
-                ((ObservableValue<? extends ViewStyle> observable, ViewStyle oldValue, ViewStyle newValue) -> {
+                ((observable, oldValue, newValue) -> {
                     if (newValue == null) {
                         newValue = Objects.requireNonNullElse(oldValue, ViewStyle.FIT_TO_WINDOW);
                     }

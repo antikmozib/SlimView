@@ -193,12 +193,12 @@ public class FavoritesWindowController implements Initializable {
     @FXML
     public void menuRemoveMissing_onAction(ActionEvent actionEvent) {
         List<FavoritesModel.FavoriteModel> removeThese = new ArrayList<>();
-        for (FavoritesModel.FavoriteModel favoriteModel : listViewFavorites.getItems()) {
+        listViewFavorites.getItems().forEach(favoriteModel -> {
             File file = new File(favoriteModel.getPath());
             if (!file.isDirectory() && !file.exists()) {
                 removeThese.add(favoriteModel);
             }
-        }
+        });
 
         favoritesController.getFavorites().removeAll(removeThese);
         favoritesController.saveFavorites();
