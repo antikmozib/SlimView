@@ -1,8 +1,9 @@
+*.*
 dependency-reduced-pom.xml
 launch4j-config.xml
 make-exe.bat
 jlink-image/
-installer/
 *.iml
-/target/
 nbactions.xml
+installer/
+!installer/slimview.iss

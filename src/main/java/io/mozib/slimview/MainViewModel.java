@@ -199,17 +199,26 @@ public class MainViewModel {
                 }
                 break;
             case Linux:
-                String trashInfo = "[Trash Info]\n" +
+                // in linux we've to manually trash the file by creating a .trashinfo file first
+
+                String trashInfo =
+                        "[Trash Info]\n" +
                         "Path=" + path + "\n" +
                         "DeletionDate=" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
+
+                String pathToTrash =
+                        Paths.get(System.getProperty("user.home"), ".local", "share", "Trash").toString();
+
                 try {
-                    String pathToTrash =
-                            Paths.get(System.getProperty("user.home"), ".local", "share", "Trash").toString();
+                    // write .trashinfo file
                     FileUtils.writeStringToFile(new File(Paths.get(
                                     pathToTrash, "info", FilenameUtils.getName(path) + ".trashinfo").toString()),
                             trashInfo, Charset.defaultCharset());
+
+                    // move file to actual trash folder
                     FileUtils.moveFile(new File(path),
                             new File(Paths.get(pathToTrash, "files", FilenameUtils.getName(path)).toString()));
+
                     success = true;
                 } catch (IOException e) {
                     e.printStackTrace();
