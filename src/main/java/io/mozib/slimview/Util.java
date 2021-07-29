@@ -46,7 +46,7 @@ public class Util {
     }
 
     /**
-     * @param dataFileLocation
+     * @param dataFileLocation Type of data file
      * @return Path to the xml settings file
      */
     public static String getDataFile(DataFileLocation dataFileLocation) {
@@ -218,6 +218,8 @@ public class Util {
     }
 
     /**
+     * Serializes an object to a xml file
+     *
      * @param data             Object to write to a xml file
      * @param dataFileLocation Location of the xml file
      */
