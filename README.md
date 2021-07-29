@@ -1,12 +1,12 @@
 # SlimView
 
-A super-fast and simple directory-based image viewer and browser for Windows, macOS and Linux.
+A fast and simple directory-based image viewer and browser for Windows, macOS and Linux.
 
 ![Screenshot](https://github.com/antikmozib/SlimView/blob/master/screenshot.jpg?raw=true)
 
 <h1>Building</h1>
 
-**Tested on Windows with Java 11 only**
+**Tested with JDK 11 on Windows 10 and Linux Mint 20.2**
 
 _Java, Maven and [JavaFX jmods](https://openjfx.io/openjfx-docs/#modular) (required for producing jlink images) must be set as environment variables. Alternatively, use an IDE like IntelliJ IDEA to import as a Maven project._
 
