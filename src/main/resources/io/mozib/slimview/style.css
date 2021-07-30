@@ -2,10 +2,13 @@
  * Copyright (C) 2021 Antik Mozib. All rights reserved.
  */
 
-#stackPaneMain {
-    -fx-background-color: #000
-}
-
 .tooltip {
 	-fx-font-size: 14
+}
+
+#stackPaneMain, #mainScrollPane {
+    -fx-box-border: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-color: #000
 }

@@ -5,5 +5,5 @@ make-exe.bat
 jlink-image/
 *.iml
 nbactions.xml
-installer/*.*
+installer/*
 !installer/slimview.iss

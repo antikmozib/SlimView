@@ -74,8 +74,8 @@ public class ImageModel {
         return new File(new File(getBestPath()).getParent());
     }
 
-    public String getResolution() {
-        return (int) getImage().getWidth() + " x " + (int) getImage().getHeight() + " px";
+    public String getOriginalResolution() {
+        return (int) getResampleWidth() + " x " + (int) getResampleHeight() + " px";
     }
 
     public String getFormat() {
@@ -103,6 +103,22 @@ public class ImageModel {
 
     public double getHeight() {
         return getImage().getHeight();
+    }
+
+    public double getResampleWidth() {
+        if (getResampleImage()==null) {
+            return getWidth();
+        } else {
+            return getResampleImage().getWidth();
+        }
+    }
+
+    public double getResampleHeight() {
+        if (getResampleImage()==null) {
+            return getHeight();
+        } else {
+            return getResampleImage().getHeight();
+        }
     }
 
     public long getDateModified() {

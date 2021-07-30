@@ -383,11 +383,12 @@ public class MainViewModel {
             imageModel.setIsFavorite(isFavorite(imageModel));
 
             selectedImageModelWrapper.set(imageModel);
-            status.set((getCurrentIndex() + 1) + " / " + imageModels.size() + "  |  Resolution: "
-                    + imageModel.getResolution() + " @ " + imageModel.getColorDepth() + "-bits" + "  |  Format: "
-                    + imageModel.getFormat() + "  |  Size: " + imageModel.getFormattedFileSize() + "  |  Created: "
-                    + formatTime(imageModel.getDateCreated()) + "  |  Modified: "
-                    + formatTime(imageModel.getDateModified()));
+            status.set((getCurrentIndex() + 1) + " / " + imageModels.size()
+                    + "  |  " + imageModel.getColorDepth() + "-bits"
+                    + "  |  " + imageModel.getFormat()
+                    + "  |  " + imageModel.getFormattedFileSize()
+                    + "  |  Created: " + formatTime(imageModel.getDateCreated())
+                    + "  |  Modified: " + formatTime(imageModel.getDateModified()));
         }
     }
 

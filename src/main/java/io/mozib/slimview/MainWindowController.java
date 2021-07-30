@@ -16,8 +16,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
-import javafx.scene.layout.HBox;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -57,9 +60,11 @@ public class MainWindowController implements Initializable {
     @FXML
     public Label labelStatus;
     @FXML
+    public Label labelResolution;
+    @FXML
     public ToolBar toolBar;
     @FXML
-    public HBox statusBar;
+    public AnchorPane statusBar;
     @FXML
     public MenuBar menuBar;
     @FXML
@@ -77,7 +82,7 @@ public class MainWindowController implements Initializable {
 
     private final Image favoriteOutline = new Image(getClass().getResourceAsStream("icons/favorite.png"));
     private final Image favoriteSolid = new Image(getClass().getResourceAsStream("icons/favorite-solid.png"));
-    private final int scrollPaneOffset = 6; // to force correct clipping of scroll pane
+    private final int scrollPaneOffset = 2; // to force correct clipping of scroll pane
     private final ToggleGroup toggleGroupViewStyle = new ToggleGroup();
     private final ToggleGroup toggleGroupSortStyle = new ToggleGroup();
     public MainViewModel mainViewModel = new MainViewModel();
@@ -130,7 +135,16 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
-        imageViewMain.requestFocus();
+
+        // start tracking resolution and zoom
+        imageViewMain.fitHeightProperty().addListener((observable, oldValue, newValue) -> {
+            labelResolution.setText("");
+            if (newValue != null && mainViewModel.getSelectedImageModel() != null) {
+                double zoom = newValue.doubleValue() / mainViewModel.getSelectedImageModel().getResampleHeight() * 100;
+                labelResolution.setText(
+                        mainViewModel.getSelectedImageModel().getOriginalResolution() + " (" + Math.round(zoom) + "%)");
+            }
+        });
 
         // menubar toggle group
         menuStretched.setToggleGroup(toggleGroupViewStyle);
@@ -213,6 +227,7 @@ public class MainWindowController implements Initializable {
                     }
 
                     preferences.put("LastViewStyle", newValue.toString());
+                    imageViewMain.requestFocus();
                 })
         );
 
@@ -294,7 +309,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
-        Scene scene = new Scene(loadParent("aboutWindow"));
+        Scene scene = new Scene(new FXMLLoader(this.getClass().getResource("aboutWindow.fxml")).load());
         Stage aboutWindow = new Stage();
         aboutWindow.setScene(scene);
         aboutWindow.initModality(Modality.WINDOW_MODAL);
@@ -311,12 +326,6 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuBar_onKeyPress(KeyEvent keyEvent) {
-        if (isViewingFullScreen.get() && menuBar.isVisible()) {
-            if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ALT) {
-                menuBar.setVisible(false);
-                imageViewMain.requestFocus();
-            }
-        }
     }
 
     @FXML
@@ -326,7 +335,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuFitToWindow_onAction(ActionEvent actionEvent) {
-        viewStyleProperty.set(ViewStyle.FIT_TO_WINDOW);
+        bestFit();
     }
 
     @FXML
@@ -371,46 +380,32 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void mainScrollPane_onKeyPress(KeyEvent keyEvent) {
-        if (keyEvent.isAltDown() && keyEvent.getCode() != KeyCode.ENTER && isViewingFullScreen.get()) {
-            menuBar.setVisible(!menuBar.isVisible());
-            if (menuBar.isVisible()) {
-                menuBar.requestFocus();
-            }
-        } else {
-            switch (keyEvent.getCode()) {
-                case LEFT:
-                case PAGE_DOWN:
-                    mainViewModel.showPreviousImage();
-                    break;
-                case RIGHT:
-                case PAGE_UP:
-                    mainViewModel.showNextImage();
-                    break;
-                case HOME:
-                    mainViewModel.showFirstImage();
-                    break;
-                case END:
-                    mainViewModel.showLastImage();
-                    break;
-                case ENTER:
+
+        switch (keyEvent.getCode()) {
+            case LEFT:
+            case PAGE_DOWN:
+                mainViewModel.showPreviousImage();
+                break;
+            case RIGHT:
+            case PAGE_UP:
+                mainViewModel.showNextImage();
+                break;
+            case HOME:
+                mainViewModel.showFirstImage();
+                break;
+            case END:
+                mainViewModel.showLastImage();
+                break;
+            case ENTER:
+                toggleFullScreen();
+                break;
+            case ESCAPE:
+                if (isViewingFullScreen.get()) {
                     toggleFullScreen();
                     break;
-                case ESCAPE:
-                    if (isViewingFullScreen.get()) {
-                        toggleFullScreen();
-                        break;
-                    } else {
-                        Platform.exit();
-                    }
-                case ADD:
-                case EQUALS:
-                    zoomIn();
-                    break;
-                case UNDERSCORE:
-                case SUBTRACT:
-                    zoomOut();
-                    break;
-            }
+                } else {
+                    Platform.exit();
+                }
         }
     }
 
@@ -478,7 +473,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void buttonResetZoom_onAction(ActionEvent actionEvent) {
-        resetZoom();
+        bestFit();
     }
 
     @FXML
@@ -633,6 +628,10 @@ public class MainWindowController implements Initializable {
         mainViewModel.resetZoom();
     }
 
+    private void bestFit() {
+        viewStyleProperty.set(ViewStyle.FIT_TO_WINDOW);
+    }
+
     private void open() {
         FileChooser fileChooser = new FileChooser();
 
@@ -750,10 +749,5 @@ public class MainWindowController implements Initializable {
         copyFileToWindow.setTitle("Copy \"" + mainViewModel.getSelectedImageModel().getShortName() + "\" To");
         controller.setViewModel(new CopyFileToViewModel(mainViewModel.getSelectedImageModel()));
         copyFileToWindow.show();
-    }
-
-    private Parent loadParent(String fxmlName) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource(fxmlName + ".fxml"));
-        return fxmlLoader.load();
     }
 }

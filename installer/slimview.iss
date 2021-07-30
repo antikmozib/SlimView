@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "SlimView"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "Antik Mozib"
 #define MyAppURL "https://mozib.io/slimview"
 #define MyAppExeName "slimview.exe"
@@ -14,7 +14,7 @@
 AppId={{9DAEB0E1-66A2-4C0D-9400-5B7EF97D115E}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
+AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -70,3 +70,6 @@ Root: HKCR; Subkey: "{#MyAppName}.png\shell\open\command"; ValueData: """{app}\{
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{%USERPROFILE}\.slimview"
