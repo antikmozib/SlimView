@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -38,6 +39,10 @@ public class SlimView extends Application {
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         stage.setWidth(preferences.getDouble("MainWindowWidth", 960));
         stage.setHeight(preferences.getDouble("MainWindowHeight", 720));
+        if (stage.getWidth() > 0.9 * Screen.getPrimary().getVisualBounds().getWidth() &&
+                stage.getHeight() > 0.9 * Screen.getPrimary().getVisualBounds().getHeight()) {
+            stage.setMaximized(true);
+        }
         stage.show();
         stage.setOnCloseRequest(event -> {
             preferences.putDouble("MainWindowHeight", stage.getScene().getWindow().getHeight());

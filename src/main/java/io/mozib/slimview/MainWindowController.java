@@ -413,7 +413,7 @@ public class MainWindowController implements Initializable {
     public void mainScrollPane_onScroll(ScrollEvent scrollEvent) {
         if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
             mainViewModel.showPreviousImage();
-        } else {
+        } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
             mainViewModel.showNextImage();
         }
         scrollEvent.consume();
