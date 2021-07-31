@@ -39,7 +39,6 @@ public class MainViewModel {
     private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper("Ready.");
     private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<SortStyle> selectedSortStyleWrapper = new ReadOnlyObjectWrapper<>();
-    private final double zoomStep = 0.1; // how much to zoom on each step
 
     public MainViewModel() {
         selectedImageModelProperty().addListener(((observable, oldValue, newValue) -> {
@@ -136,14 +135,6 @@ public class MainViewModel {
         rotateImage(getSelectedImageModel(), Scalr.Rotation.FLIP_HORZ);
     }
 
-    public void zoomIn() {
-        zoomImage(getSelectedImageModel(), zoomStep);
-    }
-
-    public void zoomOut() {
-        zoomImage(getSelectedImageModel(), -zoomStep);
-    }
-
     public void resetZoom() {
         if (getSelectedImageModel().getOriginalPath() == null) {
             return;
@@ -151,22 +142,6 @@ public class MainViewModel {
         setSelectedImage(
                 imageModels.stream().filter(item -> item.getPath().equals(getSelectedImageModel().getOriginalPath()))
                         .findFirst().orElse(null));
-    }
-
-    public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
-        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
-        BufferedImage image;
-
-        // resample image to ensure best resizing quality
-        if (!imageModel.hasOriginal()) {
-            imageModel.setOriginalPath(imageModel.getPath());
-            image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
-        } else {
-            image = SwingFXUtils.fromFXImage(imageModel.getOriginalImage(), null);
-        }
-
-        var resized = Scalr.resize(image, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
-        createTempImage(resized, file, imageModel.getOriginalPath());
     }
 
     public void saveImage(ImageModel imageModel, String destination) {
@@ -317,17 +292,6 @@ public class MainViewModel {
         return format.format(date);
     }
 
-    private void createTempImage(BufferedImage edited, File file, String resamplePath) {
-        String format = FilenameUtils.getExtension(file.getPath());
-        try {
-            file.createNewFile();
-            ImageIO.write(edited, format, file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        setSelectedImage(new ImageModel(file.getPath(), resamplePath));
-    }
-
     private static class LoadDirectory extends Service<List<ImageModel>> {
 
         private final String directoryPath;
@@ -392,17 +356,40 @@ public class MainViewModel {
         }
     }
 
-    private void zoomImage(ImageModel imageModel, double percentage) {
-        double newWidth = imageModel.getWidth() + imageModel.getWidth() * percentage;
-        double newHeight = imageModel.getHeight() + imageModel.getHeight() * percentage;
-        resizeImage(imageModel, (int) newWidth, (int) newHeight);
+    public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
+        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
+        BufferedImage image;
+
+        // resample image to ensure best resizing quality
+        if (!imageModel.hasOriginal()) {
+            imageModel.setOriginalPath(imageModel.getPath());
+            image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
+        } else {
+            image = SwingFXUtils.fromFXImage(imageModel.getOriginalImage(), null);
+        }
+
+        var resized = Scalr.resize(image, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
+        createTempImage(resized, file, imageModel.getOriginalPath());
     }
 
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
         var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
         var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(imageModel.getImage(), null), rotation);
         createTempImage(rotated, file, imageModel.getBestPath());
+    }
 
+    /**
+     * Creates a temporary, edited image and sets it as the currently displayed one
+     */
+    private void createTempImage(BufferedImage image, File file, String originalPath) {
+        String format = FilenameUtils.getExtension(file.getPath());
+        try {
+            file.createNewFile();
+            ImageIO.write(image, format, file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        setSelectedImage(new ImageModel(file.getPath(), originalPath));
     }
 
     /**

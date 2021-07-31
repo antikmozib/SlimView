@@ -81,6 +81,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public ImageView tButtonFavoriteImageView;
 
+    private final double zoomStep = 0.1;
     private final Image favoriteOutline = new Image(getClass().getResourceAsStream("icons/favorite.png"));
     private final Image favoriteSolid = new Image(getClass().getResourceAsStream("icons/favorite-solid.png"));
     private final int scrollPaneOffset = 2; // to force correct clipping of scroll pane
@@ -618,13 +619,17 @@ public class MainWindowController implements Initializable {
     }
 
     private void zoomIn() {
+        double width = getViewingWidth() + getViewingWidth() * zoomStep;
+        double height = getViewingHeight() + getViewingHeight() * zoomStep;
+        mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) width, (int) height);
         viewStyleProperty.set(ViewStyle.ORIGINAL);
-        mainViewModel.zoomIn();
     }
 
     private void zoomOut() {
+        double width = getViewingWidth() - getViewingWidth() * zoomStep;
+        double height = getViewingHeight() - getViewingHeight() * zoomStep;
+        mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) width, (int) height);
         viewStyleProperty.set(ViewStyle.ORIGINAL);
-        mainViewModel.zoomOut();
     }
 
     private void resetZoom() {
