@@ -118,6 +118,7 @@ public class Util {
     }
 
     public static void addToRecent(String path) {
+        final int maxRecent = 10; // max number of recent files to save
         RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, DataFileLocation.RECENT_FILES);
 
         if (recentFiles == null) {
@@ -135,7 +136,7 @@ public class Util {
             }
         }
 
-        if (recentFiles.getRecentFiles().size() >= 5) {
+        if (recentFiles.getRecentFiles().size() >= maxRecent) {
             long oldestSeen = System.currentTimeMillis();
             for (RecentFiles.RecentFile rf : recentFiles.getRecentFiles()) {
                 if (rf.getLastSeen() < oldestSeen) {

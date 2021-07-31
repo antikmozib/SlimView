@@ -385,7 +385,6 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void mainScrollPane_onKeyPress(KeyEvent keyEvent) {
-
         switch (keyEvent.getCode()) {
             case LEFT:
             case PAGE_DOWN:
@@ -786,6 +785,6 @@ public class MainWindowController implements Initializable {
             title = mainViewModel.getSelectedImageModel().getShortName() + " - SlimView [" +
                     (int) getViewingWidth() + " x " + (int) getViewingHeight() + " px]";
         }
-        stage.setTitle(title);
+        stage.setTitle(title);        
     }
 }
