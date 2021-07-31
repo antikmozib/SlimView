@@ -143,7 +143,7 @@ public class MainWindowController implements Initializable {
             labelResolution.setText("");
 
             if (mainViewModel.getSelectedImageModel() != null) {
-                double zoom = getViewingWidth() / mainViewModel.getSelectedImageModel().getResampleWidth() * 100;
+                double zoom = getViewingWidth() / mainViewModel.getSelectedImageModel().getOriginalWidth() * 100;
                 labelResolution.setText(
                         mainViewModel.getSelectedImageModel().getOriginalResolution() + " (" + Math.round(zoom) + "%)");
             }
@@ -680,7 +680,7 @@ public class MainWindowController implements Initializable {
                 new FileChooser.ExtensionFilter("GIF Image", "*.gif")
         );
 
-        fileChooser.setInitialFileName(mainViewModel.getSelectedImageModel().getShortName());
+        fileChooser.setInitialFileName(mainViewModel.getSelectedImageModel().getName());
 
         File initialDirectory = new File(preferences.get("SaveAsLocation", System.getProperty("user.home")));
         if (!initialDirectory.exists() || !initialDirectory.isDirectory()) {
@@ -733,7 +733,7 @@ public class MainWindowController implements Initializable {
         imageInfoWindow.initModality(Modality.WINDOW_MODAL);
         imageInfoWindow.initStyle(StageStyle.UTILITY);
         imageInfoWindow.initOwner(imageViewMain.getScene().getWindow());
-        imageInfoWindow.setTitle("Image Information - " + mainViewModel.getSelectedImageModel().getShortName());
+        imageInfoWindow.setTitle("Image Information - " + mainViewModel.getSelectedImageModel().getName());
         controller.loadInfo(mainViewModel.getSelectedImageModel());
         imageInfoWindow.show();
     }
@@ -750,7 +750,7 @@ public class MainWindowController implements Initializable {
         copyFileToWindow.initModality(Modality.WINDOW_MODAL);
         copyFileToWindow.initStyle(StageStyle.UTILITY);
         copyFileToWindow.initOwner(imageViewMain.getScene().getWindow());
-        copyFileToWindow.setTitle("Copy \"" + mainViewModel.getSelectedImageModel().getShortName() + "\" To");
+        copyFileToWindow.setTitle("Copy \"" + mainViewModel.getSelectedImageModel().getName() + "\" To");
         controller.setViewModel(new CopyFileToViewModel(mainViewModel.getSelectedImageModel()));
         copyFileToWindow.show();
     }
@@ -782,9 +782,9 @@ public class MainWindowController implements Initializable {
         if (mainViewModel.getSelectedImageModel() == null) {
             title = "SlimView";
         } else {
-            title = mainViewModel.getSelectedImageModel().getShortName() + " - SlimView [" +
+            title = mainViewModel.getSelectedImageModel().getName() + " - SlimView [Zoom: " +
                     (int) getViewingWidth() + " x " + (int) getViewingHeight() + " px]";
         }
-        stage.setTitle(title);        
+        stage.setTitle(title);
     }
 }

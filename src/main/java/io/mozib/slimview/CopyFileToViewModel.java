@@ -76,7 +76,7 @@ public class CopyFileToViewModel {
         File original = new File(source.getPath());
 
         for (CopyToDestinations.CopyToDestination destination : destinations) {
-            File copied = Paths.get(destination.getDestination(), source.getShortName()).toFile();
+            File copied = Paths.get(destination.getDestination(), source.getName()).toFile();
 
             if (copied.exists() && !copied.isDirectory()) {
                 switch (onConflict) {

@@ -19,22 +19,23 @@ import java.text.DecimalFormat;
 
 public class ImageModel {
 
-    private final String fullPath;
-    private final String shortName;
+    private String path;
+    private final String name;
     private Image image = null;
+    private Image originalImage = null;
     private final long dateModified;
     private final long dateCreated;
-    private String resamplePath; // resamplePath is the path to the original, unedited file
+    private String originalPath;
     private boolean isFavorite;
 
-    ImageModel(String fullPath) {
-        this(fullPath, null);
+    ImageModel(String path) {
+        this(path, null);
     }
 
-    ImageModel(String fullPath, String resamplePath) {
-        this.fullPath = fullPath;
-        this.resamplePath = resamplePath;
-        this.shortName = Path.of(fullPath).getFileName().toString();
+    ImageModel(String fullPath, String originalPath) {
+        this.path = fullPath;
+        this.originalPath = originalPath;
+        this.name = Path.of(fullPath).getFileName().toString();
         Path path = Paths.get(fullPath);
         BasicFileAttributes fileAttributes = null;
         try {
@@ -52,11 +53,11 @@ public class ImageModel {
     }
 
     public String getPath() {
-        return fullPath;
+        return path;
     }
 
-    public String getShortName() {
-        return shortName;
+    public String getName() {
+        return name;
     }
 
     public Image getImage() {
@@ -68,6 +69,12 @@ public class ImageModel {
 
     public void unsetImage() {
         image = null;
+
+        if (hasOriginal()) {
+            path = originalPath;
+            originalPath = null;
+            originalImage = null;
+        }
     }
 
     public File getContainingFolder() {
@@ -75,7 +82,7 @@ public class ImageModel {
     }
 
     public String getOriginalResolution() {
-        return (int) getResampleWidth() + " x " + (int) getResampleHeight() + " px";
+        return (int) getOriginalWidth() + " x " + (int) getOriginalHeight() + " px";
     }
 
     public String getFormat() {
@@ -105,19 +112,19 @@ public class ImageModel {
         return getImage().getHeight();
     }
 
-    public double getResampleWidth() {
-        if (getResampleImage() == null) {
+    public double getOriginalWidth() {
+        if (getOriginalImage() == null) {
             return getWidth();
         } else {
-            return getResampleImage().getWidth();
+            return getOriginalImage().getWidth();
         }
     }
 
-    public double getResampleHeight() {
-        if (getResampleImage() == null) {
+    public double getOriginalHeight() {
+        if (getOriginalImage() == null) {
             return getHeight();
         } else {
-            return getResampleImage().getHeight();
+            return getOriginalImage().getHeight();
         }
     }
 
@@ -129,23 +136,27 @@ public class ImageModel {
         return dateCreated;
     }
 
-    public void setResamplePath(String resamplePath) {
-        this.resamplePath = resamplePath;
+    public void setOriginalPath(String originalPath) {
+        this.originalPath = originalPath;
     }
 
     /**
      * @return The path to the original, unedited file.
      */
-    public String getResamplePath() {
-        return resamplePath;
+    public String getOriginalPath() {
+        return originalPath;
     }
 
-    public Image getResampleImage() {
-        if (getResamplePath() == null || getResamplePath().equals("")) {
+    public Image getOriginalImage() {
+        if (getOriginalPath() == null || getOriginalPath().equals("")) {
             return null;
         }
 
-        return new Image(new File(getResamplePath()).toURI().toString());
+        if (originalImage == null) {
+            originalImage = new Image(new File(getOriginalPath()).toURI().toString());
+        }
+
+        return originalImage;
     }
 
     public String getColorDepth() {
@@ -154,9 +165,9 @@ public class ImageModel {
     }
 
     public boolean hasOriginal() {
-        return getResamplePath() != null &&
-                !getResamplePath().equals("") &&
-                !getResamplePath().equalsIgnoreCase(getPath());
+        return getOriginalPath() != null &&
+                !getOriginalPath().equals("") &&
+                !getOriginalPath().equalsIgnoreCase(getPath());
     }
 
     public void setIsFavorite(boolean value) {
@@ -169,21 +180,15 @@ public class ImageModel {
 
     public String getBestPath() {
         if (hasOriginal()) {
-            return getResamplePath();
+            return getOriginalPath();
         }
 
         return getPath();
     }
 
-    public void preCacheImage() {
-        if (image == null) {
-            getImage();
-        }
-    }
-
     public double getOriginalAspectRatio() {
         if (hasOriginal()) {
-            return (getResampleWidth() / getResampleHeight());
+            return (getOriginalWidth() / getOriginalHeight());
         } else {
             return (getWidth() / getHeight());
         }

@@ -145,28 +145,28 @@ public class MainViewModel {
     }
 
     public void resetZoom() {
-        if (getSelectedImageModel().getResamplePath() == null) {
+        if (getSelectedImageModel().getOriginalPath() == null) {
             return;
         }
         setSelectedImage(
-                imageModels.stream().filter(item -> item.getPath().equals(getSelectedImageModel().getResamplePath()))
+                imageModels.stream().filter(item -> item.getPath().equals(getSelectedImageModel().getOriginalPath()))
                         .findFirst().orElse(null));
     }
 
     public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
-        var file = new File(Paths.get(tempDirectory(), imageModel.getShortName()).toString());
+        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
         BufferedImage image;
 
         // resample image to ensure best resizing quality
         if (!imageModel.hasOriginal()) {
-            imageModel.setResamplePath(imageModel.getPath());
+            imageModel.setOriginalPath(imageModel.getPath());
             image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
         } else {
-            image = SwingFXUtils.fromFXImage(imageModel.getResampleImage(), null);
+            image = SwingFXUtils.fromFXImage(imageModel.getOriginalImage(), null);
         }
 
         var resized = Scalr.resize(image, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
-        createTempImage(resized, file, imageModel.getResamplePath());
+        createTempImage(resized, file, imageModel.getOriginalPath());
     }
 
     public void saveImage(ImageModel imageModel, String destination) {
@@ -231,7 +231,7 @@ public class MainViewModel {
             ImageModel remove;
 
             if (imageModel.hasOriginal()) {
-                remove = findByPath(imageModel.getResamplePath());
+                remove = findByPath(imageModel.getOriginalPath());
             } else {
                 remove = imageModel;
             }
@@ -297,7 +297,7 @@ public class MainViewModel {
                     imageModels.sort((o1, o2) -> Long.compare(o2.getDateCreated(), o1.getDateCreated()));
                     break;
                 case NAME:
-                    imageModels.sort(Comparator.comparing(ImageModel::getShortName));
+                    imageModels.sort(Comparator.comparing(ImageModel::getName));
                     break;
                 default:
                     break;
@@ -362,7 +362,7 @@ public class MainViewModel {
                                 ImageModel image = new ImageModel(file.getPath());
                                 images.add(image);
                                 fileCount.addAndGet(1);
-                                updateMessage("Scanning " + directoryPath + "... " + image.getShortName());
+                                updateMessage("Scanning " + directoryPath + "... " + image.getName());
                             }
                         }
                     }
@@ -399,9 +399,10 @@ public class MainViewModel {
     }
 
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
-        var file = new File(Paths.get(tempDirectory(), imageModel.getShortName()).toString());
+        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
         var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(imageModel.getImage(), null), rotation);
         createTempImage(rotated, file, imageModel.getBestPath());
+
     }
 
     /**
