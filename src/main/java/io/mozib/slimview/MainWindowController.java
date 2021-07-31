@@ -7,6 +7,7 @@ package io.mozib.slimview;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -137,14 +138,18 @@ public class MainWindowController implements Initializable {
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
 
         // start tracking resolution and zoom
-        imageViewMain.fitHeightProperty().addListener((observable, oldValue, newValue) -> {
+        ChangeListener<Number> imageViewSizeChangeListener = (observable, oldValue, newValue) -> {
+            updateTitle();
             labelResolution.setText("");
-            if (newValue != null && mainViewModel.getSelectedImageModel() != null) {
-                double zoom = newValue.doubleValue() / mainViewModel.getSelectedImageModel().getResampleHeight() * 100;
+
+            if (mainViewModel.getSelectedImageModel() != null) {
+                double zoom = getViewingWidth() / mainViewModel.getSelectedImageModel().getResampleWidth() * 100;
                 labelResolution.setText(
                         mainViewModel.getSelectedImageModel().getOriginalResolution() + " (" + Math.round(zoom) + "%)");
             }
-        });
+        };
+        imageViewMain.fitHeightProperty().addListener(imageViewSizeChangeListener);
+        imageViewMain.fitWidthProperty().addListener(imageViewSizeChangeListener);
 
         // menubar toggle group
         menuStretched.setToggleGroup(toggleGroupViewStyle);
@@ -165,7 +170,7 @@ public class MainWindowController implements Initializable {
             imageViewMain.setImage(newValue.getImage());
             imageViewMain.requestFocus();
             try {
-                ((Stage) imageViewMain.getScene().getWindow()).setTitle(newValue.getShortName() + " - SlimView");
+                updateTitle();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -749,5 +754,38 @@ public class MainWindowController implements Initializable {
         copyFileToWindow.setTitle("Copy \"" + mainViewModel.getSelectedImageModel().getShortName() + "\" To");
         controller.setViewModel(new CopyFileToViewModel(mainViewModel.getSelectedImageModel()));
         copyFileToWindow.show();
+    }
+
+    /**
+     * @return The width of the image as it's being displayed on the screen.
+     */
+    private double getViewingWidth() {
+        double width = imageViewMain.getFitHeight() * mainViewModel.getSelectedImageModel().getOriginalAspectRatio();
+        if (width > imageViewMain.getFitWidth()) width = imageViewMain.getFitWidth();
+        return width;
+    }
+
+    /**
+     * @return The height of the image as it's being displayed on the screen.
+     */
+    private double getViewingHeight() {
+        double height = imageViewMain.getFitWidth() / mainViewModel.getSelectedImageModel().getOriginalAspectRatio();
+        if (height > imageViewMain.getFitHeight()) height = imageViewMain.getFitHeight();
+        return height;
+    }
+
+    /**
+     * Updates the title of the application window.
+     */
+    private void updateTitle() {
+        Stage stage = (Stage) imageViewMain.getScene().getWindow();
+        String title = "";
+        if (mainViewModel.getSelectedImageModel() == null) {
+            title = "SlimView";
+        } else {
+            title = mainViewModel.getSelectedImageModel().getShortName() + " - SlimView [" +
+                    (int) getViewingWidth() + " x " + (int) getViewingHeight() + " px]";
+        }
+        stage.setTitle(title);
     }
 }

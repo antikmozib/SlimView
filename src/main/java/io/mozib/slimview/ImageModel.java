@@ -106,7 +106,7 @@ public class ImageModel {
     }
 
     public double getResampleWidth() {
-        if (getResampleImage()==null) {
+        if (getResampleImage() == null) {
             return getWidth();
         } else {
             return getResampleImage().getWidth();
@@ -114,7 +114,7 @@ public class ImageModel {
     }
 
     public double getResampleHeight() {
-        if (getResampleImage()==null) {
+        if (getResampleImage() == null) {
             return getHeight();
         } else {
             return getResampleImage().getHeight();
@@ -178,6 +178,14 @@ public class ImageModel {
     public void preCacheImage() {
         if (image == null) {
             getImage();
+        }
+    }
+
+    public double getOriginalAspectRatio() {
+        if (hasOriginal()) {
+            return (getResampleWidth() / getResampleHeight());
+        } else {
+            return (getWidth() / getHeight());
         }
     }
 }
