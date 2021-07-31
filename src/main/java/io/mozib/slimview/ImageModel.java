@@ -67,6 +67,9 @@ public class ImageModel {
         return image;
     }
 
+    /**
+     * Release the images and free up memory.
+     */
     public void unsetImage() {
         image = null;
 

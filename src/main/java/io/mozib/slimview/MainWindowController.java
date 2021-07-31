@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
+import static io.mozib.slimview.Util.getDataFile;
 import static io.mozib.slimview.Util.getOSType;
 
 public class MainWindowController implements Initializable {
@@ -286,6 +287,18 @@ public class MainWindowController implements Initializable {
             });
             menuRecent.getItems().add(menuItem);
         }
+        // add a clear option
+        if (recentFiles.getRecentFiles().size() > 0) {
+            menuRecent.getItems().add(new SeparatorMenuItem());
+
+            MenuItem menuClearRecent = new MenuItem("Clear Recent Files");
+            menuClearRecent.setOnAction(event -> {
+                File file = new File(getDataFile(Util.DataFileLocation.RECENT_FILES));
+                if (file.exists()) file.delete();
+                menuRecent.getItems().clear();
+            });
+            menuRecent.getItems().add(menuClearRecent);
+        }
     }
 
     @FXML
@@ -508,12 +521,12 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void buttonRotateRight_onAction(ActionEvent actionEvent) {
-        rotateLeft();
+        rotateRight();
     }
 
     @FXML
     public void buttonRotateLeft_onAction(ActionEvent actionEvent) {
-        rotateRight();
+        rotateLeft();
     }
 
     @FXML
@@ -609,6 +622,8 @@ public class MainWindowController implements Initializable {
     }
 
     private void toggleFullScreen() {
+        if (mainViewModel.getSelectedImageModel() == null) return;
+
         boolean setFullScreen = !isViewingFullScreen.get();
         ((Stage) mainScrollPane.getScene().getWindow()).setFullScreen(setFullScreen);
         menuBar.setVisible(!setFullScreen);
