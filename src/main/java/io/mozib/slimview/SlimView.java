@@ -12,7 +12,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +23,6 @@ import static io.mozib.slimview.Util.tempDirectory;
 public class SlimView extends Application {
     private static String[] cmdLineArgs;
     private final Preferences preferences = Preferences.userNodeForPackage(this.getClass());
-    public static final Style globalAppStyle = Style.LIGHT;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -32,7 +30,6 @@ public class SlimView extends Application {
         Parent root = fxmlLoader.load();
         MainWindowController controller = fxmlLoader.getController();
         Scene scene = new Scene(root);
-        Util.metrofyScene(scene);
         scene.getStylesheets().add(
                 Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
         stage.setScene(scene);

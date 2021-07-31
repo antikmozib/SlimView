@@ -6,8 +6,6 @@ package io.mozib.slimview;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import javafx.scene.Scene;
-import jfxtras.styles.jmetro.JMetro;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -260,10 +258,5 @@ public class Util {
                 }
                 break;
         }
-    }
-
-    public static void metrofyScene(Scene scene) {
-        JMetro jMetro = new JMetro(SlimView.globalAppStyle);
-        jMetro.setScene(scene);
     }
 }
