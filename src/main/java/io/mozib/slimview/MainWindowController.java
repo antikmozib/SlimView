@@ -104,6 +104,7 @@ public class MainWindowController implements Initializable {
         }
 
         Scene scene = new Scene(root);
+        Util.metrofyScene(scene);
         Stage resizeWindow = new Stage();
         ResizeViewModel resizeViewModel = new ResizeViewModel(
                 mainViewModel.getSelectedImageModel().getWidth(),
@@ -315,6 +316,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
         Scene scene = new Scene(new FXMLLoader(this.getClass().getResource("aboutWindow.fxml")).load());
+        Util.metrofyScene(scene);
         Stage aboutWindow = new Stage();
         aboutWindow.setScene(scene);
         aboutWindow.initModality(Modality.WINDOW_MODAL);
@@ -585,6 +587,7 @@ public class MainWindowController implements Initializable {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("favoritesWindow.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
+        Util.metrofyScene(scene);
         scene.getStylesheets().add(
                 Objects.requireNonNull(getClass().getResource("favoritesWindowStyle.css")).toExternalForm());
         FavoritesWindowController controller = fxmlLoader.getController();
@@ -727,6 +730,7 @@ public class MainWindowController implements Initializable {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("imageInfoWindow.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
+        Util.metrofyScene(scene);
         ImageInfoWindowController controller = fxmlLoader.getController();
         Stage imageInfoWindow = new Stage();
         imageInfoWindow.setScene(scene);
@@ -745,6 +749,7 @@ public class MainWindowController implements Initializable {
         Parent root = fxmlLoader.load();
         CopyFileToWindowController controller = fxmlLoader.getController();
         Scene scene = new Scene(root);
+        Util.metrofyScene(scene);
         Stage copyFileToWindow = new Stage();
         copyFileToWindow.setScene(scene);
         copyFileToWindow.initModality(Modality.WINDOW_MODAL);

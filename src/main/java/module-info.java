@@ -15,6 +15,7 @@ module io.mozib.slimview {
     requires metadata.extractor;
     requires org.apache.httpcomponents.httpclient;
     requires org.apache.httpcomponents.httpcore;
+    requires org.jfxtras.styles.jmetro;
 
     opens io.mozib.slimview to javafx.fxml, com.fasterxml.jackson.databind;
     exports io.mozib.slimview;
