@@ -97,7 +97,7 @@ public class MainViewModel {
     public void showNextImage() {
         if (directoryScanComplete() && imageModels.size() > 0) {
             if (getCurrentIndex() + 1 > imageModels.size() - 1) {
-                setSelectedImage(imageModels.get(0));
+                showFirstImage();
             } else {
                 setSelectedImage(imageModels.get(getCurrentIndex() + 1));
             }
@@ -107,7 +107,7 @@ public class MainViewModel {
     public void showPreviousImage() {
         if (directoryScanComplete() && imageModels.size() > 0) {
             if (getCurrentIndex() - 1 < 0) {
-                setSelectedImage(imageModels.get(imageModels.size() - 1));
+                showLastImage();
             } else {
                 setSelectedImage(imageModels.get(getCurrentIndex() - 1));
             }
@@ -419,7 +419,6 @@ public class MainViewModel {
     }
 
     private boolean isFavorite(ImageModel imageModel) {
-
         return favoritesController.exists(imageModel.getBestPath());
     }
 }

@@ -92,6 +92,9 @@ public class MainWindowController implements Initializable {
     private final SimpleBooleanProperty isViewingFullScreen = new SimpleBooleanProperty(false);
     private final SimpleObjectProperty<ViewStyle> viewStyleProperty = new SimpleObjectProperty<>(ViewStyle.ORIGINAL);
 
+    // the ViewStyle to reset to when switching between images after zooming
+    private ViewStyle cachedViewStyle = viewStyleProperty.get();
+
     @FXML
     public void menuResize_onAction(ActionEvent actionEvent) {
         if (mainViewModel.getSelectedImageModel() == null) return;
@@ -169,7 +172,19 @@ public class MainWindowController implements Initializable {
         mainViewModel.selectedImageModelProperty().addListener((observable, oldValue, newValue) -> {
             tButtonFavorite.setSelected(newValue.getIsFavorite());
             imageViewMain.setImage(newValue.getImage());
+
+            // reset the ViewStyle if we've zoomed image
+            ViewStyle oldViewStyle;
+            if (newValue.hasOriginal() || oldValue == null) {
+                oldViewStyle = viewStyleProperty.get();
+            } else {
+                oldViewStyle = cachedViewStyle;
+            }
+            viewStyleProperty.set(null); // force trigger change listener
+            viewStyleProperty.set(oldViewStyle);
+
             imageViewMain.requestFocus();
+
             try {
                 updateTitle();
             } catch (Exception e) {
@@ -185,8 +200,7 @@ public class MainWindowController implements Initializable {
             }
         });
 
-        viewStyleProperty.addListener(
-                ((observable, oldValue, newValue) -> {
+        viewStyleProperty.addListener(((observable, oldValue, newValue) -> {
                     if (newValue == null) {
                         newValue = Objects.requireNonNullElse(oldValue, ViewStyle.FIT_TO_WINDOW);
                     }
@@ -232,22 +246,18 @@ public class MainWindowController implements Initializable {
                             break;
                     }
 
+                    // cache ViewStyle for use after zooming
+                    if (!mainViewModel.getSelectedImageModel().hasOriginal() ||
+                            mainViewModel.getSelectedImageModel() == null) {
+                        cachedViewStyle = newValue;
+                    }
+
                     preferences.put("LastViewStyle", newValue.toString());
                     imageViewMain.requestFocus();
                 })
         );
 
-        mainViewModel.selectedImageModelProperty().addListener(
-                ((observable, oldValue, newValue) -> {
-                    // force trigger change listener
-                    var oldViewStyle = viewStyleProperty.get();
-                    viewStyleProperty.set(null);
-                    viewStyleProperty.set(oldViewStyle);
-                })
-        );
-
-        mainViewModel.selectedSortStyleProperty().addListener(
-                ((observable, oldValue, newValue) -> {
+        mainViewModel.selectedSortStyleProperty().addListener(((observable, oldValue, newValue) -> {
                     switch (newValue) {
                         case NAME:
                             menuSortByName.setSelected(true);
@@ -401,11 +411,13 @@ public class MainWindowController implements Initializable {
         switch (keyEvent.getCode()) {
             case LEFT:
             case PAGE_DOWN:
-                mainViewModel.showPreviousImage();
+                if (getViewingWidth() < mainScrollPane.getWidth())
+                    mainViewModel.showPreviousImage();
                 break;
             case RIGHT:
             case PAGE_UP:
-                mainViewModel.showNextImage();
+                if (getViewingWidth() < mainScrollPane.getWidth())
+                    mainViewModel.showNextImage();
                 break;
             case HOME:
                 mainViewModel.showFirstImage();
@@ -429,31 +441,31 @@ public class MainWindowController implements Initializable {
     @FXML
     public void mainScrollPane_onScroll(ScrollEvent scrollEvent) {
         if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
-            mainViewModel.showPreviousImage();
+            showPrevious();
         } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
-            mainViewModel.showNextImage();
+            showNext();
         }
         scrollEvent.consume();
     }
 
     @FXML
     public void buttonNext_onAction(ActionEvent actionEvent) {
-        mainViewModel.showNextImage();
+        showNext();
     }
 
     @FXML
     public void buttonPrevious_onAction(ActionEvent actionEvent) {
-        mainViewModel.showPreviousImage();
+        showPrevious();
     }
 
     @FXML
     public void buttonFirst_onAction(ActionEvent actionEvent) {
-        mainViewModel.showFirstImage();
+        showFirst();
     }
 
     @FXML
     public void buttonLast_onAction(ActionEvent actionEvent) {
-        mainViewModel.showLastImage();
+        showLast();
     }
 
     @FXML
@@ -832,5 +844,21 @@ public class MainWindowController implements Initializable {
             alert.initOwner(imageViewMain.getScene().getWindow());
             alert.show();
         }
+    }
+
+    private void showFirst() {
+        mainViewModel.showFirstImage();
+    }
+
+    private void showPrevious() {
+        mainViewModel.showPreviousImage();
+    }
+
+    private void showNext() {
+        mainViewModel.showNextImage();
+    }
+
+    private void showLast() {
+        mainViewModel.showLastImage();
     }
 }

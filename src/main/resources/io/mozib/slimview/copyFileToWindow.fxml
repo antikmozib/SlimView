@@ -14,7 +14,7 @@
 
 <AnchorPane prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.CopyFileToWindowController">
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+      <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="56.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
          <children>
             <ListView fx:id="listViewMain" onKeyPressed="#listViewMain_onKeyPress" onMouseClicked="#listViewMain_onClick" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
             <VBox spacing="8.0">
@@ -51,7 +51,7 @@
             </VBox>
          </children>
       </HBox>
-      <HBox layoutX="8.0" layoutY="267.0" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
+      <HBox layoutX="8.0" layoutY="267.0" spacing="8.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
          <children>
             <HBox alignment="CENTER_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
                <children>
