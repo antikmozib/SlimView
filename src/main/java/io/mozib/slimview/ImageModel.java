@@ -19,30 +19,38 @@ import java.text.DecimalFormat;
 
 public class ImageModel {
 
-    private String path;
+    private final String path;
     private final String name;
     private Image image = null;
-    private Image originalImage = null;
     private final long dateModified;
     private final long dateCreated;
-    private String originalPath;
     private boolean isFavorite;
+    private ImageModel originalImageModel = null;
 
     ImageModel(String path) {
         this(path, null);
     }
 
     ImageModel(String location, String originalLocation) {
-        this.path = location;
-        this.originalPath = originalLocation;
-        this.name = Path.of(location).getFileName().toString();
-        Path path = Paths.get(location);
         BasicFileAttributes fileAttributes = null;
+        Path path;
+
+        this.path = location;
+        this.name = Path.of(location).getFileName().toString();
+
+        if (originalLocation != null) {
+            this.originalImageModel = new ImageModel(originalLocation);
+            path = Paths.get(originalLocation);
+        } else {
+            path = Paths.get(location);
+        }
+
         try {
             fileAttributes = Files.readAttributes(path, BasicFileAttributes.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         if (fileAttributes != null) {
             this.dateModified = fileAttributes.lastModifiedTime().toMillis();
             this.dateCreated = fileAttributes.creationTime().toMillis();
@@ -74,18 +82,12 @@ public class ImageModel {
         image = null;
 
         if (hasOriginal()) {
-            path = originalPath;
-            originalPath = null;
-            originalImage = null;
+            originalImageModel = null;
         }
     }
 
     public File getContainingFolder() {
         return new File(new File(getBestPath()).getParent());
-    }
-
-    public String getOriginalResolution() {
-        return (int) getOriginalWidth() + " x " + (int) getOriginalHeight() + " px";
     }
 
     public String getFormat() {
@@ -115,22 +117,6 @@ public class ImageModel {
         return getImage().getHeight();
     }
 
-    public double getOriginalWidth() {
-        if (getOriginalImage() == null) {
-            return getWidth();
-        } else {
-            return getOriginalImage().getWidth();
-        }
-    }
-
-    public double getOriginalHeight() {
-        if (getOriginalImage() == null) {
-            return getHeight();
-        } else {
-            return getOriginalImage().getHeight();
-        }
-    }
-
     public long getDateModified() {
         return dateModified;
     }
@@ -139,38 +125,13 @@ public class ImageModel {
         return dateCreated;
     }
 
-    public void setOriginalPath(String originalPath) {
-        this.originalPath = originalPath;
-    }
-
-    /**
-     * @return The path to the original, unedited file.
-     */
-    public String getOriginalPath() {
-        return originalPath;
-    }
-
-    public Image getOriginalImage() {
-        if (getOriginalPath() == null || getOriginalPath().equals("")) {
-            return null;
-        }
-
-        if (originalImage == null) {
-            originalImage = new Image(new File(getOriginalPath()).toURI().toString());
-        }
-
-        return originalImage;
-    }
-
     public String getColorDepth() {
         ColorModel colorModel = SwingFXUtils.fromFXImage(getImage(), null).getColorModel();
         return String.valueOf(colorModel.getPixelSize());
     }
 
     public boolean hasOriginal() {
-        return getOriginalPath() != null &&
-                !getOriginalPath().equals("") &&
-                !getOriginalPath().equalsIgnoreCase(getPath());
+        return originalImageModel != null;
     }
 
     public void setIsFavorite(boolean value) {
@@ -181,19 +142,23 @@ public class ImageModel {
         return isFavorite;
     }
 
-    public String getBestPath() {
-        if (hasOriginal()) {
-            return getOriginalPath();
-        }
-
-        return getPath();
+    public String getResolution() {
+        return Math.round(getWidth()) + " x " + Math.round(getHeight()) + " px";
     }
 
-    public double getOriginalAspectRatio() {
-        if (hasOriginal()) {
-            return (getOriginalWidth() / getOriginalHeight());
-        } else {
-            return (getWidth() / getHeight());
-        }
+    public double getAspectRatio() {
+        return getWidth() / getHeight();
+    }
+
+    public String getBestPath() {
+        return hasOriginal() ? originalImageModel.getPath() : getPath();
+    }
+
+    public ImageModel getOriginalImageModel() {
+        return originalImageModel;
+    }
+
+    public void setOriginalImageModel(ImageModel originalImageModel) {
+        this.originalImageModel = originalImageModel;
     }
 }

@@ -146,9 +146,14 @@ public class MainWindowController implements Initializable {
             labelResolution.setText("");
 
             if (mainViewModel.getSelectedImageModel() != null) {
-                double zoom = getViewingWidth() / mainViewModel.getSelectedImageModel().getOriginalWidth() * 100;
+                double currentWidth = mainViewModel.getSelectedImageModel().hasOriginal() ?
+                        mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth() :
+                        mainViewModel.getSelectedImageModel().getWidth();
+                double zoom = getViewingWidth() / currentWidth * 100;
                 labelResolution.setText(
-                        mainViewModel.getSelectedImageModel().getOriginalResolution() + " (" + Math.round(zoom) + "%)");
+                        (mainViewModel.getSelectedImageModel().hasOriginal() ?
+                                mainViewModel.getSelectedImageModel().getOriginalImageModel().getResolution() :
+                                mainViewModel.getSelectedImageModel().getResolution()) + " (" + Math.round(zoom) + "%)");
             }
         };
         imageViewMain.fitHeightProperty().addListener(imageViewSizeChangeListener);
@@ -199,7 +204,7 @@ public class MainWindowController implements Initializable {
             }
         });
 
-        viewStyleProperty.addListener(((observable, oldValue, newValue) -> {
+        viewStyleProperty.addListener((observable, oldValue, newValue) -> {
                     if (newValue == null) {
                         newValue = Objects.requireNonNullElse(oldValue, ViewStyle.FIT_TO_WINDOW);
                     }
@@ -253,10 +258,10 @@ public class MainWindowController implements Initializable {
 
                     preferences.put("LastViewStyle", newValue.toString());
                     imageViewMain.requestFocus();
-                })
+                }
         );
 
-        mainViewModel.selectedSortStyleProperty().addListener(((observable, oldValue, newValue) -> {
+        mainViewModel.selectedSortStyleProperty().addListener((observable, oldValue, newValue) -> {
                     switch (newValue) {
                         case NAME:
                             menuSortByName.setSelected(true);
@@ -269,7 +274,7 @@ public class MainWindowController implements Initializable {
                             break;
                     }
                     preferences.put("LastSortStyle", newValue.toString());
-                })
+                }
         );
 
         viewStyleProperty.set(ViewStyle.valueOf(preferences.get("LastViewStyle", ViewStyle.FIT_TO_WINDOW.toString())));
@@ -643,8 +648,12 @@ public class MainWindowController implements Initializable {
     }
 
     private void zoomIn() {
-        double originalWidth = mainViewModel.getSelectedImageModel().getOriginalWidth();
-        double originalHeight = mainViewModel.getSelectedImageModel().getOriginalHeight();
+        double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal() ?
+                mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth() :
+                mainViewModel.getSelectedImageModel().getWidth();
+        double originalHeight = mainViewModel.getSelectedImageModel().hasOriginal() ?
+                mainViewModel.getSelectedImageModel().getOriginalImageModel().getHeight() :
+                mainViewModel.getSelectedImageModel().getHeight();
         double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
         double targetWidth = getViewingWidth() + getViewingWidth() * zoomStep;
@@ -669,8 +678,12 @@ public class MainWindowController implements Initializable {
     }
 
     private void zoomOut() {
-        double originalWidth = mainViewModel.getSelectedImageModel().getOriginalWidth();
-        double originalHeight = mainViewModel.getSelectedImageModel().getOriginalHeight();
+        double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal() ?
+                mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth() :
+                mainViewModel.getSelectedImageModel().getWidth();
+        double originalHeight = mainViewModel.getSelectedImageModel().hasOriginal() ?
+                mainViewModel.getSelectedImageModel().getOriginalImageModel().getHeight() :
+                mainViewModel.getSelectedImageModel().getHeight();
         double targetWidth = getViewingWidth() - getViewingWidth() * zoomStep;
         double targetHeight = getViewingHeight() - getViewingHeight() * zoomStep;
         double minAllowedWidth = 0.1 * originalWidth;
@@ -798,7 +811,7 @@ public class MainWindowController implements Initializable {
         imageInfoWindow.initModality(Modality.WINDOW_MODAL);
         imageInfoWindow.initStyle(StageStyle.UTILITY);
         imageInfoWindow.initOwner(imageViewMain.getScene().getWindow());
-        imageInfoWindow.setTitle("Image Information - " + mainViewModel.getSelectedImageModel().getName());
+        imageInfoWindow.setTitle("Image Properties - " + mainViewModel.getSelectedImageModel().getName());
         controller.loadInfo(mainViewModel.getSelectedImageModel());
         imageInfoWindow.show();
     }
@@ -824,7 +837,10 @@ public class MainWindowController implements Initializable {
      * @return The width of the image as it's being displayed on the screen.
      */
     private double getViewingWidth() {
-        double width = imageViewMain.getFitHeight() * mainViewModel.getSelectedImageModel().getOriginalAspectRatio();
+        double width = imageViewMain.getFitHeight() *
+                (mainViewModel.getSelectedImageModel().hasOriginal() ?
+                        mainViewModel.getSelectedImageModel().getOriginalImageModel().getAspectRatio() :
+                        mainViewModel.getSelectedImageModel().getAspectRatio());
         if (width > imageViewMain.getFitWidth()) width = imageViewMain.getFitWidth();
         return width;
     }
@@ -833,7 +849,10 @@ public class MainWindowController implements Initializable {
      * @return The height of the image as it's being displayed on the screen.
      */
     private double getViewingHeight() {
-        double height = imageViewMain.getFitWidth() / mainViewModel.getSelectedImageModel().getOriginalAspectRatio();
+        double height = imageViewMain.getFitWidth() /
+                (mainViewModel.getSelectedImageModel().hasOriginal() ?
+                        mainViewModel.getSelectedImageModel().getOriginalImageModel().getAspectRatio() :
+                        mainViewModel.getSelectedImageModel().getAspectRatio());
         if (height > imageViewMain.getFitHeight()) height = imageViewMain.getFitHeight();
         return height;
     }

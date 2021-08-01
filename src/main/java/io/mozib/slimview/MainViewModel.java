@@ -139,12 +139,14 @@ public class MainViewModel {
     }
 
     public void resetZoom() {
-        if (getSelectedImageModel().getOriginalPath() == null) {
+        if (!getSelectedImageModel().hasOriginal()) {
             return;
         }
         setSelectedImage(
-                imageModels.stream().filter(item -> item.getPath().equals(getSelectedImageModel().getOriginalPath()))
-                        .findFirst().orElse(null));
+                imageModels.stream()
+                        .filter(item -> item.getPath().equals(getSelectedImageModel().getOriginalImageModel().getPath()))
+                        .findFirst()
+                        .orElse(null));
     }
 
     public void saveImage(ImageModel imageModel, String destination) {
@@ -209,7 +211,7 @@ public class MainViewModel {
             ImageModel remove;
 
             if (imageModel.hasOriginal()) {
-                remove = findByPath(imageModel.getOriginalPath());
+                remove = findByPath(imageModel.getOriginalImageModel().getPath());
             } else {
                 remove = imageModel;
             }
@@ -365,14 +367,14 @@ public class MainViewModel {
 
         // resample image to ensure best resizing quality
         if (!imageModel.hasOriginal()) {
-            imageModel.setOriginalPath(imageModel.getPath());
+            imageModel.setOriginalImageModel(new ImageModel(imageModel.getPath()));
             image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
         } else {
-            image = SwingFXUtils.fromFXImage(imageModel.getOriginalImage(), null);
+            image = SwingFXUtils.fromFXImage(imageModel.getOriginalImageModel().getImage(), null);
         }
 
         var resized = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
-        createTempImage(resized, file, imageModel.getOriginalPath());
+        createTempImage(resized, file, imageModel.getOriginalImageModel().getPath());
     }
 
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
