@@ -12,3 +12,16 @@
     -fx-faint-focus-color: transparent;
     -fx-background-color: #000
 }
+
+#mainScrollPane {
+    -fx-background-insets: 0;
+    -fx-padding: 0
+}
+
+#mainScrollPane:focused {
+    -fx-background-insets: 0
+}
+
+#mainScrollPane .corner {
+    -fx-background-insets: 0
+}
