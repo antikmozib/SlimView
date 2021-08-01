@@ -12,7 +12,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -644,28 +643,52 @@ public class MainWindowController implements Initializable {
     }
 
     private void zoomIn() {
-        double width = getViewingWidth() + getViewingWidth() * zoomStep;
-        double height = getViewingHeight() + getViewingHeight() * zoomStep;
+        double originalWidth = mainViewModel.getSelectedImageModel().getOriginalWidth();
+        double originalHeight = mainViewModel.getSelectedImageModel().getOriginalHeight();
+        double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+        double targetWidth = getViewingWidth() + getViewingWidth() * zoomStep;
+        double targetHeight = getViewingHeight() + getViewingHeight() * zoomStep;
+        double maxAllowedWidth = Math.min(5 * originalWidth, 3 * screenWidth);
+        double maxAllowedHeight = Math.min(5 * originalHeight, 3 * screenHeight);
 
-        // stop zooming if the image size gets larger than three times the size of the display
-        Rectangle2D screen = Screen.getPrimary().getVisualBounds();
-        if (width > 3 * screen.getMaxX() || height > 3 * screen.getMaxY()) return;
+        // apply zoom limit
+        if (targetWidth > maxAllowedWidth || targetHeight > maxAllowedHeight) {
+            return;
+        }
 
-        mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) width, (int) height);
+        // latch onto the original size if we're around it
+        if ((targetWidth >= 0.95 * originalWidth && targetWidth <= 1.05 * originalWidth) ||
+                (targetHeight >= 0.95 * originalHeight && targetHeight <= 1.05 * originalHeight)) {
+            targetWidth = originalWidth;
+            targetHeight = originalHeight;
+        }
+
+        mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) targetWidth, (int) targetHeight);
         viewStyleProperty.set(ViewStyle.ORIGINAL);
     }
 
     private void zoomOut() {
-        double width = getViewingWidth() - getViewingWidth() * zoomStep;
-        double height = getViewingHeight() - getViewingHeight() * zoomStep;
+        double originalWidth = mainViewModel.getSelectedImageModel().getOriginalWidth();
+        double originalHeight = mainViewModel.getSelectedImageModel().getOriginalHeight();
+        double targetWidth = getViewingWidth() - getViewingWidth() * zoomStep;
+        double targetHeight = getViewingHeight() - getViewingHeight() * zoomStep;
+        double minAllowedWidth = 0.1 * originalWidth;
+        double minAllowedHeight = 0.1 * originalHeight;
 
-        // stop zooming if the image size gets smaller than 10% of the size of the original image
-        if (width < 0.1 * mainViewModel.getSelectedImageModel().getOriginalWidth() ||
-                height < 0.1 * mainViewModel.getSelectedImageModel().getOriginalHeight()) {
+        // apply zoom out limit
+        if (targetWidth < minAllowedWidth || targetHeight < minAllowedHeight) {
             return;
         }
 
-        mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) width, (int) height);
+        // latch onto the original size if we're around it
+        if ((targetWidth >= 0.95 * originalWidth && targetWidth <= 1.05 * originalWidth) ||
+                (targetHeight >= 0.95 * originalHeight && targetHeight <= 1.05 * originalHeight)) {
+            targetWidth = originalWidth;
+            targetHeight = originalHeight;
+        }
+
+        mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) targetWidth, (int) targetHeight);
         viewStyleProperty.set(ViewStyle.ORIGINAL);
     }
 

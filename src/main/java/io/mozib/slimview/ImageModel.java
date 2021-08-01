@@ -32,11 +32,11 @@ public class ImageModel {
         this(path, null);
     }
 
-    ImageModel(String fullPath, String originalPath) {
-        this.path = fullPath;
-        this.originalPath = originalPath;
-        this.name = Path.of(fullPath).getFileName().toString();
-        Path path = Paths.get(fullPath);
+    ImageModel(String location, String originalLocation) {
+        this.path = location;
+        this.originalPath = originalLocation;
+        this.name = Path.of(location).getFileName().toString();
+        Path path = Paths.get(location);
         BasicFileAttributes fileAttributes = null;
         try {
             fileAttributes = Files.readAttributes(path, BasicFileAttributes.class);
