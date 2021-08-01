@@ -48,22 +48,22 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 
 [Registry]
 Root: HKCR; Subkey: ".jpg"; ValueData: "{#MyAppName}.jpg"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.jpg"; ValueData: "Program {#MyAppName}"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}.jpg"; ValueData: "{#MyAppName} JPG Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}.jpg\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}.jpg\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
 Root: HKCR; Subkey: ".jpeg"; ValueData: "{#MyAppName}.jpeg"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.jpeg"; ValueData: "Program {#MyAppName}"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}.jpeg"; ValueData: "{#MyAppName} JPEG Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}.jpeg\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}.jpeg\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
 Root: HKCR; Subkey: ".gif"; ValueData: "{#MyAppName}.gif"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.gif"; ValueData: "Program {#MyAppName}"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}.gif"; ValueData: "{#MyAppName} GIF Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}.gif\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}.gif\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
 Root: HKCR; Subkey: ".png"; ValueData: "{#MyAppName}.png"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.png"; ValueData: "Program {#MyAppName}"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}.png"; ValueData: "{#MyAppName} PNG Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}.png\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}.png\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
