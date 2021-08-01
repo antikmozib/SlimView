@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -22,10 +23,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -283,7 +282,7 @@ public class MainWindowController implements Initializable {
         for (RecentFiles.RecentFile recentFile : recentFiles.getRecentFiles()) {
             MenuItem menuItem = new MenuItem(recentFile.getPath());
             menuItem.setOnAction(event -> {
-                mainViewModel.loadImage(new ImageModel(menuItem.getText()));
+                openImage(menuItem.getText());
             });
             menuRecent.getItems().add(menuItem);
         }
@@ -612,8 +611,7 @@ public class MainWindowController implements Initializable {
         favoritesWindow.showAndWait();
 
         if (controller.getSelectedFavorite().get() != null) {
-            ImageModel selectedImage = new ImageModel(controller.getSelectedFavorite().get().toString());
-            mainViewModel.loadImage(selectedImage);
+            openImage(controller.getSelectedFavorite().get().toString());
         }
     }
 
@@ -636,6 +634,11 @@ public class MainWindowController implements Initializable {
     private void zoomIn() {
         double width = getViewingWidth() + getViewingWidth() * zoomStep;
         double height = getViewingHeight() + getViewingHeight() * zoomStep;
+
+        // stop zooming if the image size gets larger than three times the size of the display
+        Rectangle2D screen = Screen.getPrimary().getVisualBounds();
+        if (width > 3 * screen.getMaxX() || height > 3 * screen.getMaxY()) return;
+
         mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) width, (int) height);
         viewStyleProperty.set(ViewStyle.ORIGINAL);
     }
@@ -643,6 +646,13 @@ public class MainWindowController implements Initializable {
     private void zoomOut() {
         double width = getViewingWidth() - getViewingWidth() * zoomStep;
         double height = getViewingHeight() - getViewingHeight() * zoomStep;
+
+        // stop zooming if the image size gets smaller than 10% of the size of the original image
+        if (width < 0.1 * mainViewModel.getSelectedImageModel().getOriginalWidth() ||
+                height < 0.1 * mainViewModel.getSelectedImageModel().getOriginalHeight()) {
+            return;
+        }
+
         mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) width, (int) height);
         viewStyleProperty.set(ViewStyle.ORIGINAL);
     }
@@ -686,7 +696,7 @@ public class MainWindowController implements Initializable {
         File file = fileChooser.showOpenDialog(imageViewMain.getScene().getWindow());
         if (file != null) {
             preferences.put("OpenLocation", file.getParentFile().getPath());
-            mainViewModel.loadImage(new ImageModel(file.getPath()));
+            openImage(file.getPath());
         }
     }
 
@@ -806,5 +816,21 @@ public class MainWindowController implements Initializable {
                     (int) getViewingWidth() + " x " + (int) getViewingHeight() + " px]";
         }
         stage.setTitle(title);
+    }
+
+    /**
+     * Main method to load an image into the application. Don't use ViewModel's function directly.
+     */
+    public void openImage(String path) {
+        try {
+            mainViewModel.loadImage(new ImageModel(path));
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Error opening " + FilenameUtils.getName(path));
+            alert.setContentText("The requested file doesn't exist or is unreachable.");
+            alert.setTitle("Error");
+            alert.initOwner(imageViewMain.getScene().getWindow());
+            alert.show();
+        }
     }
 }

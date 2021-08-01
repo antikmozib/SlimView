@@ -50,7 +50,7 @@ public class SlimView extends Application {
         });
 
         if (cmdLineArgs != null && cmdLineArgs.length > 0) {
-            controller.mainViewModel.loadImage(new ImageModel(cmdLineArgs[0]));
+            controller.openImage(cmdLineArgs[0]);
         }
     }
 

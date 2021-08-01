@@ -62,7 +62,10 @@ public class MainViewModel {
     }
 
     @SuppressWarnings("unchecked")
-    public void loadImage(ImageModel imageModel) {
+    public void loadImage(ImageModel imageModel) throws IOException {
+        File file = new File(imageModel.getPath());
+        if (!file.exists()) throw new IOException();
+
         // first, show the image requested while the directory is being scanned
         setSelectedImage(imageModel);
 
@@ -368,7 +371,7 @@ public class MainViewModel {
             image = SwingFXUtils.fromFXImage(imageModel.getOriginalImage(), null);
         }
 
-        var resized = Scalr.resize(image, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
+        var resized = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
         createTempImage(resized, file, imageModel.getOriginalPath());
     }
 

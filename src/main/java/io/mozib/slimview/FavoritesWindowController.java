@@ -206,7 +206,6 @@ public class FavoritesWindowController implements Initializable {
 
     @FXML
     public void textFieldSearch_onAction(ActionEvent actionEvent) {
-
     }
 
     @FXML
