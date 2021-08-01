@@ -36,9 +36,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\slimview.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\target\win\slimview.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\notice.txt"; DestDir: "{app}"; Flags: 
-Source: "..\jlink-image\*"; DestDir: "{app}\jlink-image"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\target\win\jlink-image\*"; DestDir: "{app}\jlink-image"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
