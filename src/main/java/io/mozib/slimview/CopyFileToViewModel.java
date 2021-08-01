@@ -61,12 +61,12 @@ public class CopyFileToViewModel {
 
     public void saveDestinations() {
         CopyToDestinations copyToDestinations = new CopyToDestinations();
-        copyToDestinations.setDestinations( destinations);
+        copyToDestinations.setDestinations(destinations);
         Util.writeDataFile(copyToDestinations, DataFileLocation.COPY_TO_DESTINATIONS);
     }
 
     /**
-     * @param onConflict What to do when a conflict arises
+     * @param onConflict   What to do when a conflict arises
      * @param destinations Where to copy the file to
      * @return A list of exceptions (if any) that occurred during the copying process
      */
