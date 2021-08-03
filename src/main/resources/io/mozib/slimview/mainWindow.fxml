@@ -216,7 +216,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Separator prefWidth="8.0" />
+                <Separator />
                 <Button fx:id="buttonFirst" mnemonicParsing="false" onAction="#buttonFirst_onAction" prefHeight="32.0">
                     <tooltip>
                         <Tooltip text="First" />
@@ -265,7 +265,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Separator prefWidth="8.0" />
+                <Separator />
                 <Button id="buttonZoomIn" fx:id="buttonZoomIn" mnemonicParsing="false" onAction="#buttonZoomIn_onAction">
                     <tooltip>
                         <Tooltip text="Zoom In" />
@@ -327,7 +327,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Separator prefWidth="8.0" />
+            <Separator orientation="VERTICAL" />
                 <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#buttonEdit_onAction" prefHeight="32.0">
                     <tooltip>
                         <Tooltip text="Edit" />

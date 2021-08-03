@@ -5,23 +5,22 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="354.0" prefWidth="472.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.AboutWindowController">
+<AnchorPane id="AnchorPane" prefHeight="150.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.AboutWindowController">
     <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="8.0">
+      <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
          <children>
               <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
                   <image>
                       <Image url="@icons/slimview.png" />
                   </image>
               </ImageView>
-            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+            <VBox HBox.hgrow="ALWAYS">
                <children>
                     <Label text="SlimView" />
                     <Label fx:id="labelVersion" text="Version 1.0" />
@@ -36,22 +35,14 @@
                             <Hyperlink fx:id="hyperlinkWebsite" focusTraversable="false" onAction="#hyperlinkWebsite_onAction" text="https://mozib.io/slimview" />
                         </children>
                     </HBox>
-                    <Separator prefHeight="16.0" prefWidth="903.0">
-                     <padding>
-                        <Insets bottom="8.0" top="8.0" />
-                     </padding></Separator>
-                    <Label text="Acknowledgements:" />
-                    <TextArea id="textAcknowledgements" fx:id="textAcknowledgements" editable="false" prefHeight="567.0" prefWidth="1022.0" wrapText="true">
-                     <VBox.margin>
-                        <Insets bottom="16.0" top="8.0" />
-                     </VBox.margin></TextArea>
-                  <HBox alignment="CENTER_RIGHT">
-                     <children>
-                          <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#buttonOK_onAction" text="OK" />
-                     </children>
-                  </HBox>
                </children>
             </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
+         <children>
+            <Button fx:id="buttonAcknowledgements" minWidth="80.0" onAction="#buttonAcknowledgements_onAction" text="_Acknowledgements" />
+              <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#buttonOK_onAction" text="OK" />
          </children>
       </HBox>
     </children>

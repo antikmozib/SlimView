@@ -23,7 +23,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.*;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -141,6 +140,7 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
+        labelResolution.setText("");
 
         // start tracking resolution and zoom
         ChangeListener<Number> imageViewSizeChangeListener = (observable, oldValue, newValue) -> {
@@ -208,6 +208,8 @@ public class MainWindowController implements Initializable {
         });
 
         viewStyleProperty.addListener((observable, oldValue, newValue) -> {
+                    if (mainViewModel.getSelectedImageModel() == null) return;
+
                     if (newValue == null) {
                         newValue = Objects.requireNonNullElse(oldValue, ViewStyle.FIT_TO_WINDOW);
                     }
@@ -249,6 +251,8 @@ public class MainWindowController implements Initializable {
                             double aspectRatio = mainViewModel.getSelectedImageModel().getAspectRatio();
                             double targetWidth;
                             double targetHeight;
+                            double heightTaskbarTitlebar = 140;
+                            double widthWindowBorders = 8;
 
                             menuFitToDesktop.setSelected(true);
                             mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -257,19 +261,27 @@ public class MainWindowController implements Initializable {
                             if (isViewingFullScreen.get()) {
                                 targetWidth = screenWidth;
                             } else {
-                                targetWidth = screenWidth - 8;
+                                targetWidth = screenWidth - widthWindowBorders; // account for window borders
                             }
 
                             targetHeight = targetWidth / aspectRatio;
 
+                            // account for the sizes of the various UI elements and the current fullscreen mode setting
                             if (!isViewingFullScreen.get()) {
-                                if (targetHeight > screenHeight - 140) {
-                                    targetHeight = screenHeight - 140;
+                                if (targetHeight > screenHeight - heightTaskbarTitlebar) { // ScreenHeight - (taskbar + titlebar)
+                                    targetHeight = screenHeight - heightTaskbarTitlebar;
                                     targetWidth = aspectRatio * targetHeight;
                                 }
                             } else {
-                                if (targetHeight > screenHeight) {
-                                    targetHeight = screenHeight + 40; // account for taskbar height
+                                // Windows includes taskbar height in ScreenHeight, unlike *nux
+                                double heightOffsetPlatform;
+                                if (getOSType() == Util.OSType.WINDOWS) {
+                                    heightOffsetPlatform = 32;
+                                } else {
+                                    heightOffsetPlatform = 16;
+                                }
+                                if (targetHeight > screenHeight + heightOffsetPlatform) {
+                                    targetHeight = screenHeight + heightOffsetPlatform;
                                     targetWidth = aspectRatio * targetHeight;
                                 }
                             }
@@ -279,10 +291,11 @@ public class MainWindowController implements Initializable {
                             imageViewMain.setFitHeight(targetHeight);
 
                             if (!isViewingFullScreen.get()) {
-                                imageViewMain.getScene().getWindow().setWidth(imageViewMain.getFitWidth() + 16);
-                                imageViewMain.getScene().getWindow().setHeight(imageViewMain.getFitHeight() + 140);
-                                imageViewMain.getScene().getWindow().setX(0);
-                                imageViewMain.getScene().getWindow().setY(0);
+                                Window window = imageViewMain.getScene().getWindow();
+                                window.setWidth(imageViewMain.getFitWidth() + 2 * widthWindowBorders);
+                                window.setHeight(imageViewMain.getFitHeight() + heightTaskbarTitlebar);
+                                window.setX(0);
+                                window.setY(0);
                             }
                             break;
 
@@ -394,7 +407,10 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
-        Scene scene = new Scene(new FXMLLoader(this.getClass().getResource("aboutWindow.fxml")).load());
+        FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("aboutWindow.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root);
+        AboutWindowController controller = fxmlLoader.getController();
         Stage aboutWindow = new Stage();
         aboutWindow.setScene(scene);
         aboutWindow.initModality(Modality.WINDOW_MODAL);
@@ -402,6 +418,7 @@ public class MainWindowController implements Initializable {
         aboutWindow.initOwner(imageViewMain.getScene().getWindow());
         aboutWindow.setTitle("About");
         aboutWindow.show();
+        controller.buttonOK.requestFocus();
     }
 
     @FXML
@@ -869,7 +886,7 @@ public class MainWindowController implements Initializable {
         imageInfoWindow.initModality(Modality.WINDOW_MODAL);
         imageInfoWindow.initStyle(StageStyle.UTILITY);
         imageInfoWindow.initOwner(imageViewMain.getScene().getWindow());
-        imageInfoWindow.setTitle("Image Properties - " + mainViewModel.getSelectedImageModel().getName());
+        imageInfoWindow.setTitle("Image Properties");
         controller.loadInfo(mainViewModel.getSelectedImageModel());
         imageInfoWindow.show();
     }
@@ -886,7 +903,7 @@ public class MainWindowController implements Initializable {
         copyFileToWindow.initModality(Modality.WINDOW_MODAL);
         copyFileToWindow.initStyle(StageStyle.UTILITY);
         copyFileToWindow.initOwner(imageViewMain.getScene().getWindow());
-        copyFileToWindow.setTitle("Copy \"" + mainViewModel.getSelectedImageModel().getName() + "\" To");
+        copyFileToWindow.setTitle("Copy File To");
         controller.setViewModel(new CopyFileToViewModel(mainViewModel.getSelectedImageModel()));
         copyFileToWindow.show();
     }
@@ -938,8 +955,9 @@ public class MainWindowController implements Initializable {
             mainViewModel.loadImage(new ImageModel(path));
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Error opening " + FilenameUtils.getName(path));
-            alert.setContentText("The requested file doesn't exist or is unreachable.");
+            alert.setHeaderText("Unable to open the requested file");
+            alert.setContentText("The file doesn't exist or is unreachable.");
+            alert.setWidth(500);
             alert.setTitle("Error");
             alert.initOwner(imageViewMain.getScene().getWindow());
             alert.show();

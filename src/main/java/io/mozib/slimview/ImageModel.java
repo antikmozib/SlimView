@@ -24,7 +24,7 @@ public class ImageModel {
     private Image image = null;
     private final long dateModified;
     private final long dateCreated;
-    private boolean isFavorite;
+    private Boolean isFavorite = null;
     private ImageModel originalImageModel = null;
 
     ImageModel(String path) {
