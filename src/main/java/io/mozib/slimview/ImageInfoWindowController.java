@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -21,19 +22,21 @@ public class ImageInfoWindowController {
 
     @FXML
     public TextArea textInfo;
+    @FXML
+    public TextField textPath;
 
     public void loadInfo(ImageModel imageModel) {
         StringBuilder info = new StringBuilder();
-        String path;
+        String path = imageModel.getBestPath();
 
-        path = imageModel.getBestPath();
-
+        textPath.setText(path);
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(new File(path));
             for (Directory directory : metadata.getDirectories()) {
                 directory.getTags().forEach(tag -> info.append(tag).append("\n"));
             }
             textInfo.setText(info.toString());
+            textInfo.requestFocus();
         } catch (ImageProcessingException | IOException e) {
             e.printStackTrace();
         }

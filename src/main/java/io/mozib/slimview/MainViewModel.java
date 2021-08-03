@@ -352,7 +352,7 @@ public class MainViewModel {
             imageModel.setIsFavorite(isFavorite(imageModel));
 
             selectedImageModelWrapper.set(imageModel);
-            status.set((getCurrentIndex() + 1) + " / " + imageModels.size()
+            status.set((getCurrentIndex() + 1) + "/" + imageModels.size()
                     + "  |  " + imageModel.getColorDepth() + "-bits"
                     + "  |  " + imageModel.getFormat()
                     + "  |  " + imageModel.getFormattedFileSize()

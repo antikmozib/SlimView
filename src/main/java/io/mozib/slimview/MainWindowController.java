@@ -14,6 +14,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,8 +28,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Window;
 import javafx.stage.*;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -246,42 +254,39 @@ public class MainWindowController implements Initializable {
                             break;
 
                         case FIT_TO_DESKTOP:
-                            double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
-                            double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+                            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                            Rectangle desktopSize =
+                                    GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+                            double taskBarHeight = screenSize.height - desktopSize.height;
+                            double titleBarHeight = taskBarHeight;
+                            double screenWidth = screenSize.getWidth();
+                            double screenHeight = screenSize.getHeight();
                             double aspectRatio = mainViewModel.getSelectedImageModel().getAspectRatio();
-                            double targetWidth;
-                            double targetHeight;
-                            double heightTaskbarTitlebar = 140;
-                            double widthWindowBorders = 8;
+                            double fixedHeight = 25 + 42 + 33;
 
                             menuFitToDesktop.setSelected(true);
                             mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
                             mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
+                            double targetWidth, targetHeight;
+
                             if (isViewingFullScreen.get()) {
                                 targetWidth = screenWidth;
                             } else {
-                                targetWidth = screenWidth - widthWindowBorders; // account for window borders
+                                targetWidth = screenWidth - 8;
                             }
 
                             targetHeight = targetWidth / aspectRatio;
 
-                            // account for the sizes of the various UI elements and the current fullscreen mode setting
-                            if (!isViewingFullScreen.get()) {
-                                if (targetHeight > screenHeight - heightTaskbarTitlebar) { // ScreenHeight - (taskbar + titlebar)
-                                    targetHeight = screenHeight - heightTaskbarTitlebar;
+                            if (isViewingFullScreen.get()) {
+                                if (targetHeight > screenHeight - 8) {
+                                    targetHeight = screenHeight - 8;
                                     targetWidth = aspectRatio * targetHeight;
                                 }
                             } else {
-                                // Windows includes taskbar height in ScreenHeight, unlike *nux
-                                double heightOffsetPlatform;
-                                if (getOSType() == Util.OSType.WINDOWS) {
-                                    heightOffsetPlatform = 32;
-                                } else {
-                                    heightOffsetPlatform = 16;
-                                }
-                                if (targetHeight > screenHeight + heightOffsetPlatform) {
-                                    targetHeight = screenHeight + heightOffsetPlatform;
+                                double viewableHeight = screenHeight - taskBarHeight - titleBarHeight - fixedHeight - 8;
+                                if (targetHeight > viewableHeight) {
+                                    targetHeight = viewableHeight;
                                     targetWidth = aspectRatio * targetHeight;
                                 }
                             }
@@ -292,8 +297,8 @@ public class MainWindowController implements Initializable {
 
                             if (!isViewingFullScreen.get()) {
                                 Window window = imageViewMain.getScene().getWindow();
-                                window.setWidth(imageViewMain.getFitWidth() + 2 * widthWindowBorders);
-                                window.setHeight(imageViewMain.getFitHeight() + heightTaskbarTitlebar);
+                                window.setWidth(targetWidth + 16);
+                                window.setHeight(targetHeight + titleBarHeight + fixedHeight + 8);
                                 window.setX(0);
                                 window.setY(0);
                             }
@@ -957,7 +962,6 @@ public class MainWindowController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Unable to open the requested file");
             alert.setContentText("The file doesn't exist or is unreachable.");
-            alert.setWidth(500);
             alert.setTitle("Error");
             alert.initOwner(imageViewMain.getScene().getWindow());
             alert.show();
