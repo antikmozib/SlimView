@@ -39,14 +39,19 @@ public class SlimView extends Application {
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         stage.setWidth(preferences.getDouble("MainWindowWidth", 960));
         stage.setHeight(preferences.getDouble("MainWindowHeight", 720));
+        stage.setY(preferences.getDouble("MainWindowTop", 0.0));
+        stage.setX(preferences.getDouble("MainWindowLeft", 0.0));
         if (stage.getWidth() > 0.9 * Screen.getPrimary().getVisualBounds().getWidth() &&
                 stage.getHeight() > 0.9 * Screen.getPrimary().getVisualBounds().getHeight()) {
             stage.setMaximized(true);
         }
         stage.show();
         stage.setOnCloseRequest(event -> {
+            // save window positions
             preferences.putDouble("MainWindowHeight", stage.getScene().getWindow().getHeight());
             preferences.putDouble("MainWindowWidth", stage.getScene().getWindow().getWidth());
+            preferences.putDouble("MainWindowTop", stage.getScene().getWindow().getY());
+            preferences.putDouble("MainWindowLeft", stage.getScene().getWindow().getX());
         });
 
         if (cmdLineArgs != null && cmdLineArgs.length > 0) {

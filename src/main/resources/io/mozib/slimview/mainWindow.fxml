@@ -121,6 +121,10 @@
                                 <KeyCodeCombination alt="UP" code="F" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </RadioMenuItem>
+                  <RadioMenuItem fx:id="menuFitToDesktop" onAction="#menuFitToDesktop_onAction" text="Fit To _Desktop">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></RadioMenuItem>
                         <RadioMenuItem fx:id="menuOriginalSize" onAction="#menuOriginalSize_onAction" text="_Original Size">
                             <accelerator>
                                 <KeyCodeCombination alt="UP" code="H" control="DOWN" meta="UP" shift="UP" shortcut="UP" />

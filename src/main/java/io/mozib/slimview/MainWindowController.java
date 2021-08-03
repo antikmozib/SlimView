@@ -46,6 +46,8 @@ public class MainWindowController implements Initializable {
     @FXML
     public RadioMenuItem menuFitToWindow;
     @FXML
+    public RadioMenuItem menuFitToDesktop;
+    @FXML
     public RadioMenuItem menuOriginalSize;
     @FXML
     public RadioMenuItem menuFullScreen;
@@ -92,7 +94,7 @@ public class MainWindowController implements Initializable {
     private final SimpleObjectProperty<ViewStyle> viewStyleProperty = new SimpleObjectProperty<>(ViewStyle.ORIGINAL);
 
     // the ViewStyle to reset to when switching between images after zooming
-    private ViewStyle cachedViewStyle = viewStyleProperty.get();
+    private ViewStyle cachedViewStyleZoom = viewStyleProperty.get();
 
     @FXML
     public void menuResize_onAction(ActionEvent actionEvent) {
@@ -160,6 +162,7 @@ public class MainWindowController implements Initializable {
         imageViewMain.fitWidthProperty().addListener(imageViewSizeChangeListener);
 
         // menubar toggle group
+        menuFitToDesktop.setToggleGroup(toggleGroupViewStyle);
         menuStretched.setToggleGroup(toggleGroupViewStyle);
         menuFitToWindow.setToggleGroup(toggleGroupViewStyle);
         menuOriginalSize.setToggleGroup(toggleGroupViewStyle);
@@ -182,7 +185,7 @@ public class MainWindowController implements Initializable {
             if (newValue.hasOriginal() || oldValue == null) {
                 oldViewStyle = viewStyleProperty.get();
             } else {
-                oldViewStyle = cachedViewStyle;
+                oldViewStyle = cachedViewStyleZoom;
             }
             viewStyleProperty.set(null); // force trigger change listener
             viewStyleProperty.set(oldViewStyle);
@@ -240,6 +243,49 @@ public class MainWindowController implements Initializable {
                                     scrollPaneOffset));
                             break;
 
+                        case FIT_TO_DESKTOP:
+                            double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+                            double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+                            double aspectRatio = mainViewModel.getSelectedImageModel().getAspectRatio();
+                            double targetWidth;
+                            double targetHeight;
+
+                            menuFitToDesktop.setSelected(true);
+                            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                            mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+                            if (isViewingFullScreen.get()) {
+                                targetWidth = screenWidth;
+                            } else {
+                                targetWidth = screenWidth - 8;
+                            }
+
+                            targetHeight = targetWidth / aspectRatio;
+
+                            if (!isViewingFullScreen.get()) {
+                                if (targetHeight > screenHeight - 140) {
+                                    targetHeight = screenHeight - 140;
+                                    targetWidth = aspectRatio * targetHeight;
+                                }
+                            } else {
+                                if (targetHeight > screenHeight) {
+                                    targetHeight = screenHeight + 40; // account for taskbar height
+                                    targetWidth = aspectRatio * targetHeight;
+                                }
+                            }
+
+                            imageViewMain.setPreserveRatio(false);
+                            imageViewMain.setFitWidth(targetWidth);
+                            imageViewMain.setFitHeight(targetHeight);
+
+                            if (!isViewingFullScreen.get()) {
+                                imageViewMain.getScene().getWindow().setWidth(imageViewMain.getFitWidth() + 16);
+                                imageViewMain.getScene().getWindow().setHeight(imageViewMain.getFitHeight() + 140);
+                                imageViewMain.getScene().getWindow().setX(0);
+                                imageViewMain.getScene().getWindow().setY(0);
+                            }
+                            break;
+
                         case STRETCHED:
                             menuStretched.setSelected(true);
                             imageViewMain.setPreserveRatio(false);
@@ -253,13 +299,20 @@ public class MainWindowController implements Initializable {
                     // cache ViewStyle for use after zooming
                     if (!mainViewModel.getSelectedImageModel().hasOriginal() ||
                             mainViewModel.getSelectedImageModel() == null) {
-                        cachedViewStyle = newValue;
+                        cachedViewStyleZoom = newValue;
                     }
 
                     preferences.put("LastViewStyle", newValue.toString());
                     imageViewMain.requestFocus();
                 }
         );
+
+        // force trigger view style if we're switching to fullscreen mode
+        isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
+            ViewStyle old = viewStyleProperty.get();
+            viewStyleProperty.set(null);
+            viewStyleProperty.set(old);
+        }));
 
         mainViewModel.selectedSortStyleProperty().addListener((observable, oldValue, newValue) -> {
                     switch (newValue) {
@@ -631,8 +684,13 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    @FXML
+    public void menuFitToDesktop_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.FIT_TO_DESKTOP);
+    }
+
     private enum ViewStyle {
-        FIT_TO_WINDOW, ORIGINAL, STRETCHED
+        FIT_TO_WINDOW, FIT_TO_DESKTOP, ORIGINAL, STRETCHED
     }
 
     private void toggleFullScreen() {
