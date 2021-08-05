@@ -159,7 +159,7 @@
               <items>
                         <MenuItem fx:id="menuImageInfo" onAction="#menuImageInfo_onAction" text="Image _Information...">
                             <accelerator>
-                                <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                <KeyCodeCombination alt="ANY" code="I" control="UP" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
