@@ -887,6 +887,7 @@ public class MainWindowController implements Initializable {
         Scene scene = new Scene(root);
         ImageInfoWindowController controller = fxmlLoader.getController();
         Stage imageInfoWindow = new Stage();
+        scene.getStylesheets().add(getClass().getResource("imageInfoWindowStyle.css").toExternalForm());
         imageInfoWindow.setScene(scene);
         imageInfoWindow.initModality(Modality.WINDOW_MODAL);
         imageInfoWindow.initStyle(StageStyle.UTILITY);

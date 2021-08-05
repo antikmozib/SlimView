@@ -2,7 +2,8 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -15,7 +16,15 @@
             <TextField fx:id="textPath" editable="false" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <TextArea fx:id="textInfo" editable="false" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="40.0" />
+      <TabPane fx:id="tabPaneMain" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="40.0">
+         <tabs>
+            <Tab text="Untitled Tab">
+              <content>
+                <AnchorPane />
+              </content>
+            </Tab>
+         </tabs>
+      </TabPane>
       <HBox alignment="CENTER_RIGHT" prefWidth="200.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
          <children>
             <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" onAction="#buttonOK_onAction" prefWidth="80.0" text="_Close" />
