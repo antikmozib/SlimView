@@ -25,8 +25,9 @@
             </Tab>
          </tabs>
       </TabPane>
-      <HBox alignment="CENTER_RIGHT" prefWidth="200.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
+      <HBox alignment="CENTER_RIGHT" prefWidth="200.0" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
          <children>
+            <Button fx:id="buttonCopyToClipboard" onAction="#buttonCopyToClipboard_onAction" text="C_opy to Clipboard" />
             <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" onAction="#buttonOK_onAction" prefWidth="80.0" text="_Close" />
          </children>
       </HBox>

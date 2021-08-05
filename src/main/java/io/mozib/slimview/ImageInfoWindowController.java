@@ -15,6 +15,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -33,15 +35,22 @@ public class ImageInfoWindowController implements Initializable {
     @FXML
     public TabPane tabPaneMain;
 
+    private StringBuilder imageInfo; // used to copy info to clipboard
+    private final Clipboard clipboard = Clipboard.getSystemClipboard();
+    private final ClipboardContent clipboardContent = new ClipboardContent();
+
     public void loadInfo(ImageModel imageModel) {
         String path = imageModel.getBestPath();
+        imageInfo = new StringBuilder();
         textPath.setText(path);
         tabPaneMain.getTabs().clear();
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(new File(path));
             for (Directory directory : metadata.getDirectories()) {
                 int i = 0;
+                imageInfo.append(directory.getName().toUpperCase()).append("\n");
 
+                // Structure: Tab > AnchorPane > ScrollPane > GridPane > [Label + TextField]
                 Tab tab = new Tab(directory.getName());
                 AnchorPane anchorPane = new AnchorPane();
                 ScrollPane scrollPane = new ScrollPane();
@@ -53,6 +62,8 @@ public class ImageInfoWindowController implements Initializable {
                 AnchorPane.setTopAnchor(scrollPane, 0.0);
 
                 for (Tag tag : directory.getTags()) {
+                    imageInfo.append(tag.getTagName()).append(": ").append(tag.getDescription()).append("\n");
+
                     Label label = new Label(tag.getTagName() + ":");
                     TextField textField = new TextField(tag.getDescription());
                     textField.setEditable(false);
@@ -63,6 +74,8 @@ public class ImageInfoWindowController implements Initializable {
                     gridPane.add(textField, 1, i);
                     i++;
                 }
+
+                imageInfo.append("\n");
 
                 scrollPane.setFitToWidth(true);
                 scrollPane.setPadding(new Insets(8, 8, 8, 8));
@@ -92,5 +105,14 @@ public class ImageInfoWindowController implements Initializable {
     @FXML
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+    }
+
+    @FXML
+    public void buttonCopyToClipboard_onAction(ActionEvent actionEvent) {
+        if (imageInfo == null) return;
+
+        clipboardContent.clear();
+        clipboardContent.putString(imageInfo.toString());
+        clipboard.setContent(clipboardContent);
     }
 }
