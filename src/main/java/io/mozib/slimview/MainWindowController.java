@@ -107,7 +107,9 @@ public class MainWindowController implements Initializable {
 
     private class ImageChangeListener implements ChangeListener<ImageModel> {
         @Override
-        public void changed(ObservableValue<? extends ImageModel> observable, ImageModel oldValue, ImageModel newValue) {
+        public void changed(ObservableValue<? extends ImageModel> observable,
+                            ImageModel oldValue,
+                            ImageModel newValue) {
             tButtonFavorite.setSelected(newValue.getIsFavorite());
             imageViewMain.setImage(newValue.getImage());
 
@@ -245,7 +247,9 @@ public class MainWindowController implements Initializable {
 
     private class SortStyleChangeListener implements ChangeListener<MainViewModel.SortStyle> {
         @Override
-        public void changed(ObservableValue<? extends MainViewModel.SortStyle> observable, MainViewModel.SortStyle oldValue, MainViewModel.SortStyle newValue) {
+        public void changed(ObservableValue<? extends MainViewModel.SortStyle> observable,
+                            MainViewModel.SortStyle oldValue,
+                            MainViewModel.SortStyle newValue) {
             switch (newValue) {
                 case NAME:
                     menuSortByName.setSelected(true);
@@ -758,7 +762,7 @@ public class MainWindowController implements Initializable {
         double maxAllowedWidth = Math.min(5 * originalWidth, 3 * screenWidth);
         double maxAllowedHeight = Math.min(5 * originalHeight, 3 * screenHeight);
 
-        // apply zoom limit
+        // apply zoom in limit
         if (targetWidth > maxAllowedWidth || targetHeight > maxAllowedHeight) {
             return;
         }
@@ -783,8 +787,8 @@ public class MainWindowController implements Initializable {
                 mainViewModel.getSelectedImageModel().getHeight();
         double targetWidth = getViewingWidth() - getViewingWidth() * zoomStep;
         double targetHeight = getViewingHeight() - getViewingHeight() * zoomStep;
-        double minAllowedWidth = 0.1 * originalWidth;
-        double minAllowedHeight = 0.1 * originalHeight;
+        double minAllowedWidth = Math.max(0.1 * originalWidth, 8.0);
+        double minAllowedHeight = Math.max(0.1 * originalHeight, 8.0);
 
         // apply zoom out limit
         if (targetWidth < minAllowedWidth || targetHeight < minAllowedHeight) {

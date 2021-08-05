@@ -47,6 +47,8 @@ public class ImageInfoWindowController implements Initializable {
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(new File(path));
             for (Directory directory : metadata.getDirectories()) {
+                if (directory.getTags().size() < 1) continue;
+
                 int i = 0;
                 imageInfo.append(directory.getName().toUpperCase()).append("\n");
 
