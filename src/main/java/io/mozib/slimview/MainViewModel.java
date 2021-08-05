@@ -353,8 +353,8 @@ public class MainViewModel {
 
             selectedImageModelWrapper.set(imageModel);
             status.set((getCurrentIndex() + 1) + "/" + imageModels.size()
-                    + "  |  " + imageModel.getColorDepth() + "-bits"
                     + "  |  " + imageModel.getFormat()
+                    + "  |  " + imageModel.getColorDepth() + "-bits"
                     + "  |  " + imageModel.getFormattedFileSize()
                     + "  |  Created: " + formatTime(imageModel.getDateCreated())
                     + "  |  Modified: " + formatTime(imageModel.getDateModified()));

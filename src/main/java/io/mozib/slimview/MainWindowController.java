@@ -488,21 +488,20 @@ public class MainWindowController implements Initializable {
     @FXML
     public void mainScrollPane_onKeyPress(KeyEvent keyEvent) {
         switch (keyEvent.getCode()) {
+            // don't switch images if the scrollbar is visible
             case LEFT:
             case PAGE_DOWN:
-                if (getViewingWidth() < mainScrollPane.getWidth())
-                    mainViewModel.showPreviousImage();
+                if (getViewingWidth() * 0.95 < mainScrollPane.getWidth()) showPrevious();
                 break;
             case RIGHT:
             case PAGE_UP:
-                if (getViewingWidth() < mainScrollPane.getWidth())
-                    mainViewModel.showNextImage();
+                if (getViewingWidth() * 0.95 < mainScrollPane.getWidth()) showNext();
                 break;
             case HOME:
-                mainViewModel.showFirstImage();
+                showFirst();
                 break;
             case END:
-                mainViewModel.showLastImage();
+                showLast();
                 break;
             case ENTER:
                 toggleFullScreen();
@@ -510,10 +509,13 @@ public class MainWindowController implements Initializable {
             case ESCAPE:
                 if (isViewingFullScreen.get()) {
                     toggleFullScreen();
-                    break;
                 } else {
                     Platform.exit();
                 }
+
+                break;
+            default:
+                break;
         }
     }
 
