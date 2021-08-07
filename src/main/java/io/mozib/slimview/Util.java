@@ -219,7 +219,7 @@ public class Util {
                 FileNotFoundException |
                 JsonProcessingException e) {
 
-            e.printStackTrace();
+            System.out.println("An error occurred while deserializing file.");
         }
 
         return data;

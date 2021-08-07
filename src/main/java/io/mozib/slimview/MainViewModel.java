@@ -4,9 +4,6 @@
 
 package io.mozib.slimview;
 
-import io.mozib.slimview.FavoritesController;
-import io.mozib.slimview.ImageModel;
-import io.mozib.slimview.Util;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -46,7 +43,7 @@ public class MainViewModel {
 
     public MainViewModel() {
         selectedImageModelProperty().addListener(((observable, oldValue, newValue) -> {
-            if (oldValue != null) {
+            if (oldValue != null && !newValue.hasOriginal()) {
                 // clear caches
                 oldValue.unsetImage();
             }
