@@ -49,7 +49,6 @@ public class ImageInfoWindowController implements Initializable {
             for (Directory directory : metadata.getDirectories()) {
                 if (directory.getTags().size() < 1) continue;
 
-                int i = 0;
                 imageInfo.append(directory.getName().toUpperCase()).append("\n");
 
                 // Structure: Tab > AnchorPane > ScrollPane > GridPane > [Label + TextField]
@@ -63,6 +62,8 @@ public class ImageInfoWindowController implements Initializable {
                 AnchorPane.setRightAnchor(scrollPane, 0.0);
                 AnchorPane.setTopAnchor(scrollPane, 0.0);
 
+                int i = 0;
+                
                 for (Tag tag : directory.getTags()) {
                     imageInfo.append(tag.getTagName()).append(": ").append(tag.getDescription()).append("\n");
 
@@ -73,8 +74,7 @@ public class ImageInfoWindowController implements Initializable {
                     label.setMinWidth(50);
 
                     gridPane.add(label, 0, i);
-                    gridPane.add(textField, 1, i);
-                    i++;
+                    gridPane.add(textField, 1, i++);
                 }
 
                 imageInfo.append("\n");
