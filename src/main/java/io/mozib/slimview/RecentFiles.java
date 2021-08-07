@@ -47,5 +47,9 @@ public class RecentFiles implements Serializable {
         public void setLastSeen(long lastSeen) {
             this.lastSeen = lastSeen;
         }
+
+        public void refresh() {
+            setPath(path);
+        }
     }
 }

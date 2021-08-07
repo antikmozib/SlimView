@@ -153,6 +153,8 @@ public class FavoritesWindowController implements Initializable {
             case ESCAPE:
                 close();
                 break;
+            default:
+                break;
         }
     }
 

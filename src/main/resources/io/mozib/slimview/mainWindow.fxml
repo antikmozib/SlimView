@@ -392,7 +392,7 @@
             </GridPane>
          </children>
          <padding>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
          </padding>
       </AnchorPane>
     </children>

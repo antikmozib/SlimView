@@ -33,6 +33,9 @@ public class AppUpdateService extends Service<Boolean> {
         return updateUrlWrapper.getReadOnlyProperty();
     }
 
+    /**
+     * @return The url to the file to be downloaded.
+     */
     public String getUpdateUrl() {
         return updateUrlWrapper.get();
     }
@@ -54,6 +57,7 @@ public class AppUpdateService extends Service<Boolean> {
                 HttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
                 HttpPost httpPost = new HttpPost(apiUrl);
 
+                // upload app name and version
                 List<NameValuePair> params = new ArrayList<>();
                 params.add(new BasicNameValuePair("appname", "slimview"));
                 params.add(new BasicNameValuePair("version", getAppVer()));

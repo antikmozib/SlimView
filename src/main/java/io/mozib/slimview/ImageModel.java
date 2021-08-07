@@ -19,13 +19,13 @@ import java.text.DecimalFormat;
 
 public class ImageModel {
 
+    private Image image = null;
+    private ImageModel originalImageModel = null;
+    private Boolean isFavorite = null;
     private final String path;
     private final String name;
-    private Image image = null;
     private final long dateModified;
     private final long dateCreated;
-    private Boolean isFavorite = null;
-    private ImageModel originalImageModel = null;
 
     ImageModel(String path) {
         this(path, null);
@@ -95,18 +95,16 @@ public class ImageModel {
     }
 
     /**
-     * @return Converts bytes to context-sensitive KB/MB
+     * @return Converts bytes to KB/MB
      */
     public String getFormattedFileSize() {
         long fileSize = new File(getPath()).length();
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        if (fileSize > 1000 && fileSize < 1000000) {
-            return fileSize / 1000 + " KB";
-        } else if (fileSize >= 1000000) {
-            return decimalFormat.format(fileSize / 1000000.0) + " MB";
-        } else {
-            return fileSize + " B";
-        }
+
+        if (fileSize > 1e3 && fileSize < 1e6) return Math.round(fileSize / 1e3) + " KB";
+        if (fileSize >= 1e6) return decimalFormat.format(fileSize / 1e6) + " MB";
+        return fileSize + " B";
+
     }
 
     public double getWidth() {
@@ -150,6 +148,9 @@ public class ImageModel {
         return getWidth() / getHeight();
     }
 
+    /**
+     * @return If the image has an original, then returns the path to the original. Otherwise, returns the current path.
+     */
     public String getBestPath() {
         return hasOriginal() ? originalImageModel.getPath() : getPath();
     }

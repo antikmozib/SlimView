@@ -39,6 +39,7 @@ public class MainViewModel {
     private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper("Ready.");
     private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<SortStyle> selectedSortStyleWrapper = new ReadOnlyObjectWrapper<>();
+    private final String[] supportedExtensions = new String[]{"jpg", "jpeg", "bmp", "gif", "png"};
 
     public MainViewModel() {
         selectedImageModelProperty().addListener(((observable, oldValue, newValue) -> {
@@ -62,24 +63,24 @@ public class MainViewModel {
     }
 
     @SuppressWarnings("unchecked")
-    public void loadImage(ImageModel imageModel) throws IOException {
-        File file = new File(imageModel.getPath());
+    public void loadImage(String path) throws IOException {
+        File file = new File(path);
         if (!file.exists()) throw new IOException();
 
         // first, show the image requested while the directory is being scanned
-        setSelectedImage(imageModel);
+        setSelectedImage(new ImageModel(path));
 
         // now scan the rest of the directory
-        loadDirectory = new LoadDirectory(new File(imageModel.getPath()).getParent());
+        loadDirectory = new LoadDirectory(new File(path).getParent(), supportedExtensions);
         loadDirectory.setOnSucceeded((WorkerStateEvent event) -> {
             imageModels = (List<ImageModel>) event.getSource().getValue();
             sortImages(selectedSortStyleProperty().get());
-            setSelectedImage(imageModels.stream().filter(image -> image.getPath().equals(imageModel.getPath()))
+            setSelectedImage(imageModels.stream().filter(image -> image.getPath().equals(path))
                     .findFirst().orElse(null));
         });
         status.bind(loadDirectory.messageProperty());
         loadDirectory.start();
-        addToRecent(imageModel.getPath());
+        addToRecent(path);
     }
 
     public void showFirstImage() {
@@ -167,6 +168,7 @@ public class MainViewModel {
         switch (getOSType()) {
             case WINDOWS:
             case MAC:
+            default:
                 if (Desktop.isDesktopSupported()) {
                     if (Desktop.getDesktop().isSupported(Desktop.Action.MOVE_TO_TRASH)) {
                         try {
@@ -279,8 +281,6 @@ public class MainViewModel {
                 case NAME:
                     imageModels.sort(Comparator.comparing(ImageModel::getName));
                     break;
-                default:
-                    break;
             }
             setSelectedImage(getSelectedImageModel()); // refresh status and index
         }
@@ -289,6 +289,10 @@ public class MainViewModel {
 
     public FavoritesController getFavoritesController() {
         return favoritesController;
+    }
+
+    public String[] getSupportedExtensions() {
+        return supportedExtensions;
     }
 
     private String formatTime(long time) {
@@ -300,11 +304,13 @@ public class MainViewModel {
     private static class LoadDirectory extends Service<List<ImageModel>> {
 
         private final String directoryPath;
+        private final String[] supportedExtensions;
         private final AtomicInteger fileCount = new AtomicInteger(0);
         private final List<ImageModel> images = new ArrayList<>();
 
-        public LoadDirectory(String directoryPath) {
+        public LoadDirectory(String directoryPath, String[] supportedExtensions) {
             this.directoryPath = directoryPath;
+            this.supportedExtensions = supportedExtensions;
         }
 
         public Integer getFileCount() {
@@ -316,7 +322,6 @@ public class MainViewModel {
             return new Task<>() {
                 @Override
                 protected List<ImageModel> call() {
-                    String[] extensions = new String[]{"jpg", "jpeg", "png", "gif"};
                     File dir = new File(directoryPath);
                     File[] files = dir.listFiles();
 
@@ -326,7 +331,7 @@ public class MainViewModel {
                             if (file.isDirectory()) continue;
 
                             String ext = FilenameUtils.getExtension(file.getName());
-                            if (Arrays.stream(extensions).anyMatch(s -> s.equalsIgnoreCase(ext))) {
+                            if (Arrays.stream(supportedExtensions).anyMatch(s -> s.equalsIgnoreCase(ext))) {
 
                                 ImageModel image = new ImageModel(file.getPath());
                                 images.add(image);
@@ -362,10 +367,8 @@ public class MainViewModel {
     }
 
     public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
-        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
-        BufferedImage image;
-
         // resample image to ensure best resizing quality
+        BufferedImage image;
         if (!imageModel.hasOriginal()) {
             imageModel.setOriginalImageModel(new ImageModel(imageModel.getPath()));
             image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
@@ -373,6 +376,7 @@ public class MainViewModel {
             image = SwingFXUtils.fromFXImage(imageModel.getOriginalImageModel().getImage(), null);
         }
 
+        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
         var resized = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
         createTempImage(resized, file, imageModel.getOriginalImageModel().getPath());
     }

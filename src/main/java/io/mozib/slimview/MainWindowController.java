@@ -105,11 +105,15 @@ public class MainWindowController implements Initializable {
     // the ViewStyle to reset to when switching between images after zooming
     private ViewStyle cachedViewStyleZoom = viewStyleProperty.get();
 
+    /**
+     * Triggered when the image is changed
+     */
     private class ImageChangeListener implements ChangeListener<ImageModel> {
         @Override
         public void changed(ObservableValue<? extends ImageModel> observable,
                             ImageModel oldValue,
                             ImageModel newValue) {
+
             tButtonFavorite.setSelected(newValue.getIsFavorite());
             imageViewMain.setImage(newValue.getImage());
 
@@ -133,9 +137,15 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    /**
+     * Triggered with the view style is changed
+     */
     private class ViewStyleChangeListener implements ChangeListener<ViewStyle> {
         @Override
-        public void changed(ObservableValue<? extends ViewStyle> observable, ViewStyle oldValue, ViewStyle newValue) {
+        public void changed(ObservableValue<? extends ViewStyle> observable,
+                            ViewStyle oldValue,
+                            ViewStyle newValue) {
+
             if (mainViewModel.getSelectedImageModel() == null) return;
 
             if (newValue == null) {
@@ -182,7 +192,7 @@ public class MainWindowController implements Initializable {
                     double screenWidth = screenSize.getWidth();
                     double screenHeight = screenSize.getHeight();
                     double aspectRatio = mainViewModel.getSelectedImageModel().getAspectRatio();
-                    double fixedHeight = 25 + 42 + 33;
+                    double fixedHeight = 25 + 42 + 25; // MenuBar + ToolBar + StatusBar
 
                     menuFitToDesktop.setSelected(true);
                     mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -199,12 +209,12 @@ public class MainWindowController implements Initializable {
                     targetHeight = targetWidth / aspectRatio;
 
                     if (isViewingFullScreen.get()) {
-                        if (targetHeight > screenHeight - 8) {
-                            targetHeight = screenHeight - 8;
+                        if (targetHeight > screenHeight - 2) {
+                            targetHeight = screenHeight - 2;
                             targetWidth = aspectRatio * targetHeight;
                         }
                     } else {
-                        double viewableHeight = screenHeight - taskBarHeight - titleBarHeight - fixedHeight - 8;
+                        double viewableHeight = screenHeight - taskBarHeight - titleBarHeight - fixedHeight - 2;
                         if (targetHeight > viewableHeight) {
                             targetHeight = viewableHeight;
                             targetWidth = aspectRatio * targetHeight;
@@ -218,7 +228,7 @@ public class MainWindowController implements Initializable {
                     if (!isViewingFullScreen.get()) {
                         Window window = imageViewMain.getScene().getWindow();
                         window.setWidth(targetWidth + 16);
-                        window.setHeight(targetHeight + titleBarHeight + fixedHeight + 8);
+                        window.setHeight(targetHeight + titleBarHeight + fixedHeight + 2);
                         window.setX(0);
                         window.setY(0);
                     }
@@ -245,11 +255,15 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    /**
+     * Triggered when the file sort style is changed
+     */
     private class SortStyleChangeListener implements ChangeListener<MainViewModel.SortStyle> {
         @Override
         public void changed(ObservableValue<? extends MainViewModel.SortStyle> observable,
                             MainViewModel.SortStyle oldValue,
                             MainViewModel.SortStyle newValue) {
+
             switch (newValue) {
                 case NAME:
                     menuSortByName.setSelected(true);
@@ -265,9 +279,13 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    /**
+     * Triggered when the image size is changed
+     */
     private class ImageSizeChangeListener implements ChangeListener<Number> {
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+
             updateTitle();
             labelResolution.setText("");
 
@@ -358,6 +376,7 @@ public class MainWindowController implements Initializable {
             }
         });
 
+        // bind change listeners
         mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
         viewStyleProperty.addListener(new ViewStyleChangeListener());
         mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
@@ -369,7 +388,9 @@ public class MainWindowController implements Initializable {
             viewStyleProperty.set(old);
         }));
 
-        viewStyleProperty.set(ViewStyle.valueOf(preferences.get("LastViewStyle", ViewStyle.FIT_TO_DESKTOP.toString())));
+        // restore previous settings
+        viewStyleProperty.set(ViewStyle.valueOf(
+                preferences.get("LastViewStyle", ViewStyle.FIT_TO_DESKTOP.toString())));
         mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
                 preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
 
@@ -820,20 +841,24 @@ public class MainWindowController implements Initializable {
 
         if (getOSType() == Util.OSType.WINDOWS) {
 
+            // In Windows, put all extensions in one line
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String ext : mainViewModel.getSupportedExtensions()) {
+                stringBuilder.append("*").append(".").append(ext.toLowerCase()).append(";");
+            }
+            String extensions = stringBuilder.substring(0, stringBuilder.length() - 1);
+
             fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("Images", "*.jpg;*.jpeg;*.png;*.gif"),
-                    new FileChooser.ExtensionFilter("All Files", "*.*")
-            );
+                    new FileChooser.ExtensionFilter("All Images", extensions),
+                    new FileChooser.ExtensionFilter("All Files", "*.*"));
+
         } else {
 
             // *nix doesn't like Windows-style extension filters
             fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("JPG Image", "*.jpg"),
-                    new FileChooser.ExtensionFilter("JPEG Image", "*.jpeg"),
-                    new FileChooser.ExtensionFilter("PNG Image", "*.png"),
-                    new FileChooser.ExtensionFilter("GIF Image", "*.gif"),
-                    new FileChooser.ExtensionFilter("All Files", "*.*")
-            );
+                    getExtensionFilters());
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("All Files", "*.*"));
         }
 
         File initialDirectory = new File(preferences.get("OpenLocation", System.getProperty("user.home")));
@@ -853,11 +878,7 @@ public class MainWindowController implements Initializable {
         if (mainViewModel.getSelectedImageModel() == null) return;
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("JPEG Image", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG Image", "*.png"),
-                new FileChooser.ExtensionFilter("GIF Image", "*.gif")
-        );
+        fileChooser.getExtensionFilters().addAll(getExtensionFilters());
 
         fileChooser.setInitialFileName(mainViewModel.getSelectedImageModel().getName());
 
@@ -979,10 +1000,10 @@ public class MainWindowController implements Initializable {
      */
     public void openImage(String path) {
         try {
-            mainViewModel.loadImage(new ImageModel(path));
+            mainViewModel.loadImage(path);
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Unable to open the requested file");
+            alert.setHeaderText("Couldn't open file");
             alert.setContentText("The file doesn't exist or is unreachable.");
             alert.setTitle("Error");
             alert.initOwner(imageViewMain.getScene().getWindow());
@@ -1004,5 +1025,18 @@ public class MainWindowController implements Initializable {
 
     private void showLast() {
         mainViewModel.showLastImage();
+    }
+
+    private FileChooser.ExtensionFilter[] getExtensionFilters() {
+        ArrayList<FileChooser.ExtensionFilter> filters = new ArrayList<>();
+        String[] extensions = mainViewModel.getSupportedExtensions();
+
+        // separate item for each extension
+        for (String ext : extensions) {
+            ext = ext.replace("*", "").replace(".", "");
+            filters.add(new FileChooser.ExtensionFilter(ext.toUpperCase() + " Image", "*." + ext.toLowerCase()));
+        }
+
+        return filters.toArray(FileChooser.ExtensionFilter[]::new);
     }
 }

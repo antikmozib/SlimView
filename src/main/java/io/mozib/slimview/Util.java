@@ -6,6 +6,11 @@ package io.mozib.slimview;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.stage.Window;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -30,15 +35,11 @@ public class Util {
 
     public static OSType getOSType() {
         String platform = System.getProperty("os.name").toLowerCase();
-        if (platform.contains("win")) {
-            return OSType.WINDOWS;
-        } else if (platform.contains("mac")) {
-            return OSType.MAC;
-        } else if (platform.contains("nux")) {
-            return OSType.LINUX;
-        } else {
-            return OSType.OTHER;
-        }
+
+        if (platform.contains("win")) return OSType.WINDOWS;
+        if (platform.contains("mac")) return OSType.MAC;
+        if (platform.contains("nux")) return OSType.LINUX;
+        return OSType.OTHER;
     }
 
     public enum DataFileLocation {
@@ -102,23 +103,24 @@ public class Util {
         }
     }
 
-    public static String inputStreamToString(InputStream is) {
-        StringBuilder sb = new StringBuilder();
+    public static String inputStreamToString(InputStream inputStream) {
+        StringBuilder stringBuilder = new StringBuilder();
         String line = null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         try {
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
             }
-            br.close();
+            bufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return sb.toString();
+        return stringBuilder.toString();
     }
 
     public static void addToRecent(String path) {
         final int maxRecent = 10; // max number of recent files to save
+        RecentFiles.RecentFile alreadyExists = null;
         RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, DataFileLocation.RECENT_FILES);
 
         if (recentFiles == null) {
@@ -132,29 +134,34 @@ public class Util {
         // if file already exists in recent, don't add again
         for (RecentFiles.RecentFile rf : recentFiles.getRecentFiles()) {
             if (rf.getPath().equals(path)) {
-                return;
+                alreadyExists = rf;
+                break;
             }
         }
 
-        if (recentFiles.getRecentFiles().size() >= maxRecent) {
-            long oldestSeen = System.currentTimeMillis();
-            for (RecentFiles.RecentFile rf : recentFiles.getRecentFiles()) {
-                if (rf.getLastSeen() < oldestSeen) {
-                    oldestSeen = rf.getLastSeen();
+        if (alreadyExists != null) {
+            alreadyExists.refresh();
+        } else {
+            if (recentFiles.getRecentFiles().size() >= maxRecent) {
+                long oldestSeen = System.currentTimeMillis();
+                for (RecentFiles.RecentFile rf : recentFiles.getRecentFiles()) {
+                    if (rf.getLastSeen() < oldestSeen) {
+                        oldestSeen = rf.getLastSeen();
+                    }
                 }
-            }
-            RecentFiles.RecentFile remove = null;
-            for (RecentFiles.RecentFile rf : recentFiles.getRecentFiles()) {
-                if (rf.getLastSeen() == oldestSeen) {
-                    remove = rf;
-                    break;
+                RecentFiles.RecentFile remove = null;
+                for (RecentFiles.RecentFile rf : recentFiles.getRecentFiles()) {
+                    if (rf.getLastSeen() == oldestSeen) {
+                        remove = rf;
+                        break;
+                    }
                 }
+                recentFiles.getRecentFiles().remove(remove);
             }
-            recentFiles.getRecentFiles().remove(remove);
+            RecentFiles.RecentFile newRecent = new RecentFiles.RecentFile();
+            newRecent.setPath(path);
+            recentFiles.getRecentFiles().add(newRecent);
         }
-        RecentFiles.RecentFile newRecent = new RecentFiles.RecentFile();
-        newRecent.setPath(path);
-        recentFiles.getRecentFiles().add(newRecent);
         writeDataFile(recentFiles, DataFileLocation.RECENT_FILES);
     }
 
@@ -257,6 +264,37 @@ public class Util {
                     e.printStackTrace();
                 }
                 break;
+            default:
+                break;
         }
+    }
+
+    public static void showErrorMessage(Exception e, Window owner) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        e.printStackTrace(printWriter);
+        String stackTrace = stringWriter.toString(); // stack trace as a string
+
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        TextArea textArea = new TextArea(stackTrace);
+
+        alert.setTitle("Error");
+        alert.initOwner(owner);
+        alert.setHeaderText("An error occurred");
+
+        textArea.setEditable(false);
+        textArea.setWrapText(false);
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(textArea, 0, 0);
+
+        alert.getDialogPane().setExpandableContent(expContent);
+        alert.show();
     }
 }
