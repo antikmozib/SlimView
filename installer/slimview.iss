@@ -38,7 +38,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\target\win\slimview.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\notice.txt"; DestDir: "{app}"; Flags: 
-Source: "..\target\win\jlink-image\*"; DestDir: "{app}\jlink-image"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\target\win\runtime\*"; DestDir: "{app}\runtime"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
