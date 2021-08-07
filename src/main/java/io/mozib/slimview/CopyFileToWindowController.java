@@ -4,6 +4,8 @@
 
 package io.mozib.slimview;
 
+import io.mozib.slimview.CopyFileToViewModel;
+import io.mozib.slimview.CopyToDestinations;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

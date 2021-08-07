@@ -17,7 +17,7 @@
          <children>
               <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
                   <image>
-                      <Image url="@icons/slimview.png" />
+                      <Image url="@../icons/slimview.png" />
                   </image>
               </ImageView>
             <VBox HBox.hgrow="ALWAYS">

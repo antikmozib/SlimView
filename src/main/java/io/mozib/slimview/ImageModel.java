@@ -27,11 +27,11 @@ public class ImageModel {
     private final long dateModified;
     private final long dateCreated;
 
-    ImageModel(String path) {
+    public ImageModel(String path) {
         this(path, null);
     }
 
-    ImageModel(String location, String originalLocation) {
+    public ImageModel(String location, String originalLocation) {
         BasicFileAttributes fileAttributes = null;
         Path path;
 

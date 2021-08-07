@@ -26,12 +26,12 @@ public class SlimView extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/mainWindow.fxml"));
         Parent root = fxmlLoader.load();
         MainWindowController controller = fxmlLoader.getController();
         Scene scene = new Scene(root);
         scene.getStylesheets().add(
-                Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
+                Objects.requireNonNull(getClass().getResource("styles/style.css")).toExternalForm());
         stage.setScene(scene);
         stage.setTitle("SlimView");
         stage.getIcons().add(

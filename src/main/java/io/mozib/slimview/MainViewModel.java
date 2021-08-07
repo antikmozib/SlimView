@@ -4,6 +4,9 @@
 
 package io.mozib.slimview;
 
+import io.mozib.slimview.FavoritesController;
+import io.mozib.slimview.ImageModel;
+import io.mozib.slimview.Util;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;

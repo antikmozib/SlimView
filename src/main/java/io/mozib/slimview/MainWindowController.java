@@ -306,7 +306,7 @@ public class MainWindowController implements Initializable {
     public void menuResize_onAction(ActionEvent actionEvent) {
         if (mainViewModel.getSelectedImageModel() == null) return;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("resizeWindow.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/resizeWindow.fxml"));
         Parent root = null;
         try {
             root = fxmlLoader.load();
@@ -452,7 +452,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("aboutWindow.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("fxml/aboutWindow.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
         AboutWindowController controller = fxmlLoader.getController();
@@ -728,11 +728,11 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuViewFavorites_onAction(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("favoritesWindow.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/favoritesWindow.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
         scene.getStylesheets().add(
-                Objects.requireNonNull(getClass().getResource("favoritesWindowStyle.css")).toExternalForm());
+                Objects.requireNonNull(getClass().getResource("styles/favoritesWindowStyle.css")).toExternalForm());
         FavoritesWindowController controller = fxmlLoader.getController();
         Stage favoritesWindow = new Stage();
         favoritesWindow.setScene(scene);
@@ -924,12 +924,12 @@ public class MainWindowController implements Initializable {
     private void viewImageInfo() throws IOException {
         if (mainViewModel.getSelectedImageModel() == null) return;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("imageInfoWindow.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/imageInfoWindow.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
         ImageInfoWindowController controller = fxmlLoader.getController();
         Stage imageInfoWindow = new Stage();
-        scene.getStylesheets().add(getClass().getResource("imageInfoWindowStyle.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("styles/imageInfoWindowStyle.css").toExternalForm());
         imageInfoWindow.setScene(scene);
         imageInfoWindow.initModality(Modality.WINDOW_MODAL);
         imageInfoWindow.initStyle(StageStyle.UTILITY);
@@ -942,7 +942,7 @@ public class MainWindowController implements Initializable {
     private void copyFileTo() throws IOException {
         if (mainViewModel.getSelectedImageModel() == null) return;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("copyFileToWindow.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/copyFileToWindow.fxml"));
         Parent root = fxmlLoader.load();
         CopyFileToWindowController controller = fxmlLoader.getController();
         Scene scene = new Scene(root);
