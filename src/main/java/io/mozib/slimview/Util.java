@@ -1,13 +1,11 @@
 /*
  * Copyright (C) 2021 Antik Mozib. All rights reserved.
  */
-
 package io.mozib.slimview;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import javafx.scene.control.Alert;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Window;
@@ -29,6 +27,7 @@ import java.util.ArrayList;
  * A collection of various static utility methods
  */
 public class Util {
+
     public enum OSType {
         WINDOWS, MAC, LINUX, OTHER
     }
@@ -36,9 +35,15 @@ public class Util {
     public static OSType getOSType() {
         String platform = System.getProperty("os.name").toLowerCase();
 
-        if (platform.contains("win")) return OSType.WINDOWS;
-        if (platform.contains("mac")) return OSType.MAC;
-        if (platform.contains("nux")) return OSType.LINUX;
+        if (platform.contains("win")) {
+            return OSType.WINDOWS;
+        }
+        if (platform.contains("mac")) {
+            return OSType.MAC;
+        }
+        if (platform.contains("nux")) {
+            return OSType.LINUX;
+        }
         return OSType.OTHER;
     }
 
@@ -169,6 +174,7 @@ public class Util {
      * Required class to enable copying image to the system clipboard
      */
     public static class ImageTransferable implements Transferable {
+
         private final Image image;
 
         public ImageTransferable(Image image) {
@@ -212,14 +218,14 @@ public class Util {
             if (data == null) {
                 data = classType.getDeclaredConstructor().newInstance();
             }
-        } catch (InstantiationException |
-                IllegalAccessException |
-                NoSuchMethodException |
-                InvocationTargetException |
-                FileNotFoundException |
-                JsonProcessingException e) {
+        } catch (InstantiationException
+                | IllegalAccessException
+                | NoSuchMethodException
+                | InvocationTargetException
+                | FileNotFoundException
+                | JsonProcessingException e) {
 
-            System.out.println("An error occurred while deserializing file.");
+            System.out.println("An error occurred while deserializing the requested file.");
         }
 
         return data;
@@ -269,32 +275,32 @@ public class Util {
         }
     }
 
-    public static void showErrorMessage(Exception e, Window owner) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        e.printStackTrace(printWriter);
-        String stackTrace = stringWriter.toString(); // stack trace as a string
-
+    public static Alert showCustomErrorDialog(String header, String content, Window owner, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        TextArea textArea = new TextArea(stackTrace);
-
-        alert.setTitle("Error");
+        alert.setHeaderText(header);
+        alert.setContentText(content);
         alert.initOwner(owner);
-        alert.setHeaderText("An error occurred");
+        alert.setTitle("Error");
 
-        textArea.setEditable(false);
-        textArea.setWrapText(false);
-        textArea.setMaxWidth(Double.MAX_VALUE);
-        textArea.setMaxHeight(Double.MAX_VALUE);
+        if (e != null) {
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            e.printStackTrace(printWriter);
+            String stackTrace = stringWriter.toString(); // stack trace as a string
 
-        GridPane.setVgrow(textArea, Priority.ALWAYS);
-        GridPane.setHgrow(textArea, Priority.ALWAYS);
+            javafx.scene.control.TextArea textArea = new javafx.scene.control.TextArea(stackTrace);
+            textArea.setEditable(false);
+            textArea.setWrapText(false);
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(textArea, 0, 0);
 
-        GridPane expContent = new GridPane();
-        expContent.setMaxWidth(Double.MAX_VALUE);
-        expContent.add(textArea, 0, 0);
-
-        alert.getDialogPane().setExpandableContent(expContent);
-        alert.show();
+            alert.getDialogPane().setExpandableContent(expContent);
+        }
+        return alert;
     }
 }

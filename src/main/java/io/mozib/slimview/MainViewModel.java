@@ -301,7 +301,7 @@ public class MainViewModel {
 
     private String formatTime(long time) {
         Date date = new Date(time);
-        Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Format format = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
         return format.format(date);
     }
 
@@ -362,11 +362,11 @@ public class MainViewModel {
 
             selectedImageModelWrapper.set(imageModel);
             status.set((getCurrentIndex() + 1) + "/" + imageModels.size()
-                    + "  |  " + imageModel.getFormat()
-                    + "  |  " + imageModel.getColorDepth() + "-bits"
-                    + "  |  " + imageModel.getFormattedFileSize()
-                    + "  |  Created: " + formatTime(imageModel.getDateCreated())
-                    + "  |  Modified: " + formatTime(imageModel.getDateModified()));
+                    + " | " + imageModel.getFormat()
+                    + " | " + imageModel.getColorDepth() + "-bits"
+                    + " | " + imageModel.getFormattedFileSize()
+                    + " | C: " + formatTime(imageModel.getDateCreated())
+                    + " | M: " + formatTime(imageModel.getDateModified()));
         }
     }
 
@@ -394,15 +394,15 @@ public class MainViewModel {
     /**
      * Creates a temporary, edited image and sets it as the currently displayed one
      */
-    private void createTempImage(BufferedImage image, File file, String originalPath) {
-        String format = FilenameUtils.getExtension(file.getPath());
+    private void createTempImage(BufferedImage image, File tempFile, String originalPath) {
+        String format = FilenameUtils.getExtension(tempFile.getPath());
         try {
-            file.createNewFile();
-            ImageIO.write(image, format, file);
+            tempFile.createNewFile();
+            ImageIO.write(image, format, tempFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setSelectedImage(new ImageModel(file.getPath(), originalPath));
+        setSelectedImage(new ImageModel(tempFile.getPath(), originalPath));
     }
 
     /**

@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2021 Antik Mozib. All rights reserved.
  */
-
 package io.mozib.slimview;
 
 import javafx.application.Platform;
@@ -99,8 +98,8 @@ public class MainWindowController implements Initializable {
     public MainViewModel mainViewModel = new MainViewModel();
     private final Preferences preferences = Preferences.userNodeForPackage(this.getClass());
     private final SimpleBooleanProperty isViewingFullScreen = new SimpleBooleanProperty(false);
-    private final SimpleObjectProperty<ViewStyle> viewStyleProperty =
-            new SimpleObjectProperty<>(ViewStyle.FIT_TO_DESKTOP);
+    private final SimpleObjectProperty<ViewStyle> viewStyleProperty
+            = new SimpleObjectProperty<>(ViewStyle.FIT_TO_DESKTOP);
 
     // the ViewStyle to reset to when switching between images after zooming
     private ViewStyle cachedViewStyleZoom = viewStyleProperty.get();
@@ -109,6 +108,7 @@ public class MainWindowController implements Initializable {
      * Triggered when the image is changed
      */
     private class ImageChangeListener implements ChangeListener<ImageModel> {
+
         @Override
         public void changed(ObservableValue<? extends ImageModel> observable,
                             ImageModel oldValue,
@@ -141,6 +141,7 @@ public class MainWindowController implements Initializable {
      * Triggered with the view style is changed
      */
     private class ViewStyleChangeListener implements ChangeListener<ViewStyle> {
+
         private final double menuBarHeight, toolBarHeight, statusBarHeight;
 
         public ViewStyleChangeListener(double menuBarHeight, double toolBarHeight, double statusBarHeight) {
@@ -154,7 +155,9 @@ public class MainWindowController implements Initializable {
                             ViewStyle oldValue,
                             ViewStyle newValue) {
 
-            if (mainViewModel.getSelectedImageModel() == null) return;
+            if (mainViewModel.getSelectedImageModel() == null) {
+                return;
+            }
 
             if (newValue == null) {
                 newValue = Objects.requireNonNullElse(oldValue, ViewStyle.FIT_TO_WINDOW);
@@ -193,8 +196,8 @@ public class MainWindowController implements Initializable {
 
                 case FIT_TO_DESKTOP:
                     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                    Rectangle desktopSize =
-                            GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+                    Rectangle desktopSize
+                            = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
                     double taskBarHeight = screenSize.height - desktopSize.height;
                     double titleBarHeight = taskBarHeight;
                     double screenWidth = screenSize.getWidth();
@@ -206,7 +209,8 @@ public class MainWindowController implements Initializable {
                     mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
                     mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-                    double targetWidth, targetHeight;
+                    double targetWidth,
+                            targetHeight;
 
                     if (isViewingFullScreen.get()) {
                         targetWidth = screenWidth;
@@ -253,8 +257,8 @@ public class MainWindowController implements Initializable {
             }
 
             // cache ViewStyle for use after zooming
-            if (!mainViewModel.getSelectedImageModel().hasOriginal() ||
-                    mainViewModel.getSelectedImageModel() == null) {
+            if (!mainViewModel.getSelectedImageModel().hasOriginal()
+                    || mainViewModel.getSelectedImageModel() == null) {
                 cachedViewStyleZoom = newValue;
             }
 
@@ -267,6 +271,7 @@ public class MainWindowController implements Initializable {
      * Triggered when the file sort style is changed
      */
     private class SortStyleChangeListener implements ChangeListener<MainViewModel.SortStyle> {
+
         @Override
         public void changed(ObservableValue<? extends MainViewModel.SortStyle> observable,
                             MainViewModel.SortStyle oldValue,
@@ -291,6 +296,7 @@ public class MainWindowController implements Initializable {
      * Triggered when the image size is changed
      */
     private class ImageSizeChangeListener implements ChangeListener<Number> {
+
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 
@@ -298,21 +304,23 @@ public class MainWindowController implements Initializable {
             labelResolution.setText("");
 
             if (mainViewModel.getSelectedImageModel() != null) {
-                double currentWidth = mainViewModel.getSelectedImageModel().hasOriginal() ?
-                        mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth() :
-                        mainViewModel.getSelectedImageModel().getWidth();
+                double currentWidth = mainViewModel.getSelectedImageModel().hasOriginal()
+                        ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth()
+                        : mainViewModel.getSelectedImageModel().getWidth();
                 double zoom = getViewingWidth() / currentWidth * 100;
                 labelResolution.setText(
-                        (mainViewModel.getSelectedImageModel().hasOriginal() ?
-                                mainViewModel.getSelectedImageModel().getOriginalImageModel().getResolution() :
-                                mainViewModel.getSelectedImageModel().getResolution()) + " (" + Math.round(zoom) + "%)");
+                        (mainViewModel.getSelectedImageModel().hasOriginal()
+                                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getResolution()
+                                : mainViewModel.getSelectedImageModel().getResolution()) + " (" + Math.round(zoom) + "%)");
             }
         }
     }
 
     @FXML
     public void menuResize_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() == null) return;
+        if (mainViewModel.getSelectedImageModel() == null) {
+            return;
+        }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/resizeWindow.fxml"));
         Parent root = null;
@@ -330,7 +338,7 @@ public class MainWindowController implements Initializable {
         resizeWindow.setScene(scene);
         resizeWindow.setTitle("Resize");
         resizeWindow.initModality(Modality.WINDOW_MODAL);
-        resizeWindow.getIcons().add(((Stage)imageViewMain.getScene().getWindow()).getIcons().get(0));
+        resizeWindow.getIcons().add(((Stage) imageViewMain.getScene().getWindow()).getIcons().get(0));
         resizeWindow.initOwner(imageViewMain.getScene().getWindow());
         ResizeWindowController controller = fxmlLoader.getController();
         controller.setViewModel(resizeViewModel);
@@ -408,7 +416,9 @@ public class MainWindowController implements Initializable {
             MenuItem menuClearRecent = new MenuItem("Clear History");
             menuClearRecent.setOnAction(event -> {
                 File file = new File(getDataFile(Util.DataFileLocation.RECENT_FILES));
-                if (file.exists()) file.delete();
+                if (file.exists()) {
+                    file.delete();
+                }
                 menuRecent.getItems().clear();
             });
             menuRecent.getItems().add(menuClearRecent);
@@ -521,11 +531,15 @@ public class MainWindowController implements Initializable {
             // don't switch images if the scrollbar is visible
             case LEFT:
             case PAGE_DOWN:
-                if (getViewingWidth() * 0.95 < mainScrollPane.getWidth()) showPrevious();
+                if (getViewingWidth() * 0.95 < mainScrollPane.getWidth()) {
+                    showPrevious();
+                }
                 break;
             case RIGHT:
             case PAGE_UP:
-                if (getViewingWidth() * 0.95 < mainScrollPane.getWidth()) showNext();
+                if (getViewingWidth() * 0.95 < mainScrollPane.getWidth()) {
+                    showNext();
+                }
                 break;
             case HOME:
                 showFirst();
@@ -748,7 +762,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void toggleFullScreen() {
-        if (mainViewModel.getSelectedImageModel() == null) return;
+        if (mainViewModel.getSelectedImageModel() == null) {
+            return;
+        }
 
         boolean setFullScreen = !isViewingFullScreen.get();
         ((Stage) mainScrollPane.getScene().getWindow()).setFullScreen(setFullScreen);
@@ -760,12 +776,12 @@ public class MainWindowController implements Initializable {
     }
 
     private void zoomIn() {
-        double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal() ?
-                mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth() :
-                mainViewModel.getSelectedImageModel().getWidth();
-        double originalHeight = mainViewModel.getSelectedImageModel().hasOriginal() ?
-                mainViewModel.getSelectedImageModel().getOriginalImageModel().getHeight() :
-                mainViewModel.getSelectedImageModel().getHeight();
+        double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal()
+                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth()
+                : mainViewModel.getSelectedImageModel().getWidth();
+        double originalHeight = mainViewModel.getSelectedImageModel().hasOriginal()
+                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getHeight()
+                : mainViewModel.getSelectedImageModel().getHeight();
         double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
         double targetWidth = getViewingWidth() + getViewingWidth() * zoomStep;
@@ -779,8 +795,8 @@ public class MainWindowController implements Initializable {
         }
 
         // latch onto the original size if we're around it
-        if ((targetWidth >= 0.95 * originalWidth && targetWidth <= 1.05 * originalWidth) ||
-                (targetHeight >= 0.95 * originalHeight && targetHeight <= 1.05 * originalHeight)) {
+        if ((targetWidth >= 0.95 * originalWidth && targetWidth <= 1.05 * originalWidth)
+                || (targetHeight >= 0.95 * originalHeight && targetHeight <= 1.05 * originalHeight)) {
             targetWidth = originalWidth;
             targetHeight = originalHeight;
         }
@@ -790,12 +806,12 @@ public class MainWindowController implements Initializable {
     }
 
     private void zoomOut() {
-        double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal() ?
-                mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth() :
-                mainViewModel.getSelectedImageModel().getWidth();
-        double originalHeight = mainViewModel.getSelectedImageModel().hasOriginal() ?
-                mainViewModel.getSelectedImageModel().getOriginalImageModel().getHeight() :
-                mainViewModel.getSelectedImageModel().getHeight();
+        double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal()
+                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth()
+                : mainViewModel.getSelectedImageModel().getWidth();
+        double originalHeight = mainViewModel.getSelectedImageModel().hasOriginal()
+                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getHeight()
+                : mainViewModel.getSelectedImageModel().getHeight();
         double targetWidth = getViewingWidth() - getViewingWidth() * zoomStep;
         double targetHeight = getViewingHeight() - getViewingHeight() * zoomStep;
         double minAllowedWidth = Math.max(0.1 * originalWidth, 8.0);
@@ -807,8 +823,8 @@ public class MainWindowController implements Initializable {
         }
 
         // latch onto the original size if we're around it
-        if ((targetWidth >= 0.95 * originalWidth && targetWidth <= 1.05 * originalWidth) ||
-                (targetHeight >= 0.95 * originalHeight && targetHeight <= 1.05 * originalHeight)) {
+        if ((targetWidth >= 0.95 * originalWidth && targetWidth <= 1.05 * originalWidth)
+                || (targetHeight >= 0.95 * originalHeight && targetHeight <= 1.05 * originalHeight)) {
             targetWidth = originalWidth;
             targetHeight = originalHeight;
         }
@@ -865,7 +881,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void saveAs() {
-        if (mainViewModel.getSelectedImageModel() == null) return;
+        if (mainViewModel.getSelectedImageModel() == null) {
+            return;
+        }
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(getExtensionFilters());
@@ -912,7 +930,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void viewImageInfo() throws IOException {
-        if (mainViewModel.getSelectedImageModel() == null) return;
+        if (mainViewModel.getSelectedImageModel() == null) {
+            return;
+        }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/imageInfoWindow.fxml"));
         Parent root = fxmlLoader.load();
@@ -930,7 +950,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void copyFileTo() throws IOException {
-        if (mainViewModel.getSelectedImageModel() == null) return;
+        if (mainViewModel.getSelectedImageModel() == null) {
+            return;
+        }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/copyFileToWindow.fxml"));
         Parent root = fxmlLoader.load();
@@ -950,11 +972,13 @@ public class MainWindowController implements Initializable {
      * @return The width of the image as it's being displayed on the screen.
      */
     private double getViewingWidth() {
-        double width = imageViewMain.getFitHeight() *
-                (mainViewModel.getSelectedImageModel().hasOriginal() ?
-                        mainViewModel.getSelectedImageModel().getOriginalImageModel().getAspectRatio() :
-                        mainViewModel.getSelectedImageModel().getAspectRatio());
-        if (width > imageViewMain.getFitWidth()) width = imageViewMain.getFitWidth();
+        double width = imageViewMain.getFitHeight()
+                * (mainViewModel.getSelectedImageModel().hasOriginal()
+                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getAspectRatio()
+                : mainViewModel.getSelectedImageModel().getAspectRatio());
+        if (width > imageViewMain.getFitWidth()) {
+            width = imageViewMain.getFitWidth();
+        }
         return width;
     }
 
@@ -962,11 +986,13 @@ public class MainWindowController implements Initializable {
      * @return The height of the image as it's being displayed on the screen.
      */
     private double getViewingHeight() {
-        double height = imageViewMain.getFitWidth() /
-                (mainViewModel.getSelectedImageModel().hasOriginal() ?
-                        mainViewModel.getSelectedImageModel().getOriginalImageModel().getAspectRatio() :
-                        mainViewModel.getSelectedImageModel().getAspectRatio());
-        if (height > imageViewMain.getFitHeight()) height = imageViewMain.getFitHeight();
+        double height = imageViewMain.getFitWidth()
+                / (mainViewModel.getSelectedImageModel().hasOriginal()
+                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getAspectRatio()
+                : mainViewModel.getSelectedImageModel().getAspectRatio());
+        if (height > imageViewMain.getFitHeight()) {
+            height = imageViewMain.getFitHeight();
+        }
         return height;
     }
 
@@ -979,8 +1005,8 @@ public class MainWindowController implements Initializable {
         if (mainViewModel.getSelectedImageModel() == null) {
             title = "SlimView";
         } else {
-            title = mainViewModel.getSelectedImageModel().getName() + " - SlimView [Zoom: " +
-                    (int) getViewingWidth() + " x " + (int) getViewingHeight() + " px]";
+            title = mainViewModel.getSelectedImageModel().getName() + " - SlimView [Zoom: "
+                    + (int) getViewingWidth() + " x " + (int) getViewingHeight() + " px]";
         }
         stage.setTitle(title);
     }
@@ -994,12 +1020,11 @@ public class MainWindowController implements Initializable {
         try {
             mainViewModel.loadImage(path);
         } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Couldn't open file");
-            alert.setContentText("The file doesn't exist or is unreadable.");
-            alert.setTitle("Error");
-            alert.initOwner(imageViewMain.getScene().getWindow());
-            alert.show();
+            Util.showCustomErrorDialog(
+                            "Couldn't open the requested file",
+                            "The file doesn't exist or is unreadable.",
+                            imageViewMain.getScene().getWindow(), e)
+                    .show();
         }
     }
 
