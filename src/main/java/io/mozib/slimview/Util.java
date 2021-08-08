@@ -47,7 +47,7 @@ public class Util {
     }
 
     /**
-     * @param dataFileLocation Type of data file
+     * @param dataFileLocation Path to the data file
      * @return Path to the xml settings file
      */
     public static String getDataFile(DataFileLocation dataFileLocation) {

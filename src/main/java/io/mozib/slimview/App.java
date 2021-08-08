@@ -4,6 +4,9 @@
 
 package io.mozib.slimview;
 
+/**
+ * Fake main() for JavaFX support. True main() is in SlimView.java
+ */
 public class App
 {
     public static void main(String[] args) {

@@ -141,6 +141,14 @@ public class MainWindowController implements Initializable {
      * Triggered with the view style is changed
      */
     private class ViewStyleChangeListener implements ChangeListener<ViewStyle> {
+        private final double menuBarHeight, toolBarHeight, statusBarHeight;
+
+        public ViewStyleChangeListener(double menuBarHeight, double toolBarHeight, double statusBarHeight) {
+            this.menuBarHeight = menuBarHeight;
+            this.toolBarHeight = toolBarHeight;
+            this.statusBarHeight = statusBarHeight;
+        }
+
         @Override
         public void changed(ObservableValue<? extends ViewStyle> observable,
                             ViewStyle oldValue,
@@ -192,7 +200,7 @@ public class MainWindowController implements Initializable {
                     double screenWidth = screenSize.getWidth();
                     double screenHeight = screenSize.getHeight();
                     double aspectRatio = mainViewModel.getSelectedImageModel().getAspectRatio();
-                    double fixedHeight = 25 + 42 + 25; // MenuBar + ToolBar + StatusBar
+                    double fixedHeight = menuBarHeight + toolBarHeight + statusBarHeight;
 
                     menuFitToDesktop.setSelected(true);
                     mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -322,7 +330,7 @@ public class MainWindowController implements Initializable {
         resizeWindow.setScene(scene);
         resizeWindow.setTitle("Resize");
         resizeWindow.initModality(Modality.WINDOW_MODAL);
-        resizeWindow.initStyle(StageStyle.UTILITY);
+        resizeWindow.getIcons().add(((Stage)imageViewMain.getScene().getWindow()).getIcons().get(0));
         resizeWindow.initOwner(imageViewMain.getScene().getWindow());
         ResizeWindowController controller = fxmlLoader.getController();
         controller.setViewModel(resizeViewModel);
@@ -376,24 +384,6 @@ public class MainWindowController implements Initializable {
             }
         });
 
-        // bind change listeners
-        mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
-        viewStyleProperty.addListener(new ViewStyleChangeListener());
-        mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
-
-        // force trigger view style if we're switching to fullscreen mode
-        isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
-            ViewStyle old = viewStyleProperty.get();
-            viewStyleProperty.set(null);
-            viewStyleProperty.set(old);
-        }));
-
-        // restore previous settings
-        viewStyleProperty.set(ViewStyle.valueOf(
-                preferences.get("LastViewStyle", ViewStyle.FIT_TO_DESKTOP.toString())));
-        mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
-                preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
-
         // load recent files
         RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileLocation.RECENT_FILES);
         if (recentFiles == null) {
@@ -415,7 +405,7 @@ public class MainWindowController implements Initializable {
         if (recentFiles.getRecentFiles().size() > 0) {
             menuRecent.getItems().add(new SeparatorMenuItem());
 
-            MenuItem menuClearRecent = new MenuItem("Clear Recent Files");
+            MenuItem menuClearRecent = new MenuItem("Clear History");
             menuClearRecent.setOnAction(event -> {
                 File file = new File(getDataFile(Util.DataFileLocation.RECENT_FILES));
                 if (file.exists()) file.delete();
@@ -459,8 +449,8 @@ public class MainWindowController implements Initializable {
         Stage aboutWindow = new Stage();
         aboutWindow.setScene(scene);
         aboutWindow.initModality(Modality.WINDOW_MODAL);
-        aboutWindow.initStyle(StageStyle.UTILITY);
         aboutWindow.initOwner(imageViewMain.getScene().getWindow());
+        aboutWindow.getIcons().add(((Stage) imageViewMain.getScene().getWindow()).getIcons().get(0));
         aboutWindow.setTitle("About");
         aboutWindow.show();
         controller.buttonOK.requestFocus();
@@ -737,7 +727,7 @@ public class MainWindowController implements Initializable {
         Stage favoritesWindow = new Stage();
         favoritesWindow.setScene(scene);
         favoritesWindow.initModality(Modality.WINDOW_MODAL);
-        favoritesWindow.initStyle(StageStyle.UTILITY);
+        favoritesWindow.getIcons().add(((Stage) imageViewMain.getScene().getWindow()).getIcons().get(0));
         favoritesWindow.initOwner(imageViewMain.getScene().getWindow());
         favoritesWindow.setTitle("Favorites Manager");
         controller.setFavoritesController(mainViewModel.getFavoritesController());
@@ -932,7 +922,7 @@ public class MainWindowController implements Initializable {
         scene.getStylesheets().add(getClass().getResource("styles/imageInfoWindowStyle.css").toExternalForm());
         imageInfoWindow.setScene(scene);
         imageInfoWindow.initModality(Modality.WINDOW_MODAL);
-        imageInfoWindow.initStyle(StageStyle.UTILITY);
+        imageInfoWindow.getIcons().add(((Stage) imageViewMain.getScene().getWindow()).getIcons().get(0));
         imageInfoWindow.initOwner(imageViewMain.getScene().getWindow());
         imageInfoWindow.setTitle("Image Properties");
         controller.loadInfo(mainViewModel.getSelectedImageModel());
@@ -949,7 +939,7 @@ public class MainWindowController implements Initializable {
         Stage copyFileToWindow = new Stage();
         copyFileToWindow.setScene(scene);
         copyFileToWindow.initModality(Modality.WINDOW_MODAL);
-        copyFileToWindow.initStyle(StageStyle.UTILITY);
+        copyFileToWindow.getIcons().add(((Stage) imageViewMain.getScene().getWindow()).getIcons().get(0));
         copyFileToWindow.initOwner(imageViewMain.getScene().getWindow());
         copyFileToWindow.setTitle("Copy File To");
         controller.setViewModel(new CopyFileToViewModel(mainViewModel.getSelectedImageModel()));
@@ -996,7 +986,9 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Main method to load an image into the application. Don't use ViewModel's function directly.
+     * Main method to load an image into the application.Don't use ViewModel's function directly.
+     *
+     * @param path Path to the image file.
      */
     public void openImage(String path) {
         try {
@@ -1004,11 +996,35 @@ public class MainWindowController implements Initializable {
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Couldn't open file");
-            alert.setContentText("The file doesn't exist or is unreachable.");
+            alert.setContentText("The file doesn't exist or is unreadable.");
             alert.setTitle("Error");
             alert.initOwner(imageViewMain.getScene().getWindow());
             alert.show();
         }
+    }
+
+    /**
+     * Sets up the listeners to various properties. Important to call this after the UI has loaded.
+     */
+    public void initUIListeners() {
+        // bind change listeners
+        mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
+        viewStyleProperty.addListener(new ViewStyleChangeListener(
+                menuBar.getHeight(), toolBar.getHeight(), statusBar.getHeight()));
+        mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
+
+        // restore previous settings
+        viewStyleProperty.set(ViewStyle.valueOf(
+                preferences.get("LastViewStyle", ViewStyle.FIT_TO_DESKTOP.toString())));
+        mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
+                preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
+
+        // force trigger view style if we're switching to fullscreen mode
+        isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
+            ViewStyle old = viewStyleProperty.get();
+            viewStyleProperty.set(null);
+            viewStyleProperty.set(old);
+        }));
     }
 
     private void showFirst() {

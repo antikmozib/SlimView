@@ -46,6 +46,10 @@ public class SlimView extends Application {
             stage.setMaximized(true);
         }
         stage.show();
+
+        // initialize listeners; must be called after UI has loaded
+        controller.initUIListeners();
+
         stage.setOnCloseRequest(event -> {
             // save window positions
             preferences.putDouble("MainWindowHeight", stage.getScene().getWindow().getHeight());

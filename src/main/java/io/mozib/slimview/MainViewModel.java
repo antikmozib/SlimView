@@ -22,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -65,7 +66,9 @@ public class MainViewModel {
     @SuppressWarnings("unchecked")
     public void loadImage(String path) throws IOException {
         File file = new File(path);
-        if (!file.exists()) throw new IOException();
+        if (!file.exists() || !Files.isReadable(file.toPath())) {
+            throw new IOException();
+        }
 
         // first, show the image requested while the directory is being scanned
         setSelectedImage(new ImageModel(path));
@@ -145,7 +148,8 @@ public class MainViewModel {
         }
         setSelectedImage(
                 imageModels.stream()
-                        .filter(item -> item.getPath().equals(getSelectedImageModel().getOriginalImageModel().getPath()))
+                        .filter(item ->
+                                item.getPath().equals(getSelectedImageModel().getOriginalImageModel().getPath()))
                         .findFirst()
                         .orElse(null));
     }

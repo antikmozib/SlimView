@@ -366,11 +366,11 @@
             </ToggleButton>
             </items>
         </ToolBar>
-        <ScrollPane id="mainScrollPane" fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" onKeyPressed="#mainScrollPane_onKeyPress" onMouseClicked="#mainScrollPane_onClick" onScroll="#mainScrollPane_onScroll" pannable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+        <ScrollPane id="mainScrollPane" fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" onKeyPressed="#mainScrollPane_onKeyPress" onMouseClicked="#mainScrollPane_onClick" onScroll="#mainScrollPane_onScroll" pannable="true" VBox.vgrow="ALWAYS">
             <content>
-                <StackPane id="stackPaneMain" fx:id="stackPaneMain" prefHeight="150.0" prefWidth="200.0">
+                <StackPane id="stackPaneMain" fx:id="stackPaneMain">
                     <children>
-                        <ImageView id="imageViewMain" fx:id="imageViewMain" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#imageViewMain_onClick" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView id="imageViewMain" fx:id="imageViewMain" focusTraversable="true" onMouseClicked="#imageViewMain_onClick" pickOnBounds="true" preserveRatio="true" />
                     </children>
                 </StackPane>
             </content>
