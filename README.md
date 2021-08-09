@@ -8,7 +8,7 @@ A fast and simple directory-based image viewer and browser for Windows, macOS an
 
 **Tested with JDK 11 on Windows 10 and Linux Mint 20.2**
 
-_Java, Maven and [JavaFX jmods](https://openjfx.io/openjfx-docs/#modular) (required for producing jlink images) must be available in the environment or module path._
+_Java, Maven and [JavaFX jmods](https://openjfx.io/openjfx-docs/#modular) (required for producing jlink images) must be available on the environment or module path._
 
 `clone` the repository, `cd` into the root directory and execute `mvn clean`.
 
