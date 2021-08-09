@@ -4,7 +4,6 @@
 
 package io.mozib.slimview;
 
-import io.mozib.slimview.Util;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

@@ -4,8 +4,6 @@
 
 package io.mozib.slimview;
 
-import io.mozib.slimview.FavoritesController;
-import io.mozib.slimview.FavoritesModel;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.transformation.FilteredList;

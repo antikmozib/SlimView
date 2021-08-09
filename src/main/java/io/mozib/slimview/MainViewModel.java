@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -149,7 +150,7 @@ public class MainViewModel {
         setSelectedImage(
                 imageModels.stream()
                         .filter(item ->
-                                item.getPath().equals(getSelectedImageModel().getOriginalImageModel().getPath()))
+                                item.getPath().equals(getSelectedImageModel().getOriginal().getPath()))
                         .findFirst()
                         .orElse(null));
     }
@@ -165,7 +166,7 @@ public class MainViewModel {
         }
     }
 
-    public void trashImage(ImageModel imageModel) {
+    public void trashImage(ImageModel imageModel) throws Exception {
         String path = imageModel.getPath();
         boolean success = false;
 
@@ -175,12 +176,8 @@ public class MainViewModel {
             default:
                 if (Desktop.isDesktopSupported()) {
                     if (Desktop.getDesktop().isSupported(Desktop.Action.MOVE_TO_TRASH)) {
-                        try {
-                            Desktop.getDesktop().moveToTrash(new File(path));
-                            success = true;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        Desktop.getDesktop().moveToTrash(new File(path));
+                        success = true;
                     }
                 }
                 break;
@@ -195,20 +192,16 @@ public class MainViewModel {
                 String pathToTrash =
                         Paths.get(System.getProperty("user.home"), ".local", "share", "Trash").toString();
 
-                try {
-                    // write .trashinfo file
-                    FileUtils.writeStringToFile(new File(Paths.get(
-                                    pathToTrash, "info", FilenameUtils.getName(path) + ".trashinfo").toString()),
-                            trashInfo, Charset.defaultCharset());
+                // write .trashinfo file
+                FileUtils.writeStringToFile(new File(Paths.get(
+                                pathToTrash, "info", FilenameUtils.getName(path) + ".trashinfo").toString()),
+                        trashInfo, Charset.defaultCharset());
 
-                    // move file to actual trash folder
-                    FileUtils.moveFile(new File(path),
-                            new File(Paths.get(pathToTrash, "files", FilenameUtils.getName(path)).toString()));
+                // move file to actual trash folder
+                FileUtils.moveFile(new File(path),
+                        new File(Paths.get(pathToTrash, "files", FilenameUtils.getName(path)).toString()));
 
-                    success = true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                success = true;
                 break;
         }
 
@@ -217,7 +210,7 @@ public class MainViewModel {
             ImageModel remove;
 
             if (imageModel.hasOriginal()) {
-                remove = findByPath(imageModel.getOriginalImageModel().getPath());
+                remove = findByPath(imageModel.getOriginal().getPath());
             } else {
                 remove = imageModel;
             }
@@ -305,6 +298,15 @@ public class MainViewModel {
         return format.format(date);
     }
 
+    private String formatFileSize(long bytes) {
+        long fileSize = bytes;
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+
+        if (fileSize > 1e3 && fileSize < 1e6) return Math.round(fileSize / 1e3) + " KB";
+        if (fileSize >= 1e6) return decimalFormat.format(fileSize / 1e6) + " MB";
+        return fileSize + " B";
+    }
+
     private static class LoadDirectory extends Service<List<ImageModel>> {
 
         private final String directoryPath;
@@ -364,7 +366,7 @@ public class MainViewModel {
             status.set((getCurrentIndex() + 1) + "/" + imageModels.size()
                     + "  |  " + imageModel.getFormat()
                     + "  |  " + imageModel.getColorDepth() + "-bits"
-                    + "  |  " + imageModel.getFormattedFileSize()
+                    + "  |  " + formatFileSize(imageModel.getFileSize())
                     + "  |  C: " + formatTime(imageModel.getDateCreated())
                     + "  |  M: " + formatTime(imageModel.getDateModified()));
         }
@@ -374,15 +376,15 @@ public class MainViewModel {
         // resample image to ensure best resizing quality
         BufferedImage image;
         if (!imageModel.hasOriginal()) {
-            imageModel.setOriginalImageModel(new ImageModel(imageModel.getPath()));
+            imageModel.setOriginal(new ImageModel(imageModel.getPath()));
             image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
         } else {
-            image = SwingFXUtils.fromFXImage(imageModel.getOriginalImageModel().getImage(), null);
+            image = SwingFXUtils.fromFXImage(imageModel.getOriginal().getImage(), null);
         }
 
         var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
         var resized = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
-        createTempImage(resized, file, imageModel.getOriginalImageModel().getPath());
+        createTempImage(resized, file, imageModel.getOriginal().getPath());
     }
 
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {

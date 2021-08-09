@@ -305,12 +305,12 @@ public class MainWindowController implements Initializable {
 
             if (mainViewModel.getSelectedImageModel() != null) {
                 double currentWidth = mainViewModel.getSelectedImageModel().hasOriginal()
-                        ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth()
+                        ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
                         : mainViewModel.getSelectedImageModel().getWidth();
                 double zoom = getViewingWidth() / currentWidth * 100;
                 labelResolution.setText(
                         (mainViewModel.getSelectedImageModel().hasOriginal()
-                                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getResolution()
+                                ? mainViewModel.getSelectedImageModel().getOriginal().getResolution()
                                 : mainViewModel.getSelectedImageModel().getResolution()) + " (" + Math.round(zoom) + "%)");
             }
         }
@@ -602,7 +602,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuDelete_onAction(ActionEvent actionEvent) {
-        mainViewModel.trashImage(mainViewModel.getSelectedImageModel());
+        deleteFile();
     }
 
     @FXML
@@ -777,10 +777,10 @@ public class MainWindowController implements Initializable {
 
     private void zoomIn() {
         double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth()
+                ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
                 : mainViewModel.getSelectedImageModel().getWidth();
         double originalHeight = mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getHeight()
+                ? mainViewModel.getSelectedImageModel().getOriginal().getHeight()
                 : mainViewModel.getSelectedImageModel().getHeight();
         double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
@@ -807,10 +807,10 @@ public class MainWindowController implements Initializable {
 
     private void zoomOut() {
         double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getWidth()
+                ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
                 : mainViewModel.getSelectedImageModel().getWidth();
         double originalHeight = mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getHeight()
+                ? mainViewModel.getSelectedImageModel().getOriginal().getHeight()
                 : mainViewModel.getSelectedImageModel().getHeight();
         double targetWidth = getViewingWidth() - getViewingWidth() * zoomStep;
         double targetHeight = getViewingHeight() - getViewingHeight() * zoomStep;
@@ -974,7 +974,7 @@ public class MainWindowController implements Initializable {
     private double getViewingWidth() {
         double width = imageViewMain.getFitHeight()
                 * (mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getAspectRatio()
+                ? mainViewModel.getSelectedImageModel().getOriginal().getAspectRatio()
                 : mainViewModel.getSelectedImageModel().getAspectRatio());
         if (width > imageViewMain.getFitWidth()) {
             width = imageViewMain.getFitWidth();
@@ -988,7 +988,7 @@ public class MainWindowController implements Initializable {
     private double getViewingHeight() {
         double height = imageViewMain.getFitWidth()
                 / (mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginalImageModel().getAspectRatio()
+                ? mainViewModel.getSelectedImageModel().getOriginal().getAspectRatio()
                 : mainViewModel.getSelectedImageModel().getAspectRatio());
         if (height > imageViewMain.getFitHeight()) {
             height = imageViewMain.getFitHeight();
@@ -1012,7 +1012,7 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Main method to load an image into the application.Don't use ViewModel's function directly.
+     * Main method to load an image into the application. Don't use ViewModel's function directly.
      *
      * @param path Path to the image file.
      */
@@ -1021,8 +1021,8 @@ public class MainWindowController implements Initializable {
             mainViewModel.loadImage(path);
         } catch (IOException e) {
             Util.showCustomErrorDialog(
-                            "Couldn't open the requested file",
-                            "The file doesn't exist or is unreadable.",
+                            "Loading failed",
+                            "The requested file doesn't exist or is unreadable.",
                             imageViewMain.getScene().getWindow(), e)
                     .show();
         }
@@ -1079,5 +1079,17 @@ public class MainWindowController implements Initializable {
         }
 
         return filters.toArray(FileChooser.ExtensionFilter[]::new);
+    }
+
+    private void deleteFile() {
+        if (mainViewModel.getSelectedImageModel() == null) return;
+        try {
+            mainViewModel.trashImage(mainViewModel.getSelectedImageModel());
+        } catch (Exception e) {
+            Util.showCustomErrorDialog(
+                    "Deletion failed",
+                    "The requested file couldn't be deleted.",
+                    imageViewMain.getScene().getWindow(), e);
+        }
     }
 }

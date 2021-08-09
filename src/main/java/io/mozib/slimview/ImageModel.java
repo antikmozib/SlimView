@@ -15,12 +15,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.DecimalFormat;
 
 public class ImageModel {
 
     private Image image = null;
-    private ImageModel originalImageModel = null;
+    private ImageModel original = null;
     private Boolean isFavorite = null;
     private final String path;
     private final String name;
@@ -39,7 +38,7 @@ public class ImageModel {
         this.name = Path.of(location).getFileName().toString();
 
         if (originalLocation != null) {
-            this.originalImageModel = new ImageModel(originalLocation);
+            this.original = new ImageModel(originalLocation);
             path = Paths.get(originalLocation);
         } else {
             path = Paths.get(location);
@@ -82,7 +81,7 @@ public class ImageModel {
         image = null;
 
         if (hasOriginal()) {
-            originalImageModel = null;
+            original = null;
         }
     }
 
@@ -94,17 +93,8 @@ public class ImageModel {
         return FilenameUtils.getExtension(getPath()).toUpperCase();
     }
 
-    /**
-     * @return Converts bytes to KB/MB
-     */
-    public String getFormattedFileSize() {
-        long fileSize = new File(getPath()).length();
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-
-        if (fileSize > 1e3 && fileSize < 1e6) return Math.round(fileSize / 1e3) + " KB";
-        if (fileSize >= 1e6) return decimalFormat.format(fileSize / 1e6) + " MB";
-        return fileSize + " B";
-
+    public long getFileSize() {
+        return new File(getPath()).length();
     }
 
     public double getWidth() {
@@ -129,7 +119,7 @@ public class ImageModel {
     }
 
     public boolean hasOriginal() {
-        return originalImageModel != null;
+        return original != null;
     }
 
     public void setIsFavorite(boolean value) {
@@ -152,14 +142,14 @@ public class ImageModel {
      * @return If the image has an original, then returns the path to the original. Otherwise, returns the current path.
      */
     public String getBestPath() {
-        return hasOriginal() ? originalImageModel.getPath() : getPath();
+        return hasOriginal() ? original.getPath() : getPath();
     }
 
-    public ImageModel getOriginalImageModel() {
-        return originalImageModel;
+    public ImageModel getOriginal() {
+        return original;
     }
 
-    public void setOriginalImageModel(ImageModel originalImageModel) {
-        this.originalImageModel = originalImageModel;
+    public void setOriginal(ImageModel original) {
+        this.original = original;
     }
 }
