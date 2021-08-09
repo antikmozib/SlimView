@@ -362,11 +362,11 @@ public class MainViewModel {
 
             selectedImageModelWrapper.set(imageModel);
             status.set((getCurrentIndex() + 1) + "/" + imageModels.size()
-                    + " | " + imageModel.getFormat()
-                    + " | " + imageModel.getColorDepth() + "-bits"
-                    + " | " + imageModel.getFormattedFileSize()
-                    + " | C: " + formatTime(imageModel.getDateCreated())
-                    + " | M: " + formatTime(imageModel.getDateModified()));
+                    + "  |  " + imageModel.getFormat()
+                    + "  |  " + imageModel.getColorDepth() + "-bits"
+                    + "  |  " + imageModel.getFormattedFileSize()
+                    + "  |  C: " + formatTime(imageModel.getDateCreated())
+                    + "  |  M: " + formatTime(imageModel.getDateModified()));
         }
     }
 
