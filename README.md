@@ -12,7 +12,7 @@ _Java, Maven and [JavaFX jmods](https://openjfx.io/openjfx-docs/#modular) (requi
 
 `clone` the repository, `cd` into the root directory and execute `mvn clean`.
 
-Four Windows batch files are provided to ease building and running:
+Two sets of four batch files are provided to ease building and running:
 
 * `build.bat` and `run.bat`: Builds the program using Maven and runs it with the system JDK.
 * `jlink-build.bat` and `jlink-run.bat`: Builds the program using Maven, produces a native jlink image and uses that to run the program.
