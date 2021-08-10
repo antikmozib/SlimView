@@ -20,4 +20,4 @@ Linux/macOS: `linux-build.sh` and `linux-run.sh`
 
 Windows: `jlink-build.bat` and `jlink-run.bat`
 
-Linux/macOS: `linux-jlink-build.bat` and `linux-jlink-run.bat`
+Linux/macOS: `linux-jlink-build.sh` and `linux-jlink-run.sh`
