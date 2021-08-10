@@ -317,19 +317,13 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    public void menuResize_onAction(ActionEvent actionEvent) {
+    public void menuResize_onAction(ActionEvent actionEvent) throws IOException {
         if (mainViewModel.getSelectedImageModel() == null) {
             return;
         }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/resizeWindow.fxml"));
-        Parent root = null;
-        try {
-            root = fxmlLoader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        Parent root = fxmlLoader.load();        
         Scene scene = new Scene(root);
         Stage resizeWindow = new Stage();
         ResizeViewModel resizeViewModel = new ResizeViewModel(
@@ -775,6 +769,131 @@ public class MainWindowController implements Initializable {
         menuFullScreen.setSelected(setFullScreen);
     }
 
+    /**
+     * @return The width of the image as it's being displayed on the screen.
+     */
+    private double getViewingWidth() {
+        double width = imageViewMain.getFitHeight()
+                * (mainViewModel.getSelectedImageModel().hasOriginal()
+                ? mainViewModel.getSelectedImageModel().getOriginal().getAspectRatio()
+                : mainViewModel.getSelectedImageModel().getAspectRatio());
+        if (width > imageViewMain.getFitWidth()) {
+            width = imageViewMain.getFitWidth();
+        }
+        return width;
+    }
+
+    /**
+     * @return The height of the image as it's being displayed on the screen.
+     */
+    private double getViewingHeight() {
+        double height = imageViewMain.getFitWidth()
+                / (mainViewModel.getSelectedImageModel().hasOriginal()
+                ? mainViewModel.getSelectedImageModel().getOriginal().getAspectRatio()
+                : mainViewModel.getSelectedImageModel().getAspectRatio());
+        if (height > imageViewMain.getFitHeight()) {
+            height = imageViewMain.getFitHeight();
+        }
+        return height;
+    }
+
+    /**
+     * Updates the title of the application window.
+     */
+    private void updateTitle() {
+        Stage stage = (Stage) imageViewMain.getScene().getWindow();
+        String title = "";
+        if (mainViewModel.getSelectedImageModel() == null) {
+            title = "SlimView";
+        } else {
+            title = mainViewModel.getSelectedImageModel().getName() + " - SlimView [Zoom: "
+                    + (int) getViewingWidth() + " x " + (int) getViewingHeight() + " px]";
+        }
+        stage.setTitle(title);
+    }
+
+    /**
+     * Main method to load an image into the application. Don't use ViewModel's function directly.
+     *
+     * @param path Path to the image file.
+     */
+    public void openImage(String path) {
+        try {
+            mainViewModel.loadImage(path);
+        } catch (IOException e) {
+            Util.showCustomErrorDialog(
+                            "Loading failed",
+                            "The requested file doesn't exist or is unreadable.",
+                            imageViewMain.getScene().getWindow(), e)
+                    .show();
+        }
+    }
+
+    /**
+     * Sets up the listeners to various properties. Important to call this after the UI has loaded.
+     */
+    public void initUIListeners() {
+        // bind change listeners
+        mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
+        viewStyleProperty.addListener(new ViewStyleChangeListener(
+                menuBar.getHeight(), toolBar.getHeight(), statusBar.getHeight()));
+        mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
+
+        // restore previous settings
+        viewStyleProperty.set(ViewStyle.valueOf(
+                preferences.get("LastViewStyle", ViewStyle.FIT_TO_DESKTOP.toString())));
+        mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
+                preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
+
+        // force trigger view style if we're switching to fullscreen mode
+        isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
+            ViewStyle old = viewStyleProperty.get();
+            viewStyleProperty.set(null);
+            viewStyleProperty.set(old);
+        }));
+    }
+
+    private void showFirst() {
+        mainViewModel.showFirstImage();
+    }
+
+    private void showPrevious() {
+        mainViewModel.showPreviousImage();
+    }
+
+    private void showNext() {
+        mainViewModel.showNextImage();
+    }
+
+    private void showLast() {
+        mainViewModel.showLastImage();
+    }
+
+    private FileChooser.ExtensionFilter[] getExtensionFilters() {
+        ArrayList<FileChooser.ExtensionFilter> filters = new ArrayList<>();
+        String[] extensions = mainViewModel.getSupportedExtensions();
+
+        // separate item for each extension
+        for (String ext : extensions) {
+            ext = ext.replace("*", "").replace(".", "");
+            filters.add(new FileChooser.ExtensionFilter(ext.toUpperCase() + " Image", "*." + ext.toLowerCase()));
+        }
+
+        return filters.toArray(FileChooser.ExtensionFilter[]::new);
+    }
+
+    private void deleteFile() {
+        if (mainViewModel.getSelectedImageModel() == null) return;
+        try {
+            mainViewModel.trashImage(mainViewModel.getSelectedImageModel());
+        } catch (Exception e) {
+            Util.showCustomErrorDialog(
+                    "Deletion failed",
+                    "The requested file couldn't be deleted.",
+                    imageViewMain.getScene().getWindow(), e);
+        }
+    }
+    
     private void zoomIn() {
         double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal()
                 ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
@@ -966,130 +1085,5 @@ public class MainWindowController implements Initializable {
         copyFileToWindow.setTitle("Copy File To");
         controller.setViewModel(new CopyFileToViewModel(mainViewModel.getSelectedImageModel()));
         copyFileToWindow.show();
-    }
-
-    /**
-     * @return The width of the image as it's being displayed on the screen.
-     */
-    private double getViewingWidth() {
-        double width = imageViewMain.getFitHeight()
-                * (mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginal().getAspectRatio()
-                : mainViewModel.getSelectedImageModel().getAspectRatio());
-        if (width > imageViewMain.getFitWidth()) {
-            width = imageViewMain.getFitWidth();
-        }
-        return width;
-    }
-
-    /**
-     * @return The height of the image as it's being displayed on the screen.
-     */
-    private double getViewingHeight() {
-        double height = imageViewMain.getFitWidth()
-                / (mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginal().getAspectRatio()
-                : mainViewModel.getSelectedImageModel().getAspectRatio());
-        if (height > imageViewMain.getFitHeight()) {
-            height = imageViewMain.getFitHeight();
-        }
-        return height;
-    }
-
-    /**
-     * Updates the title of the application window.
-     */
-    private void updateTitle() {
-        Stage stage = (Stage) imageViewMain.getScene().getWindow();
-        String title = "";
-        if (mainViewModel.getSelectedImageModel() == null) {
-            title = "SlimView";
-        } else {
-            title = mainViewModel.getSelectedImageModel().getName() + " - SlimView [Zoom: "
-                    + (int) getViewingWidth() + " x " + (int) getViewingHeight() + " px]";
-        }
-        stage.setTitle(title);
-    }
-
-    /**
-     * Main method to load an image into the application. Don't use ViewModel's function directly.
-     *
-     * @param path Path to the image file.
-     */
-    public void openImage(String path) {
-        try {
-            mainViewModel.loadImage(path);
-        } catch (IOException e) {
-            Util.showCustomErrorDialog(
-                            "Loading failed",
-                            "The requested file doesn't exist or is unreadable.",
-                            imageViewMain.getScene().getWindow(), e)
-                    .show();
-        }
-    }
-
-    /**
-     * Sets up the listeners to various properties. Important to call this after the UI has loaded.
-     */
-    public void initUIListeners() {
-        // bind change listeners
-        mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
-        viewStyleProperty.addListener(new ViewStyleChangeListener(
-                menuBar.getHeight(), toolBar.getHeight(), statusBar.getHeight()));
-        mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
-
-        // restore previous settings
-        viewStyleProperty.set(ViewStyle.valueOf(
-                preferences.get("LastViewStyle", ViewStyle.FIT_TO_DESKTOP.toString())));
-        mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
-                preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
-
-        // force trigger view style if we're switching to fullscreen mode
-        isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
-            ViewStyle old = viewStyleProperty.get();
-            viewStyleProperty.set(null);
-            viewStyleProperty.set(old);
-        }));
-    }
-
-    private void showFirst() {
-        mainViewModel.showFirstImage();
-    }
-
-    private void showPrevious() {
-        mainViewModel.showPreviousImage();
-    }
-
-    private void showNext() {
-        mainViewModel.showNextImage();
-    }
-
-    private void showLast() {
-        mainViewModel.showLastImage();
-    }
-
-    private FileChooser.ExtensionFilter[] getExtensionFilters() {
-        ArrayList<FileChooser.ExtensionFilter> filters = new ArrayList<>();
-        String[] extensions = mainViewModel.getSupportedExtensions();
-
-        // separate item for each extension
-        for (String ext : extensions) {
-            ext = ext.replace("*", "").replace(".", "");
-            filters.add(new FileChooser.ExtensionFilter(ext.toUpperCase() + " Image", "*." + ext.toLowerCase()));
-        }
-
-        return filters.toArray(FileChooser.ExtensionFilter[]::new);
-    }
-
-    private void deleteFile() {
-        if (mainViewModel.getSelectedImageModel() == null) return;
-        try {
-            mainViewModel.trashImage(mainViewModel.getSelectedImageModel());
-        } catch (Exception e) {
-            Util.showCustomErrorDialog(
-                    "Deletion failed",
-                    "The requested file couldn't be deleted.",
-                    imageViewMain.getScene().getWindow(), e);
-        }
     }
 }

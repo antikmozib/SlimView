@@ -8,6 +8,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
 
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 public class ImageModel {
 
     private Image image = null;
+    private BufferedImage bufferedImage = null;
     private ImageModel original = null;
     private Boolean isFavorite = null;
     private final String path;
@@ -74,11 +76,19 @@ public class ImageModel {
         return image;
     }
 
+    public BufferedImage getBufferedImage() {
+        if (bufferedImage == null) {
+            bufferedImage = SwingFXUtils.fromFXImage(getImage(), null);
+        }
+        return bufferedImage;
+    }
+
     /**
      * Release the images and free up memory.
      */
     public void unsetImage() {
         image = null;
+        bufferedImage = null;
 
         if (hasOriginal()) {
             original = null;

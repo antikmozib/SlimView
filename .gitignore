@@ -6,4 +6,4 @@ jlink-image/
 nbactions.xml
 installer/*
 !installer/slimview.iss
-/target/
+nb-configuration.xml

@@ -377,9 +377,9 @@ public class MainViewModel {
         BufferedImage image;
         if (!imageModel.hasOriginal()) {
             imageModel.setOriginal(new ImageModel(imageModel.getPath()));
-            image = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
+            image = imageModel.getBufferedImage();
         } else {
-            image = SwingFXUtils.fromFXImage(imageModel.getOriginal().getImage(), null);
+            image = imageModel.getOriginal().getBufferedImage();
         }
 
         var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
@@ -389,7 +389,7 @@ public class MainViewModel {
 
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
         var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
-        var rotated = Scalr.rotate(SwingFXUtils.fromFXImage(imageModel.getImage(), null), rotation);
+        var rotated = Scalr.rotate(imageModel.getBufferedImage(), rotation);
         createTempImage(rotated, file, imageModel.getBestPath());
     }
 
