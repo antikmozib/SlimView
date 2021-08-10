@@ -10,7 +10,7 @@ _**Requires Java 11 and Maven.**_ Java and Maven must be available on the enviro
 
 `clone` the repository, `cd` into the root directory and execute `mvn clean`.
 
-<h3>One-click building</h3>
+<h3>Automated building</h3>
 
 |                               | Windows                               | Linux/macOS                                  |
 |            -------            |:-----------                           |:------                                       |
