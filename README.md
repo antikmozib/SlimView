@@ -13,6 +13,6 @@ _**Requires Java 11 and Maven.**_ Java and Maven must be available on the enviro
 <h3>Automated building</h3>
 
 |                               | Windows                               | Linux/macOS                                  |
-|            -------            |:-----------                           |:------                                       |
+|            -------            |-----------                            | ------                                       |
 | Build and run with system JRE | `build.bat` and `run.bat`             | `build.sh` and `run.sh`                      |
 | Build and run with custom JRE | `jlink-build.bat` and `jlink-run.bat` | `jlink-build.sh` and `jlink-run.sh`          |
