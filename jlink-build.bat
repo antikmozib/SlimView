@@ -9,7 +9,7 @@ mkdir target\win
 mkdir target\win\lib
 
 echo.
-echo Copying notice
+echo Copying files
 echo.
 copy notice.txt target\win\notice.txt
 
