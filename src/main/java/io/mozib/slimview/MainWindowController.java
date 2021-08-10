@@ -323,7 +323,7 @@ public class MainWindowController implements Initializable {
         }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/resizeWindow.fxml"));
-        Parent root = fxmlLoader.load();        
+        Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
         Stage resizeWindow = new Stage();
         ResizeViewModel resizeViewModel = new ResizeViewModel(
@@ -729,8 +729,7 @@ public class MainWindowController implements Initializable {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/favoritesWindow.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(
-                Objects.requireNonNull(getClass().getResource("styles/favoritesWindowStyle.css")).toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("styles/favoritesWindowStyle.css").toExternalForm());
         FavoritesWindowController controller = fxmlLoader.getController();
         Stage favoritesWindow = new Stage();
         favoritesWindow.setScene(scene);
@@ -893,7 +892,7 @@ public class MainWindowController implements Initializable {
                     imageViewMain.getScene().getWindow(), e);
         }
     }
-    
+
     private void zoomIn() {
         double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal()
                 ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()

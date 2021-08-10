@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.prefs.Preferences;
 
 import static io.mozib.slimview.Util.tempDirectory;
@@ -30,12 +29,10 @@ public class SlimView extends Application {
         Parent root = fxmlLoader.load();
         MainWindowController controller = fxmlLoader.getController();
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(
-                Objects.requireNonNull(getClass().getResource("styles/style.css")).toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("styles/style.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("SlimView");
-        stage.getIcons().add(
-                new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("icons/slimview.png"))));
+        stage.getIcons().add(new Image(this.getClass().getResourceAsStream("icons/slimview.png")));
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         stage.setWidth(preferences.getDouble("MainWindowWidth", 960));
         stage.setHeight(preferences.getDouble("MainWindowHeight", 720));
@@ -67,7 +64,7 @@ public class SlimView extends Application {
     public void stop() {
         // clear caches...
         var files = new File(tempDirectory());
-        for (File file : Objects.requireNonNull(files.listFiles())) {
+        for (File file : files.listFiles()) {
             file.delete();
         }
     }

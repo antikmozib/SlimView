@@ -215,17 +215,20 @@ public class Util {
         try {
             xml = inputStreamToString(new FileInputStream(getDataFile(dataFileLocation)));
             data = xmlMapper.readValue(xml, classType);
-            if (data == null) {
-                data = classType.getDeclaredConstructor().newInstance();
-            }
-        } catch (InstantiationException
-                | IllegalAccessException
-                | NoSuchMethodException
-                | InvocationTargetException
-                | FileNotFoundException
-                | JsonProcessingException e) {
+        } catch (FileNotFoundException
+                | JsonProcessingException ignored) {
+            // ignore this error; this means we're running the app for the first time
+        }
 
-            System.out.println("An error occurred while deserializing the requested file.");
+        if (data == null) {
+            try {
+                data = classType.getDeclaredConstructor().newInstance();
+            } catch (InstantiationException
+                    | IllegalAccessException
+                    | InvocationTargetException
+                    | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         }
 
         return data;
