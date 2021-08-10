@@ -5,4 +5,3 @@ mkdir target/linux/lib
 cp notice.txt target/linux
 jlink --module-path target/modules --add-modules $MODULES --output target/linux/runtime
 cp -R target/modules/. target/linux/lib
-
