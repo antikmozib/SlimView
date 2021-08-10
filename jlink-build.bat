@@ -1,5 +1,9 @@
+@echo off
 SET modules=java.base,java.security.jgss,javafx.controls,javafx.graphics,javafx.fxml,javafx.base,javafx.swing,jdk.net,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.crypto.mscapi
 
+echo.
+echo Executing Maven goals
+echo.
 call mvn clean package
 
 echo.
