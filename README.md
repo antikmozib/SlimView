@@ -10,7 +10,14 @@ A fast and simple directory-based image viewer and browser for Windows, macOS an
 
 `clone` the repository, `cd` into the root directory and execute `mvn clean`.
 
-Two sets of four batch files are provided to ease building and running:
+<h3>Build and run the app with the system JRE</h3>
 
-* `build.bat` and `run.bat`: Builds the program using Maven and runs it with the system JDK.
-* `jlink-build.bat` and `jlink-run.bat`: Builds the program using Maven, produces a native jlink image and uses that to run the program.
+Windows: `build.bat` and `run.bat`
+
+Linux/macOS: `linux-build.sh` and `linux-run.sh`
+
+<h3>Build and run the app with the custom JRE</h3>
+
+Windows: `jlink-build.bat` and `jlink-run.bat`
+
+Linux/macOS: `linux-jlink-build.bat` and `linux-jlink-run.bat`
