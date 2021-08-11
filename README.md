@@ -4,15 +4,19 @@ A fast and simple directory-based image viewer and browser for Windows, macOS an
 
 ![Screenshot](https://github.com/antikmozib/SlimView/blob/master/screenshot.jpg?raw=true)
 
-<h1>Building</h1>
+## Building
 
-_**Requires Java 11 and Maven.**_ Java and Maven must be available on the environment path or current path.
+### Requirements
 
-`clone` the repository, `cd` into the root directory and execute `mvn clean`.
+* Java 11
+* Maven 3.6.3+
 
-<h3>Automated building</h3>
+Additionally, Cygwin is needed if building the custom JRE on Windows.
 
-|                               | Windows                               | Linux/macOS                                  |
-|            -------            |-----------                            | ------                                       |
-| Build and run with system JRE | `build.bat` and `run.bat`             | `build.sh` and `run.sh`                      |
-| Build and run with custom JRE | `jlink-build.bat` and `jlink-run.bat` | `jlink-build.sh` and `jlink-run.sh`          |
+### Building with Maven
+
+`clone` the repository, `cd` into the root directory and execute `mvn clean package`.
+
+### Building custom JRE
+
+Execute the script `jlink-build.sh` to produce a native custom JRE for running the app. Execute the script `jlink-run.sh` to launch the app using the custom JRE.
