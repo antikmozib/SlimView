@@ -4,5 +4,5 @@ org.apache.httpcomponents.httpclient,org.apache.httpcomponents.httpcore,org.apac
 imgscalr.lib,metadata.extractor
 
 target/bin/runtime/bin/java	--module-path target/bin/lib \
-							--add-modules $MODULES \
-							-jar target/slimview-1.0.5.jar
+	--add-modules $MODULES \
+	-jar target/slimview-1.0.5.jar

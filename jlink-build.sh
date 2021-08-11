@@ -14,13 +14,13 @@ printf "\nCopying files\n"
 cp notice.txt target/bin
 
 printf "\nMaking new jlink image\n"
-jlink 	--module-path target/modules \
-		--add-modules $MODULES \
-		--strip-debug \
-		--no-header-files \
-		--no-man-pages \
-		--compress 2 \
-		--output target/bin/runtime
+jlink --module-path target/modules \
+	--add-modules $MODULES \
+	--strip-debug \
+	--no-header-files \
+	--no-man-pages \
+	--compress 2 \
+	--output target/bin/runtime
 
 printf "\nCopying dependencies\n"
 cp -R target/modules/. target/bin/lib
