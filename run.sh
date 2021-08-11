@@ -1,6 +1,6 @@
 MODULES=javafx.controls,javafx.graphics,javafx.fxml,javafx.base,javafx.swing,\
 com.fasterxml.jackson.core,com.fasterxml.jackson.dataformat.xml,\
-org.apache.httpcomponents.httpclient,org.apache.httpcomponents.httpcore,org.apache.commons.io,\
+org.apache.httpcomponents.httpcore,org.apache.httpcomponents.httpclient,org.apache.commons.io,\
 imgscalr.lib,metadata.extractor
 
 java --module-path target/modules \
