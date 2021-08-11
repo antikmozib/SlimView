@@ -1,3 +1,8 @@
-MODULES=javafx.controls,javafx.graphics,javafx.fxml,javafx.base,javafx.swing,imgscalr.lib,org.apache.commons.io,com.fasterxml.jackson.core,com.fasterxml.jackson.dataformat.xml,metadata.extractor,org.apache.httpcomponents.httpclient,org.apache.httpcomponents.httpcore
+MODULES=javafx.controls,javafx.graphics,javafx.fxml,javafx.base,javafx.swing,\
+com.fasterxml.jackson.core,com.fasterxml.jackson.dataformat.xml,\
+org.apache.httpcomponents.httpclient,org.apache.httpcomponents.httpcore,org.apache.commons.io,\
+imgscalr.lib,metadata.extractor
 
-target/linux/runtime/bin/java --module-path target/linux/lib --add-modules $MODULES -jar target/slimview-1.0.5.jar
+target/bin/runtime/bin/java	--module-path target/bin/lib \
+							--add-modules $MODULES \
+							-jar target/slimview-1.0.5.jar

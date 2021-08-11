@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>target\slimview-1.0.5.jar</jar>
-  <outfile>target\win\slimview.exe</outfile>
+  <jar>target/slimview-1.0.5.jar</jar>
+  <outfile>target/bin/slimview.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -13,7 +13,7 @@
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>installer\slimview.ico</icon>
+  <icon>installer/slimview.ico</icon>
   <classPath>
     <mainClass>io.mozib.slimview.App</mainClass>
     <cp>lib/javafx-controls-16.jar</cp>
