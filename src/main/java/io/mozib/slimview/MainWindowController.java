@@ -48,6 +48,37 @@ import static io.mozib.slimview.Util.getDataFile;
 import static io.mozib.slimview.Util.getOSType;
 
 public class MainWindowController implements Initializable {
+    private enum ViewStyle {
+        FIT_TO_WINDOW, FIT_TO_DESKTOP, ORIGINAL, STRETCHED
+    }
+
+    public MainViewModel mainViewModel = new MainViewModel();
+    private final Preferences preferences = Preferences.userNodeForPackage(this.getClass());
+
+    private final double zoomStep = 0.1;
+    private final int scrollPaneOffset = 2; // to force correct clipping of scroll pane
+
+    // for favorite button
+    private final Image favoriteOutline = new Image(getClass().getResourceAsStream("icons/favorite.png"));
+    private final Image favoriteSolid = new Image(getClass().getResourceAsStream("icons/favorite-solid.png"));
+
+    private final ToggleGroup toggleGroupViewStyle = new ToggleGroup();
+    private final ToggleGroup toggleGroupSortStyle = new ToggleGroup();
+    private final ToggleGroup toggleGroupSelectPan = new ToggleGroup();
+
+    private final SimpleBooleanProperty isViewingFullScreen = new SimpleBooleanProperty(false);
+    private final SimpleObjectProperty<ViewStyle> viewStyleProperty
+            = new SimpleObjectProperty<>(ViewStyle.FIT_TO_DESKTOP);
+
+    // the ViewStyle to reset to when switching between images after zooming
+    private ViewStyle cachedViewStyleZoom = viewStyleProperty.get();
+
+    // fields for selection rectangle
+    private boolean selectionStarted = false;
+    // initial point where mouse was clicked
+    private double selectionPivotX = 0.0;
+    private double selectionPivotY = 0.0;
+    private javafx.scene.shape.Rectangle selectionRectangle = null;
 
     @FXML
     public RadioMenuItem menuStretched;
@@ -100,36 +131,108 @@ public class MainWindowController implements Initializable {
     @FXML
     public StackPane stackPaneMain;
 
-    public MainViewModel mainViewModel = new MainViewModel();
-    private final Preferences preferences = Preferences.userNodeForPackage(this.getClass());
+    @FXML
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        labelStatus.textProperty().bind(mainViewModel.statusProperty());
+        labelResolution.setText("");
 
-    private enum ViewStyle {
-        FIT_TO_WINDOW, FIT_TO_DESKTOP, ORIGINAL, STRETCHED
+        // start tracking resolution and zoom
+        imageViewMain.fitHeightProperty().addListener(new ImageSizeChangeListener());
+        imageViewMain.fitWidthProperty().addListener(new ImageSizeChangeListener());
+
+        // menubar toggle group
+        menuFitToDesktop.setToggleGroup(toggleGroupViewStyle);
+        menuStretched.setToggleGroup(toggleGroupViewStyle);
+        menuFitToWindow.setToggleGroup(toggleGroupViewStyle);
+        menuOriginalSize.setToggleGroup(toggleGroupViewStyle);
+        menuSortByName.setToggleGroup(toggleGroupSortStyle);
+        menuSortByCreated.setToggleGroup(toggleGroupSortStyle);
+        menuSortByModified.setToggleGroup(toggleGroupSortStyle);
+
+        // button toggle group
+        tButtonPanMode.setToggleGroup(toggleGroupSelectPan);
+        tButtonSelectionMode.setToggleGroup(toggleGroupSelectPan);
+
+        // bindings for fullscreen viewing
+        toolBar.managedProperty().bind(toolBar.visibleProperty());
+        statusBar.managedProperty().bind(statusBar.visibleProperty());
+        menuBar.managedProperty().bind(menuBar.visibleProperty());
+
+        // bind ImageView and Favorite Button to selectedImage
+        tButtonFavorite.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                tButtonFavoriteImageView.setImage(favoriteSolid);
+            } else {
+                tButtonFavoriteImageView.setImage(favoriteOutline);
+            }
+        });
+
+        // remove selection rectangle if imageview/scrollpane/window size is changed
+        mainScrollPane.widthProperty().addListener((observable) -> clearSelectionRectangle());
+        mainScrollPane.heightProperty().addListener((observable) -> clearSelectionRectangle());
+        imageViewMain.fitWidthProperty().addListener((observable) -> clearSelectionRectangle());
+        imageViewMain.fitHeightProperty().addListener((observable) -> clearSelectionRectangle());
+
+        // bind selection rectangle/pan mode buttons
+        mainScrollPane.pannableProperty().bindBidirectional(tButtonPanMode.selectedProperty());
+
+        // load recent files
+        RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileLocation.RECENT_FILES);
+        if (recentFiles == null) {
+            recentFiles = new RecentFiles();
+        }
+        if (recentFiles.getRecentFiles() == null) {
+            recentFiles.setRecentFiles(new ArrayList<>());
+        } else {
+            recentFiles.getRecentFiles().sort(((o1, o2) -> Long.compare(o2.getLastSeen(), o1.getLastSeen())));
+        }
+        for (RecentFiles.RecentFile recentFile : recentFiles.getRecentFiles()) {
+            MenuItem menuItem = new MenuItem(recentFile.getPath());
+            menuItem.setOnAction(event -> {
+                openImage(menuItem.getText());
+            });
+            menuRecent.getItems().add(menuItem);
+        }
+        // add a clear option
+        if (recentFiles.getRecentFiles().size() > 0) {
+            menuRecent.getItems().add(new SeparatorMenuItem());
+
+            MenuItem menuClearRecent = new MenuItem("Clear History");
+            menuClearRecent.setOnAction(event -> {
+                File file = new File(getDataFile(Util.DataFileLocation.RECENT_FILES));
+                if (file.exists()) {
+                    file.delete();
+                }
+                menuRecent.getItems().clear();
+            });
+            menuRecent.getItems().add(menuClearRecent);
+        }
     }
 
-    private final double zoomStep = 0.1;
-    private final int scrollPaneOffset = 2; // to force correct clipping of scroll pane
+    /**
+     * Sets up the listeners to various properties. Important to call this after the UI has loaded.
+     */
+    public void initUIListeners() {
+        // bind change listeners
+        mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
+        viewStyleProperty.addListener(new ViewStyleChangeListener(
+                menuBar.getHeight(), toolBar.getHeight(), statusBar.getHeight()));
+        mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
 
-    private final Image favoriteOutline = new Image(getClass().getResourceAsStream("icons/favorite.png"));
-    private final Image favoriteSolid = new Image(getClass().getResourceAsStream("icons/favorite-solid.png"));
+        // restore previous settings
+        viewStyleProperty.set(ViewStyle.valueOf(
+                preferences.get("LastViewStyle", ViewStyle.FIT_TO_DESKTOP.toString())));
+        mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
+                preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
 
-    private final ToggleGroup toggleGroupViewStyle = new ToggleGroup();
-    private final ToggleGroup toggleGroupSortStyle = new ToggleGroup();
-    private final ToggleGroup toggleGroupSelectPan = new ToggleGroup();
-
-    private final SimpleBooleanProperty isViewingFullScreen = new SimpleBooleanProperty(false);
-    private final SimpleObjectProperty<ViewStyle> viewStyleProperty
-            = new SimpleObjectProperty<>(ViewStyle.FIT_TO_DESKTOP);
-
-    // fields for selection rectangle
-    boolean selectionStarted = false;
-    // initial point where mouse was clicked
-    double selectionPivotX = 0.0;
-    double selectionPivotY = 0.0;
-    javafx.scene.shape.Rectangle selectionRectangle = null;
-
-    // the ViewStyle to reset to when switching between images after zooming
-    private ViewStyle cachedViewStyleZoom = viewStyleProperty.get();
+        // force trigger view style if we're switching to fullscreen mode
+        isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
+            ViewStyle old = viewStyleProperty.get();
+            viewStyleProperty.set(null);
+            viewStyleProperty.set(old);
+        }));
+    }
 
     @FXML
     public void anchorPaneMain_onMouseDrag(MouseEvent mouseEvent) {
@@ -153,11 +256,11 @@ public class MainWindowController implements Initializable {
                 double newY = mouseEvent.getY();
                 double width, height;
 
-                if (mouseEvent.getX() > imageViewMain.getBoundsInParent().getMinX() + getViewingWidth()) {
-                    newX = imageViewMain.getBoundsInParent().getMinX() + getViewingWidth();
+                if (mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX()) {
+                    newX = imageViewMain.getBoundsInParent().getMaxX();
                 }
-                if (mouseEvent.getY() > imageViewMain.getBoundsInParent().getMinY() + getViewingHeight()) {
-                    newY = imageViewMain.getBoundsInParent().getMinY() + getViewingHeight();
+                if (mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
+                    newY = imageViewMain.getBoundsInParent().getMaxY();
                 }
 
                 if (newX >= selectionPivotX) {
@@ -214,6 +317,10 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
+    public void stackPaneMain_onClick(MouseEvent mouseEvent) {
+    }
+
+    @FXML
     public void menuResize_onAction(ActionEvent actionEvent) throws IOException {
         if (mainViewModel.getSelectedImageModel() == null) {
             return;
@@ -248,92 +355,6 @@ public class MainWindowController implements Initializable {
     @FXML
     public void menuSaveAs_onAction(ActionEvent actionEvent) {
         saveAs();
-    }
-
-    @FXML
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        labelStatus.textProperty().bind(mainViewModel.statusProperty());
-        labelResolution.setText("");
-
-        // start tracking resolution and zoom
-        imageViewMain.fitHeightProperty().addListener(new ImageSizeChangeListener());
-        imageViewMain.fitWidthProperty().addListener(new ImageSizeChangeListener());
-
-        // menubar toggle group
-        menuFitToDesktop.setToggleGroup(toggleGroupViewStyle);
-        menuStretched.setToggleGroup(toggleGroupViewStyle);
-        menuFitToWindow.setToggleGroup(toggleGroupViewStyle);
-        menuOriginalSize.setToggleGroup(toggleGroupViewStyle);
-        menuSortByName.setToggleGroup(toggleGroupSortStyle);
-        menuSortByCreated.setToggleGroup(toggleGroupSortStyle);
-        menuSortByModified.setToggleGroup(toggleGroupSortStyle);
-
-        // button toggle group
-        tButtonPanMode.setToggleGroup(toggleGroupSelectPan);
-        tButtonSelectionMode.setToggleGroup(toggleGroupSelectPan);
-
-        // bindings for fullscreen viewing
-        toolBar.managedProperty().bind(toolBar.visibleProperty());
-        statusBar.managedProperty().bind(statusBar.visibleProperty());
-        menuBar.managedProperty().bind(menuBar.visibleProperty());
-
-        // bind ImageView and Favorite Button to selectedImage
-        tButtonFavorite.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                tButtonFavoriteImageView.setImage(favoriteSolid);
-            } else {
-                tButtonFavoriteImageView.setImage(favoriteOutline);
-            }
-        });
-
-        // remove selection rectangle if imageview/scrollpane/window size is changed
-        ChangeListener<Number> clearRectangleListener = ((observable, oldValue, newValue) -> {
-            if (selectionStarted || selectionRectangle != null) {
-                selectionStarted = false;
-                anchorPaneMain.getChildren().remove(selectionRectangle);
-                selectionRectangle = null;
-            }
-        });
-        mainScrollPane.widthProperty().addListener(clearRectangleListener);
-        mainScrollPane.heightProperty().addListener(clearRectangleListener);
-        imageViewMain.fitWidthProperty().addListener(clearRectangleListener);
-        imageViewMain.fitHeightProperty().addListener(clearRectangleListener);
-
-        // bind selection rectangle/pan mode buttons
-        mainScrollPane.pannableProperty().bindBidirectional(tButtonPanMode.selectedProperty());
-
-        // load recent files
-        RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileLocation.RECENT_FILES);
-        if (recentFiles == null) {
-            recentFiles = new RecentFiles();
-        }
-        if (recentFiles.getRecentFiles() == null) {
-            recentFiles.setRecentFiles(new ArrayList<>());
-        } else {
-            recentFiles.getRecentFiles().sort(((o1, o2) -> Long.compare(o2.getLastSeen(), o1.getLastSeen())));
-        }
-        for (RecentFiles.RecentFile recentFile : recentFiles.getRecentFiles()) {
-            MenuItem menuItem = new MenuItem(recentFile.getPath());
-            menuItem.setOnAction(event -> {
-                openImage(menuItem.getText());
-            });
-            menuRecent.getItems().add(menuItem);
-        }
-        // add a clear option
-        if (recentFiles.getRecentFiles().size() > 0) {
-            menuRecent.getItems().add(new SeparatorMenuItem());
-
-            MenuItem menuClearRecent = new MenuItem("Clear History");
-            menuClearRecent.setOnAction(event -> {
-                File file = new File(getDataFile(Util.DataFileLocation.RECENT_FILES));
-                if (file.exists()) {
-                    file.delete();
-                }
-                menuRecent.getItems().clear();
-            });
-            menuRecent.getItems().add(menuClearRecent);
-        }
     }
 
     @FXML
@@ -685,10 +706,7 @@ public class MainWindowController implements Initializable {
      * @return The width of the image as it's being displayed on the screen.
      */
     private double getViewingWidth() {
-        double width = imageViewMain.getFitHeight()
-                * (mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginal().getAspectRatio()
-                : mainViewModel.getSelectedImageModel().getAspectRatio());
+        double width = imageViewMain.getFitHeight() * mainViewModel.getSelectedImageModel().getAspectRatio();
         if (width > imageViewMain.getFitWidth()) {
             width = imageViewMain.getFitWidth();
         }
@@ -699,10 +717,7 @@ public class MainWindowController implements Initializable {
      * @return The height of the image as it's being displayed on the screen.
      */
     private double getViewingHeight() {
-        double height = imageViewMain.getFitWidth()
-                / (mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginal().getAspectRatio()
-                : mainViewModel.getSelectedImageModel().getAspectRatio());
+        double height = imageViewMain.getFitWidth() / mainViewModel.getSelectedImageModel().getAspectRatio();
         if (height > imageViewMain.getFitHeight()) {
             height = imageViewMain.getFitHeight();
         }
@@ -962,6 +977,14 @@ public class MainWindowController implements Initializable {
         copyFileToWindow.show();
     }
 
+    private void clearSelectionRectangle() {
+        if (selectionStarted || selectionRectangle != null) {
+            selectionStarted = false;
+            anchorPaneMain.getChildren().remove(selectionRectangle);
+            selectionRectangle = null;
+        }
+    }
+
     private FileChooser.ExtensionFilter[] getExtensionFilters() {
         ArrayList<FileChooser.ExtensionFilter> filters = new ArrayList<>();
         String[] extensions = mainViewModel.getSupportedExtensions();
@@ -973,30 +996,6 @@ public class MainWindowController implements Initializable {
         }
 
         return filters.toArray(FileChooser.ExtensionFilter[]::new);
-    }
-
-    /**
-     * Sets up the listeners to various properties. Important to call this after the UI has loaded.
-     */
-    public void initUIListeners() {
-        // bind change listeners
-        mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
-        viewStyleProperty.addListener(new ViewStyleChangeListener(
-                menuBar.getHeight(), toolBar.getHeight(), statusBar.getHeight()));
-        mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
-
-        // restore previous settings
-        viewStyleProperty.set(ViewStyle.valueOf(
-                preferences.get("LastViewStyle", ViewStyle.FIT_TO_DESKTOP.toString())));
-        mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
-                preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
-
-        // force trigger view style if we're switching to fullscreen mode
-        isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
-            ViewStyle old = viewStyleProperty.get();
-            viewStyleProperty.set(null);
-            viewStyleProperty.set(old);
-        }));
     }
 
     /**
@@ -1158,6 +1157,7 @@ public class MainWindowController implements Initializable {
             }
 
             preferences.put("LastViewStyle", newValue.toString());
+            clearSelectionRectangle();
             imageViewMain.requestFocus();
         }
     }
@@ -1197,6 +1197,7 @@ public class MainWindowController implements Initializable {
 
             updateTitle();
             labelResolution.setText("");
+            clearSelectionRectangle();
 
             if (mainViewModel.getSelectedImageModel() != null) {
                 double currentWidth = mainViewModel.getSelectedImageModel().hasOriginal()
