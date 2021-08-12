@@ -217,6 +217,31 @@
                     </graphic>
                 </Button>
                 <Separator />
+            <ToggleButton fx:id="tButtonSelectionMode" mnemonicParsing="false" selected="true">
+                <tooltip>
+                    <Tooltip text="Selection Mode" />
+                </tooltip>
+               <graphic>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icons/selection-mode.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </ToggleButton>
+            <ToggleButton fx:id="tButtonPanMode" mnemonicParsing="false">
+                <tooltip>
+                    <Tooltip text="Pan Mode" />
+                </tooltip>
+               <graphic>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icons/pan-mode.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </ToggleButton>
+            <Separator orientation="VERTICAL" />
                 <Button fx:id="buttonFirst" mnemonicParsing="false" onAction="#buttonFirst_onAction" prefHeight="32.0">
                     <tooltip>
                         <Tooltip text="First" />
@@ -366,14 +391,18 @@
             </ToggleButton>
             </items>
         </ToolBar>
-        <ScrollPane id="mainScrollPane" fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" onKeyPressed="#mainScrollPane_onKeyPress" onMouseClicked="#mainScrollPane_onClick" onScroll="#mainScrollPane_onScroll" pannable="true" VBox.vgrow="ALWAYS">
-            <content>
-                <StackPane id="stackPaneMain" fx:id="stackPaneMain">
-                    <children>
-                        <ImageView id="imageViewMain" fx:id="imageViewMain" focusTraversable="true" onMouseClicked="#imageViewMain_onClick" pickOnBounds="true" preserveRatio="true" />
-                    </children>
-                </StackPane>
-            </content>
+        <ScrollPane id="mainScrollPane" fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" onKeyPressed="#mainScrollPane_onKeyPress" onMouseClicked="#mainScrollPane_onClick" onScroll="#mainScrollPane_onScroll" VBox.vgrow="ALWAYS">
+         <content>
+            <AnchorPane fx:id="anchorPaneMain" onMouseDragged="#anchorPaneMain_onMouseDrag" onMousePressed="#anchorPaneMain_onMousePress" onMouseReleased="#anchorPaneMain_onMouseRelease">
+               <children>
+                      <StackPane id="stackPaneMain" fx:id="stackPaneMain" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <children>
+                              <ImageView id="imageViewMain" fx:id="imageViewMain" fitHeight="500.0" fitWidth="500.0" focusTraversable="true" onMouseClicked="#imageViewMain_onClick" pickOnBounds="true" preserveRatio="true" />
+                          </children>
+                      </StackPane>
+               </children>
+            </AnchorPane>
+         </content>
         </ScrollPane>
       <AnchorPane fx:id="statusBar" VBox.vgrow="NEVER">
          <children>

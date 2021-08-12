@@ -28,6 +28,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeType;
 import javafx.stage.Window;
 import javafx.stage.*;
 
@@ -75,6 +78,8 @@ public class MainWindowController implements Initializable {
     @FXML
     public AnchorPane statusBar;
     @FXML
+    public AnchorPane anchorPaneMain;
+    @FXML
     public MenuBar menuBar;
     @FXML
     public MenuItem menuClose;
@@ -87,232 +92,124 @@ public class MainWindowController implements Initializable {
     @FXML
     public ToggleButton tButtonFavorite;
     @FXML
+    public ToggleButton tButtonPanMode;
+    @FXML
+    public ToggleButton tButtonSelectionMode;
+    @FXML
     public ImageView tButtonFavoriteImageView;
+    @FXML
+    public StackPane stackPaneMain;
 
-    private final double zoomStep = 0.1;
-    private final Image favoriteOutline = new Image(getClass().getResourceAsStream("icons/favorite.png"));
-    private final Image favoriteSolid = new Image(getClass().getResourceAsStream("icons/favorite-solid.png"));
-    private final int scrollPaneOffset = 2; // to force correct clipping of scroll pane
-    private final ToggleGroup toggleGroupViewStyle = new ToggleGroup();
-    private final ToggleGroup toggleGroupSortStyle = new ToggleGroup();
     public MainViewModel mainViewModel = new MainViewModel();
     private final Preferences preferences = Preferences.userNodeForPackage(this.getClass());
+
+    private enum ViewStyle {
+        FIT_TO_WINDOW, FIT_TO_DESKTOP, ORIGINAL, STRETCHED
+    }
+
+    private final double zoomStep = 0.1;
+    private final int scrollPaneOffset = 2; // to force correct clipping of scroll pane
+
+    private final Image favoriteOutline = new Image(getClass().getResourceAsStream("icons/favorite.png"));
+    private final Image favoriteSolid = new Image(getClass().getResourceAsStream("icons/favorite-solid.png"));
+
+    private final ToggleGroup toggleGroupViewStyle = new ToggleGroup();
+    private final ToggleGroup toggleGroupSortStyle = new ToggleGroup();
+    private final ToggleGroup toggleGroupSelectPan = new ToggleGroup();
+
     private final SimpleBooleanProperty isViewingFullScreen = new SimpleBooleanProperty(false);
     private final SimpleObjectProperty<ViewStyle> viewStyleProperty
             = new SimpleObjectProperty<>(ViewStyle.FIT_TO_DESKTOP);
 
+    // fields for selection rectangle
+    boolean selectionStarted = false;
+    // initial point where mouse was clicked
+    double selectionPivotX = 0.0;
+    double selectionPivotY = 0.0;
+    javafx.scene.shape.Rectangle selectionRectangle = null;
+
     // the ViewStyle to reset to when switching between images after zooming
     private ViewStyle cachedViewStyleZoom = viewStyleProperty.get();
 
-    /**
-     * Triggered when the image is changed
-     */
-    private class ImageChangeListener implements ChangeListener<ImageModel> {
+    @FXML
+    public void anchorPaneMain_onMouseDrag(MouseEvent mouseEvent) {
+        if (selectionStarted) {
+            if (selectionRectangle == null) {
+                selectionRectangle = new javafx.scene.shape.Rectangle();
+                selectionRectangle.setFill(Color.TRANSPARENT);
+                selectionRectangle.setStroke(Color.LIME);
+                selectionRectangle.setStrokeType(StrokeType.INSIDE);
+                selectionRectangle.setStrokeWidth(1.0);
 
-        @Override
-        public void changed(ObservableValue<? extends ImageModel> observable,
-                            ImageModel oldValue,
-                            ImageModel newValue) {
+                selectionRectangle.setX(mouseEvent.getX());
+                selectionRectangle.setY(mouseEvent.getY());
+                anchorPaneMain.getChildren().add(selectionRectangle);
 
-            tButtonFavorite.setSelected(newValue.getIsFavorite());
-            imageViewMain.setImage(newValue.getImage());
-
-            // reset the ViewStyle if we've zoomed image
-            ViewStyle oldViewStyle;
-            if (newValue.hasOriginal() || oldValue == null) {
-                oldViewStyle = viewStyleProperty.get();
+                // save this point for selecting in the reverse direction
+                selectionPivotX = selectionRectangle.getX();
+                selectionPivotY = selectionRectangle.getY();
             } else {
-                oldViewStyle = cachedViewStyleZoom;
-            }
-            viewStyleProperty.set(null); // force trigger change listener
-            viewStyleProperty.set(oldViewStyle);
+                double newX = mouseEvent.getX();
+                double newY = mouseEvent.getY();
+                double width, height;
 
-            imageViewMain.requestFocus();
+                if (mouseEvent.getX() > imageViewMain.getBoundsInParent().getMinX() + getViewingWidth()) {
+                    newX = imageViewMain.getBoundsInParent().getMinX() + getViewingWidth();
+                }
+                if (mouseEvent.getY() > imageViewMain.getBoundsInParent().getMinY() + getViewingHeight()) {
+                    newY = imageViewMain.getBoundsInParent().getMinY() + getViewingHeight();
+                }
 
-            try {
-                updateTitle();
-            } catch (Exception e) {
-                e.printStackTrace();
+                if (newX >= selectionPivotX) {
+                    width = newX - selectionPivotX;
+                } else {
+                    // selecting in the reverse direction
+
+                    // if we're outside the left of the image, limit selection to left boundary
+                    if (newX < imageViewMain.getBoundsInParent().getMinX()) {
+                        newX = imageViewMain.getBoundsInParent().getMinX();
+                    }
+
+                    selectionRectangle.setX(newX);
+                    width = selectionPivotX - newX;
+                }
+
+                if (newY >= selectionPivotY) {
+                    height = newY - selectionPivotY;
+                } else {
+                    if (newY < imageViewMain.getBoundsInParent().getMinY()) {
+                        newY = imageViewMain.getBoundsInParent().getMinY();
+                    }
+                    selectionRectangle.setY(newY);
+                    height = selectionPivotY - newY;
+                }
+
+                selectionRectangle.setWidth(width);
+                selectionRectangle.setHeight(height);
             }
         }
     }
 
-    /**
-     * Triggered with the view style is changed
-     */
-    private class ViewStyleChangeListener implements ChangeListener<ViewStyle> {
-
-        private final double menuBarHeight, toolBarHeight, statusBarHeight;
-
-        public ViewStyleChangeListener(double menuBarHeight, double toolBarHeight, double statusBarHeight) {
-            this.menuBarHeight = menuBarHeight;
-            this.toolBarHeight = toolBarHeight;
-            this.statusBarHeight = statusBarHeight;
-        }
-
-        @Override
-        public void changed(ObservableValue<? extends ViewStyle> observable,
-                            ViewStyle oldValue,
-                            ViewStyle newValue) {
-
-            if (mainViewModel.getSelectedImageModel() == null) {
+    @FXML
+    public void anchorPaneMain_onMousePress(MouseEvent mouseEvent) {
+        if (!selectionStarted && !mainScrollPane.isPannable()) {
+            // don't start selecting if initial point is outside imageview
+            if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX() ||
+                    mouseEvent.getY() < imageViewMain.getBoundsInParent().getMinY()) {
                 return;
             }
 
-            if (newValue == null) {
-                newValue = Objects.requireNonNullElse(oldValue, ViewStyle.FIT_TO_WINDOW);
-            }
-
-            imageViewMain.fitWidthProperty().unbind();
-            imageViewMain.fitHeightProperty().unbind();
-
-            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
-            mainScrollPane.setFitToHeight(true);
-            mainScrollPane.setFitToWidth(true);
-
-            if (imageViewMain.getImage() != null) {
-                imageViewMain.setFitWidth(mainViewModel.getSelectedImageModel().getWidth());
-                imageViewMain.setFitHeight(mainViewModel.getSelectedImageModel().getHeight());
-            }
-
-            imageViewMain.setPreserveRatio(true);
-
-            switch (newValue) {
-                case ORIGINAL:
-                    menuOriginalSize.setSelected(true);
-                    mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                    mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                    break;
-
-                case FIT_TO_WINDOW:
-                    menuFitToWindow.setSelected(true);
-                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
-                            scrollPaneOffset));
-                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
-                            scrollPaneOffset));
-                    break;
-
-                case FIT_TO_DESKTOP:
-                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                    Rectangle desktopSize
-                            = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-                    double taskBarHeight = screenSize.height - desktopSize.height;
-                    double titleBarHeight = taskBarHeight;
-                    double screenWidth = screenSize.getWidth();
-                    double screenHeight = screenSize.getHeight();
-                    double aspectRatio = mainViewModel.getSelectedImageModel().getAspectRatio();
-                    double fixedHeight = menuBarHeight + toolBarHeight + statusBarHeight;
-
-                    menuFitToDesktop.setSelected(true);
-                    mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                    mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-                    double targetWidth,
-                            targetHeight;
-
-                    if (isViewingFullScreen.get()) {
-                        targetWidth = screenWidth;
-                    } else {
-                        targetWidth = screenWidth - 8;
-                    }
-
-                    targetHeight = targetWidth / aspectRatio;
-
-                    if (isViewingFullScreen.get()) {
-                        if (targetHeight > screenHeight - 2) {
-                            targetHeight = screenHeight - 2;
-                            targetWidth = aspectRatio * targetHeight;
-                        }
-                    } else {
-                        double viewableHeight = screenHeight - taskBarHeight - titleBarHeight - fixedHeight - 2;
-                        if (targetHeight > viewableHeight) {
-                            targetHeight = viewableHeight;
-                            targetWidth = aspectRatio * targetHeight;
-                        }
-                    }
-
-                    imageViewMain.setPreserveRatio(false);
-                    imageViewMain.setFitWidth(targetWidth);
-                    imageViewMain.setFitHeight(targetHeight);
-
-                    if (!isViewingFullScreen.get()) {
-                        Window window = imageViewMain.getScene().getWindow();
-                        window.setWidth(targetWidth + 16);
-                        window.setHeight(targetHeight + titleBarHeight + fixedHeight + 2);
-                        window.setX(0);
-                        window.setY(0);
-                    }
-                    break;
-
-                case STRETCHED:
-                    menuStretched.setSelected(true);
-                    imageViewMain.setPreserveRatio(false);
-                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
-                            scrollPaneOffset));
-                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
-                            scrollPaneOffset));
-                    break;
-            }
-
-            // cache ViewStyle for use after zooming
-            if (!mainViewModel.getSelectedImageModel().hasOriginal()
-                    || mainViewModel.getSelectedImageModel() == null) {
-                cachedViewStyleZoom = newValue;
-            }
-
-            preferences.put("LastViewStyle", newValue.toString());
-            imageViewMain.requestFocus();
+            selectionStarted = true;
+            anchorPaneMain.getChildren().remove(selectionRectangle);
+            selectionRectangle = null;
         }
     }
 
-    /**
-     * Triggered when the file sort style is changed
-     */
-    private class SortStyleChangeListener implements ChangeListener<MainViewModel.SortStyle> {
-
-        @Override
-        public void changed(ObservableValue<? extends MainViewModel.SortStyle> observable,
-                            MainViewModel.SortStyle oldValue,
-                            MainViewModel.SortStyle newValue) {
-
-            switch (newValue) {
-                case NAME:
-                    menuSortByName.setSelected(true);
-                    break;
-                case DATE_CREATED:
-                    menuSortByCreated.setSelected(true);
-                    break;
-                case DATE_MODIFIED:
-                    menuSortByModified.setSelected(true);
-                    break;
-            }
-            preferences.put("LastSortStyle", newValue.toString());
-        }
-    }
-
-    /**
-     * Triggered when the image size is changed
-     */
-    private class ImageSizeChangeListener implements ChangeListener<Number> {
-
-        @Override
-        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-
-            updateTitle();
-            labelResolution.setText("");
-
-            if (mainViewModel.getSelectedImageModel() != null) {
-                double currentWidth = mainViewModel.getSelectedImageModel().hasOriginal()
-                        ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
-                        : mainViewModel.getSelectedImageModel().getWidth();
-                double zoom = getViewingWidth() / currentWidth * 100;
-                labelResolution.setText(
-                        (mainViewModel.getSelectedImageModel().hasOriginal()
-                                ? mainViewModel.getSelectedImageModel().getOriginal().getResolution()
-                                : mainViewModel.getSelectedImageModel().getResolution()) + " (" + Math.round(zoom) + "%)");
-            }
+    @FXML
+    public void anchorPaneMain_onMouseRelease(MouseEvent mouseEvent) {
+        // stop selecting but don't clear the rectangle yet as we need it for copying, zooming etc.
+        if (selectionStarted) {
+            selectionStarted = false;
         }
     }
 
@@ -372,6 +269,10 @@ public class MainWindowController implements Initializable {
         menuSortByCreated.setToggleGroup(toggleGroupSortStyle);
         menuSortByModified.setToggleGroup(toggleGroupSortStyle);
 
+        // button toggle group
+        tButtonPanMode.setToggleGroup(toggleGroupSelectPan);
+        tButtonSelectionMode.setToggleGroup(toggleGroupSelectPan);
+
         // bindings for fullscreen viewing
         toolBar.managedProperty().bind(toolBar.visibleProperty());
         statusBar.managedProperty().bind(statusBar.visibleProperty());
@@ -385,6 +286,22 @@ public class MainWindowController implements Initializable {
                 tButtonFavoriteImageView.setImage(favoriteOutline);
             }
         });
+
+        // remove selection rectangle if imageview/scrollpane/window size is changed
+        ChangeListener<Number> clearRectangleListener = ((observable, oldValue, newValue) -> {
+            if (selectionStarted || selectionRectangle != null) {
+                selectionStarted = false;
+                anchorPaneMain.getChildren().remove(selectionRectangle);
+                selectionRectangle = null;
+            }
+        });
+        mainScrollPane.widthProperty().addListener(clearRectangleListener);
+        mainScrollPane.heightProperty().addListener(clearRectangleListener);
+        imageViewMain.fitWidthProperty().addListener(clearRectangleListener);
+        imageViewMain.fitHeightProperty().addListener(clearRectangleListener);
+
+        // bind selection rectangle/pan mode buttons
+        mainScrollPane.pannableProperty().bindBidirectional(tButtonPanMode.selectedProperty());
 
         // load recent files
         RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileLocation.RECENT_FILES);
@@ -750,10 +667,6 @@ public class MainWindowController implements Initializable {
         viewStyleProperty.set(ViewStyle.FIT_TO_DESKTOP);
     }
 
-    private enum ViewStyle {
-        FIT_TO_WINDOW, FIT_TO_DESKTOP, ORIGINAL, STRETCHED
-    }
-
     private void toggleFullScreen() {
         if (mainViewModel.getSelectedImageModel() == null) {
             return;
@@ -828,30 +741,6 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    /**
-     * Sets up the listeners to various properties. Important to call this after the UI has loaded.
-     */
-    public void initUIListeners() {
-        // bind change listeners
-        mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
-        viewStyleProperty.addListener(new ViewStyleChangeListener(
-                menuBar.getHeight(), toolBar.getHeight(), statusBar.getHeight()));
-        mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
-
-        // restore previous settings
-        viewStyleProperty.set(ViewStyle.valueOf(
-                preferences.get("LastViewStyle", ViewStyle.FIT_TO_DESKTOP.toString())));
-        mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
-                preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
-
-        // force trigger view style if we're switching to fullscreen mode
-        isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
-            ViewStyle old = viewStyleProperty.get();
-            viewStyleProperty.set(null);
-            viewStyleProperty.set(old);
-        }));
-    }
-
     private void showFirst() {
         mainViewModel.showFirstImage();
     }
@@ -866,19 +755,6 @@ public class MainWindowController implements Initializable {
 
     private void showLast() {
         mainViewModel.showLastImage();
-    }
-
-    private FileChooser.ExtensionFilter[] getExtensionFilters() {
-        ArrayList<FileChooser.ExtensionFilter> filters = new ArrayList<>();
-        String[] extensions = mainViewModel.getSupportedExtensions();
-
-        // separate item for each extension
-        for (String ext : extensions) {
-            ext = ext.replace("*", "").replace(".", "");
-            filters.add(new FileChooser.ExtensionFilter(ext.toUpperCase() + " Image", "*." + ext.toLowerCase()));
-        }
-
-        return filters.toArray(FileChooser.ExtensionFilter[]::new);
     }
 
     private void deleteFile() {
@@ -1084,5 +960,254 @@ public class MainWindowController implements Initializable {
         copyFileToWindow.setTitle("Copy File To");
         controller.setViewModel(new CopyFileToViewModel(mainViewModel.getSelectedImageModel()));
         copyFileToWindow.show();
+    }
+
+    private FileChooser.ExtensionFilter[] getExtensionFilters() {
+        ArrayList<FileChooser.ExtensionFilter> filters = new ArrayList<>();
+        String[] extensions = mainViewModel.getSupportedExtensions();
+
+        // separate item for each extension
+        for (String ext : extensions) {
+            ext = ext.replace("*", "").replace(".", "");
+            filters.add(new FileChooser.ExtensionFilter(ext.toUpperCase() + " Image", "*." + ext.toLowerCase()));
+        }
+
+        return filters.toArray(FileChooser.ExtensionFilter[]::new);
+    }
+
+    /**
+     * Sets up the listeners to various properties. Important to call this after the UI has loaded.
+     */
+    public void initUIListeners() {
+        // bind change listeners
+        mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
+        viewStyleProperty.addListener(new ViewStyleChangeListener(
+                menuBar.getHeight(), toolBar.getHeight(), statusBar.getHeight()));
+        mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
+
+        // restore previous settings
+        viewStyleProperty.set(ViewStyle.valueOf(
+                preferences.get("LastViewStyle", ViewStyle.FIT_TO_DESKTOP.toString())));
+        mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
+                preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
+
+        // force trigger view style if we're switching to fullscreen mode
+        isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
+            ViewStyle old = viewStyleProperty.get();
+            viewStyleProperty.set(null);
+            viewStyleProperty.set(old);
+        }));
+    }
+
+    /**
+     * Triggered when the image is changed
+     */
+    private class ImageChangeListener implements ChangeListener<ImageModel> {
+
+        @Override
+        public void changed(ObservableValue<? extends ImageModel> observable,
+                            ImageModel oldValue,
+                            ImageModel newValue) {
+
+            tButtonFavorite.setSelected(newValue.getIsFavorite());
+            imageViewMain.setImage(newValue.getImage());
+
+            // reset the ViewStyle if we've zoomed image
+            ViewStyle oldViewStyle;
+            if (newValue.hasOriginal() || oldValue == null) {
+                oldViewStyle = viewStyleProperty.get();
+            } else {
+                oldViewStyle = cachedViewStyleZoom;
+            }
+            viewStyleProperty.set(null); // force trigger change listener
+            viewStyleProperty.set(oldViewStyle);
+
+            imageViewMain.requestFocus();
+
+            try {
+                updateTitle();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Triggered with the view style is changed
+     */
+    private class ViewStyleChangeListener implements ChangeListener<ViewStyle> {
+
+        private final double menuBarHeight, toolBarHeight, statusBarHeight;
+
+        public ViewStyleChangeListener(double menuBarHeight, double toolBarHeight, double statusBarHeight) {
+            this.menuBarHeight = menuBarHeight;
+            this.toolBarHeight = toolBarHeight;
+            this.statusBarHeight = statusBarHeight;
+        }
+
+        @Override
+        public void changed(ObservableValue<? extends ViewStyle> observable,
+                            ViewStyle oldValue,
+                            ViewStyle newValue) {
+
+            if (mainViewModel.getSelectedImageModel() == null) {
+                return;
+            }
+
+            if (newValue == null) {
+                newValue = Objects.requireNonNullElse(oldValue, ViewStyle.FIT_TO_WINDOW);
+            }
+
+            imageViewMain.fitWidthProperty().unbind();
+            imageViewMain.fitHeightProperty().unbind();
+
+            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+            mainScrollPane.setFitToHeight(true);
+            mainScrollPane.setFitToWidth(true);
+
+            if (imageViewMain.getImage() != null) {
+                imageViewMain.setFitWidth(mainViewModel.getSelectedImageModel().getWidth());
+                imageViewMain.setFitHeight(mainViewModel.getSelectedImageModel().getHeight());
+            }
+
+            imageViewMain.setPreserveRatio(true);
+
+            switch (newValue) {
+                case ORIGINAL:
+                    menuOriginalSize.setSelected(true);
+                    mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                    mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                    break;
+
+                case FIT_TO_WINDOW:
+                    menuFitToWindow.setSelected(true);
+                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
+                            scrollPaneOffset));
+                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
+                            scrollPaneOffset));
+                    break;
+
+                case FIT_TO_DESKTOP:
+                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                    Rectangle desktopSize
+                            = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+                    double taskBarHeight = screenSize.height - desktopSize.height;
+                    double titleBarHeight = taskBarHeight;
+                    double screenWidth = screenSize.getWidth();
+                    double screenHeight = screenSize.getHeight();
+                    double aspectRatio = mainViewModel.getSelectedImageModel().getAspectRatio();
+                    double fixedHeight = menuBarHeight + toolBarHeight + statusBarHeight;
+
+                    menuFitToDesktop.setSelected(true);
+                    mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                    mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+                    double targetWidth,
+                            targetHeight;
+
+                    if (isViewingFullScreen.get()) {
+                        targetWidth = screenWidth;
+                    } else {
+                        targetWidth = screenWidth - 8;
+                    }
+
+                    targetHeight = targetWidth / aspectRatio;
+
+                    if (isViewingFullScreen.get()) {
+                        if (targetHeight > screenHeight - 2) {
+                            targetHeight = screenHeight - 2;
+                            targetWidth = aspectRatio * targetHeight;
+                        }
+                    } else {
+                        double viewableHeight = screenHeight - taskBarHeight - titleBarHeight - fixedHeight - 2;
+                        if (targetHeight > viewableHeight) {
+                            targetHeight = viewableHeight;
+                            targetWidth = aspectRatio * targetHeight;
+                        }
+                    }
+
+                    imageViewMain.setPreserveRatio(false);
+                    imageViewMain.setFitWidth(targetWidth);
+                    imageViewMain.setFitHeight(targetHeight);
+
+                    if (!isViewingFullScreen.get()) {
+                        Window window = imageViewMain.getScene().getWindow();
+                        window.setWidth(targetWidth + 16);
+                        window.setHeight(targetHeight + titleBarHeight + fixedHeight + 2);
+                        window.setX(0);
+                        window.setY(0);
+                    }
+                    break;
+
+                case STRETCHED:
+                    menuStretched.setSelected(true);
+                    imageViewMain.setPreserveRatio(false);
+                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
+                            scrollPaneOffset));
+                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
+                            scrollPaneOffset));
+                    break;
+            }
+
+            // cache ViewStyle for use after zooming
+            if (!mainViewModel.getSelectedImageModel().hasOriginal()
+                    || mainViewModel.getSelectedImageModel() == null) {
+                cachedViewStyleZoom = newValue;
+            }
+
+            preferences.put("LastViewStyle", newValue.toString());
+            imageViewMain.requestFocus();
+        }
+    }
+
+    /**
+     * Triggered when the file sort style is changed
+     */
+    private class SortStyleChangeListener implements ChangeListener<MainViewModel.SortStyle> {
+
+        @Override
+        public void changed(ObservableValue<? extends MainViewModel.SortStyle> observable,
+                            MainViewModel.SortStyle oldValue,
+                            MainViewModel.SortStyle newValue) {
+
+            switch (newValue) {
+                case NAME:
+                    menuSortByName.setSelected(true);
+                    break;
+                case DATE_CREATED:
+                    menuSortByCreated.setSelected(true);
+                    break;
+                case DATE_MODIFIED:
+                    menuSortByModified.setSelected(true);
+                    break;
+            }
+            preferences.put("LastSortStyle", newValue.toString());
+        }
+    }
+
+    /**
+     * Triggered when the image size is changed
+     */
+    private class ImageSizeChangeListener implements ChangeListener<Number> {
+
+        @Override
+        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+
+            updateTitle();
+            labelResolution.setText("");
+
+            if (mainViewModel.getSelectedImageModel() != null) {
+                double currentWidth = mainViewModel.getSelectedImageModel().hasOriginal()
+                        ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
+                        : mainViewModel.getSelectedImageModel().getWidth();
+                double zoom = getViewingWidth() / currentWidth * 100;
+                labelResolution.setText(
+                        (mainViewModel.getSelectedImageModel().hasOriginal()
+                                ? mainViewModel.getSelectedImageModel().getOriginal().getResolution()
+                                : mainViewModel.getSelectedImageModel().getResolution()) + " (" + Math.round(zoom) + "%)");
+            }
+        }
     }
 }
