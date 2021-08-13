@@ -134,6 +134,8 @@ public class MainWindowController implements Initializable {
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // initialize only UI control listeners in this method
+
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
         labelResolution.setText("");
 
@@ -167,12 +169,6 @@ public class MainWindowController implements Initializable {
                 tButtonFavoriteImageView.setImage(favoriteOutline);
             }
         });
-
-        // remove selection rectangle if imageview/scrollpane/window size is changed
-        mainScrollPane.widthProperty().addListener((observable) -> clearSelectionRectangle());
-        mainScrollPane.heightProperty().addListener((observable) -> clearSelectionRectangle());
-        imageViewMain.fitWidthProperty().addListener((observable) -> clearSelectionRectangle());
-        imageViewMain.fitHeightProperty().addListener((observable) -> clearSelectionRectangle());
 
         // bind selection rectangle/pan mode buttons
         mainScrollPane.pannableProperty().bindBidirectional(tButtonPanMode.selectedProperty());
@@ -211,9 +207,17 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Sets up the listeners to various properties. Important to call this after the UI has loaded.
+     * Sets up the listeners to various virtual (view model) properties. Important to call this after the UI has loaded.
      */
     public void initUIListeners() {
+        // remove selection rectangle if imageview/window size is changed
+        // Window must be called after stage has initialized
+        Window window = imageViewMain.getScene().getWindow();
+        window.widthProperty().addListener((observable -> clearSelectionRectangle()));
+        window.heightProperty().addListener((observable -> clearSelectionRectangle()));
+        imageViewMain.fitWidthProperty().addListener((observable) -> clearSelectionRectangle());
+        imageViewMain.fitHeightProperty().addListener((observable) -> clearSelectionRectangle());
+
         // bind change listeners
         mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
         viewStyleProperty.addListener(new ViewStyleChangeListener(
@@ -252,39 +256,49 @@ public class MainWindowController implements Initializable {
                 selectionPivotX = selectionRectangle.getX();
                 selectionPivotY = selectionRectangle.getY();
             } else {
-                double newX = mouseEvent.getX();
-                double newY = mouseEvent.getY();
+                double endX = mouseEvent.getX();
+                double endY = mouseEvent.getY();
                 double width, height;
 
+                // we can only be outside a maximum of two boundaries at the same time, e.g. top-right
+
+                // outside right boundary
                 if (mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX()) {
-                    newX = imageViewMain.getBoundsInParent().getMaxX();
-                }
-                if (mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
-                    newY = imageViewMain.getBoundsInParent().getMaxY();
+                    endX = imageViewMain.getBoundsInParent().getMaxX();
                 }
 
-                if (newX >= selectionPivotX) {
-                    width = newX - selectionPivotX;
+                // outside bottom boundary
+                if (mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
+                    endY = imageViewMain.getBoundsInParent().getMaxY();
+                }
+
+                if (endX >= selectionPivotX) {
+                    width = endX - selectionPivotX;
                 } else {
                     // selecting in the reverse direction
 
-                    // if we're outside the left of the image, limit selection to left boundary
-                    if (newX < imageViewMain.getBoundsInParent().getMinX()) {
-                        newX = imageViewMain.getBoundsInParent().getMinX();
+                    // outside left boundary
+                    if (endX < imageViewMain.getBoundsInParent().getMinX()) {
+                        endX = imageViewMain.getBoundsInParent().getMinX();
                     }
 
-                    selectionRectangle.setX(newX);
-                    width = selectionPivotX - newX;
+                    selectionRectangle.setX(endX);
+                    width = selectionPivotX - endX;
                 }
 
-                if (newY >= selectionPivotY) {
-                    height = newY - selectionPivotY;
+                // repeat the same for the Y-axis
+                if (endY >= selectionPivotY) {
+                    height = endY - selectionPivotY;
                 } else {
-                    if (newY < imageViewMain.getBoundsInParent().getMinY()) {
-                        newY = imageViewMain.getBoundsInParent().getMinY();
+                    // selecting in the reverse direction
+
+                    // outside top boundary
+                    if (endY < imageViewMain.getBoundsInParent().getMinY()) {
+                        endY = imageViewMain.getBoundsInParent().getMinY();
                     }
-                    selectionRectangle.setY(newY);
-                    height = selectionPivotY - newY;
+
+                    selectionRectangle.setY(endY);
+                    height = selectionPivotY - endY;
                 }
 
                 selectionRectangle.setWidth(width);
@@ -295,10 +309,12 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void anchorPaneMain_onMousePress(MouseEvent mouseEvent) {
-        if (!selectionStarted && !mainScrollPane.isPannable()) {
+        if (!selectionStarted && !mainScrollPane.isPannable() && mainViewModel.getSelectedImageModel() != null) {
+
             // don't start selecting if initial point is outside imageview
             if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX() ||
                     mouseEvent.getY() < imageViewMain.getBoundsInParent().getMinY()) {
+
                 return;
             }
 

@@ -215,18 +215,17 @@ public class Util {
         try {
             xml = inputStreamToString(new FileInputStream(getDataFile(dataFileLocation)));
             data = xmlMapper.readValue(xml, classType);
-        } catch (FileNotFoundException
-                | JsonProcessingException ignored) {
+        } catch (FileNotFoundException | JsonProcessingException ignored) {
             // ignore this error; this means we're running the app for the first time
         }
 
         if (data == null) {
             try {
                 data = classType.getDeclaredConstructor().newInstance();
-            } catch (InstantiationException
-                    | IllegalAccessException
-                    | InvocationTargetException
-                    | NoSuchMethodException e) {
+            } catch (InstantiationException |
+                    IllegalAccessException |
+                    InvocationTargetException |
+                    NoSuchMethodException e) {
                 e.printStackTrace();
             }
         }
