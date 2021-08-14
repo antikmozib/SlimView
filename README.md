@@ -19,4 +19,4 @@ A fast and simple directory-based image viewer and browser for Windows, macOS an
 
 ### Building custom JRE
 
-Execute the script `jlink-build.sh` to produce a native custom JRE for running the app. Execute the script `jlink-run.sh` to launch the app using the custom JRE.
+Execute the script `build.sh` to produce a native custom JRE for running the app. Execute the script `run.sh` to launch the app using the custom JRE.
