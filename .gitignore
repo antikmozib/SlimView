@@ -1,7 +1,7 @@
 dependency-reduced-pom.xml
 !launch4j-config.xml
-make-exe.bat
-make-release.bat
+make-exe.*
+make-release.*
 patched/
 jlink-image/
 *.iml
