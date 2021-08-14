@@ -1,7 +1,5 @@
 dependency-reduced-pom.xml
 !launch4j-config.xml
-make-exe.*
-make-release.*
 patched/
 jlink-image/
 *.iml
@@ -10,3 +8,7 @@ installer/*
 !installer/slimview.iss
 !installer/slimview.ico
 nb-configuration.xml
+*.sh
+!jlink-build.sh
+!jlink-run.sh
+!jlink-build-patched.sh
