@@ -20,7 +20,7 @@ rm target/modules/imgscalr-lib-4.2.jar
 rm target/modules/xmpcore-6.1.11.jar
 
 printf "\nCopying patched jars\n"
-cp -r patched/. target/modules
+cp -r ../Patched\ JARs/. target/modules
 
 printf "\nMaking new jlink image\n"
 jlink --module-path target/modules \

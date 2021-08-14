@@ -299,12 +299,12 @@ public class MainWindowController implements Initializable {
 
                 // outside right boundary
                 if (mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX()) {
-                    endX = imageViewMain.getBoundsInParent().getMaxX();
+                    endX = imageViewMain.getBoundsInParent().getMaxX()-1;
                 }
 
                 // outside bottom boundary
                 if (mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
-                    endY = imageViewMain.getBoundsInParent().getMaxY();
+                    endY = imageViewMain.getBoundsInParent().getMaxY()-1;
                 }
 
                 if (endX >= selectionPivotX) {
