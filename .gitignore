@@ -8,7 +8,3 @@ installer/*
 !installer/slimview.iss
 !installer/slimview.ico
 nb-configuration.xml
-*.sh
-!jlink-build.sh
-!jlink-run.sh
-!jlink-build-patched.sh
