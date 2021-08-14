@@ -28,7 +28,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import javafx.stage.Window;
@@ -128,8 +127,6 @@ public class MainWindowController implements Initializable {
     public ToggleButton tButtonSelectionMode;
     @FXML
     public ImageView tButtonFavoriteImageView;
-    @FXML
-    public StackPane stackPaneMain;
 
     @FXML
     @Override
@@ -142,8 +139,6 @@ public class MainWindowController implements Initializable {
         // start tracking resolution, zoom and selection rectangle
         imageViewMain.fitWidthProperty().addListener(new ImageSizeChangeListener());
         imageViewMain.fitHeightProperty().addListener(new ImageSizeChangeListener());
-        imageViewMain.fitWidthProperty().addListener((observable) -> clearSelectionRectangle());
-        imageViewMain.fitHeightProperty().addListener((observable) -> clearSelectionRectangle());
 
         // menubar toggle group
         menuFitToDesktop.setToggleGroup(toggleGroupViewStyle);
@@ -243,18 +238,6 @@ public class MainWindowController implements Initializable {
             anchorPaneMain.getChildren().remove(selectionRectangle);
             selectionRectangle = null;
         }
-    }
-
-    @FXML
-    public void anchorPaneMain_onMouseEnter(MouseEvent mouseEvent) {
-    }
-
-    @FXML
-    public void anchorPaneMain_onMouseExit(MouseEvent mouseEvent) {
-    }
-
-    @FXML
-    public void anchorPaneMain_onMouseMove(MouseEvent mouseEvent) {
     }
 
     @FXML
@@ -478,10 +461,6 @@ public class MainWindowController implements Initializable {
         if (mainViewModel.getSelectedImageModel() != null) {
             mainViewModel.openInEditor(mainViewModel.getSelectedImageModel());
         }
-    }
-
-    @FXML
-    public void imageViewMain_onClick(MouseEvent mouseEvent) {
     }
 
     @FXML
@@ -1052,6 +1031,7 @@ public class MainWindowController implements Initializable {
             viewStyleProperty.set(null); // force trigger change listener
             viewStyleProperty.set(oldViewStyle);
 
+            clearSelectionRectangle();
             imageViewMain.requestFocus();
 
             try {

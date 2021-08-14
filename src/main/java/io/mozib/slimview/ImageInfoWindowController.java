@@ -43,6 +43,7 @@ public class ImageInfoWindowController implements Initializable {
         String path = imageModel.getBestPath();
         imageInfo = new StringBuilder();
         textPath.setText(path);
+        tabPaneMain.setTabMinWidth(50.0);
         tabPaneMain.getTabs().clear();
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(new File(path));
@@ -63,7 +64,7 @@ public class ImageInfoWindowController implements Initializable {
                 AnchorPane.setTopAnchor(scrollPane, 0.0);
 
                 int i = 0;
-                
+
                 for (Tag tag : directory.getTags()) {
                     imageInfo.append(tag.getTagName()).append(": ").append(tag.getDescription()).append("\n");
 
@@ -72,6 +73,8 @@ public class ImageInfoWindowController implements Initializable {
                     textField.setEditable(false);
                     textField.setMinWidth(100);
                     label.setMinWidth(50);
+                    label.setLabelFor(textField);
+                    label.setOnMouseClicked(event -> label.getLabelFor().requestFocus());
 
                     gridPane.add(label, 0, i);
                     gridPane.add(textField, 1, i++);
