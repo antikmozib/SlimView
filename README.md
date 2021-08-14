@@ -11,7 +11,7 @@ A fast and simple directory-based image viewer and browser for Windows, macOS an
 * Java 11
 * Maven 3.6.3+
 * Cygwin (if building the custom JRE on Windows)
-* [Launch4j](http://launch4j.sourceforge.net/) (if building the Windows executable)
+* [Launch4j](http://launch4j.sourceforge.net/) 3.14+ (if building the Windows executable)
 
 ### Building with Maven
 
