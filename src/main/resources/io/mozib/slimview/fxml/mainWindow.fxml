@@ -335,7 +335,7 @@
                     <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../icons/rotateleft.png" />
+                                <Image url="@../icons/rotate-left.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -347,7 +347,7 @@
                     <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../icons/rotateright.png" />
+                                <Image url="@../icons/rotate-right.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -379,7 +379,7 @@
                 </Button>
             <ToggleButton fx:id="tButtonFavorite" mnemonicParsing="false" onAction="#tButtonFavorite_onAction">
                 <tooltip>
-                    <Tooltip text="Favorite" />
+                    <Tooltip text="Add To Favorites" />
                 </tooltip>
                <graphic>
                   <ImageView fx:id="tButtonFavoriteImageView" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
@@ -393,9 +393,9 @@
         </ToolBar>
         <ScrollPane id="mainScrollPane" fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" onKeyPressed="#mainScrollPane_onKeyPress" onMouseClicked="#mainScrollPane_onClick" onScroll="#mainScrollPane_onScroll" VBox.vgrow="ALWAYS">
          <content>
-            <AnchorPane fx:id="anchorPaneMain" onMouseDragged="#anchorPaneMain_onMouseDrag" onMousePressed="#anchorPaneMain_onMousePress" onMouseReleased="#anchorPaneMain_onMouseRelease">
+            <AnchorPane fx:id="anchorPaneMain" onMouseDragged="#anchorPaneMain_onMouseDrag" onMouseEntered="#anchorPaneMain_onMouseEnter" onMouseExited="#anchorPaneMain_onMouseExit" onMouseMoved="#anchorPaneMain_onMouseMove" onMousePressed="#anchorPaneMain_onMousePress" onMouseReleased="#anchorPaneMain_onMouseRelease">
                <children>
-                      <StackPane id="stackPaneMain" fx:id="stackPaneMain" onMouseClicked="#stackPaneMain_onClick" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                      <StackPane id="stackPaneMain" fx:id="stackPaneMain" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <children>
                               <ImageView id="imageViewMain" fx:id="imageViewMain" fitHeight="500.0" fitWidth="500.0" focusTraversable="true" onMouseClicked="#imageViewMain_onClick" pickOnBounds="true" preserveRatio="true" />
                           </children>

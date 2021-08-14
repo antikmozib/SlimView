@@ -139,9 +139,11 @@ public class MainWindowController implements Initializable {
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
         labelResolution.setText("");
 
-        // start tracking resolution and zoom
-        imageViewMain.fitHeightProperty().addListener(new ImageSizeChangeListener());
+        // start tracking resolution, zoom and selection rectangle
         imageViewMain.fitWidthProperty().addListener(new ImageSizeChangeListener());
+        imageViewMain.fitHeightProperty().addListener(new ImageSizeChangeListener());
+        imageViewMain.fitWidthProperty().addListener((observable) -> clearSelectionRectangle());
+        imageViewMain.fitHeightProperty().addListener((observable) -> clearSelectionRectangle());
 
         // menubar toggle group
         menuFitToDesktop.setToggleGroup(toggleGroupViewStyle);
@@ -210,13 +212,11 @@ public class MainWindowController implements Initializable {
      * Sets up the listeners to various virtual (view model) properties. Important to call this after the UI has loaded.
      */
     public void initUIListeners() {
-        // remove selection rectangle if imageview/window size is changed
+        // remove selection rectangle if window size is changed
         // Window must be called after stage has initialized
         Window window = imageViewMain.getScene().getWindow();
         window.widthProperty().addListener((observable -> clearSelectionRectangle()));
         window.heightProperty().addListener((observable -> clearSelectionRectangle()));
-        imageViewMain.fitWidthProperty().addListener((observable) -> clearSelectionRectangle());
-        imageViewMain.fitHeightProperty().addListener((observable) -> clearSelectionRectangle());
 
         // bind change listeners
         mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
@@ -238,24 +238,76 @@ public class MainWindowController implements Initializable {
         }));
     }
 
+    private void clearSelectionRectangle() {
+        if (!selectionStarted && selectionRectangle != null) {
+            anchorPaneMain.getChildren().remove(selectionRectangle);
+            selectionRectangle = null;
+        }
+    }
+
+    @FXML
+    public void anchorPaneMain_onMouseEnter(MouseEvent mouseEvent) {
+    }
+
+    @FXML
+    public void anchorPaneMain_onMouseExit(MouseEvent mouseEvent) {
+    }
+
+    @FXML
+    public void anchorPaneMain_onMouseMove(MouseEvent mouseEvent) {
+    }
+
+    @FXML
+    public void anchorPaneMain_onMousePress(MouseEvent mouseEvent) {
+        if (!mainScrollPane.isPannable() && mainViewModel.getSelectedImageModel() != null) {
+
+            // don't start selecting if initial point is outside imageview
+            if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX() ||
+                    mouseEvent.getY() < imageViewMain.getBoundsInParent().getMinY() ||
+                    mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX() ||
+                    mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
+
+                return;
+            }
+
+            selectionStarted = true;
+        } else {
+            // most likely panning started; disable selection mode
+            selectionStarted = false;
+        }
+
+        anchorPaneMain.getChildren().remove(selectionRectangle);
+        selectionRectangle = null;
+    }
+
+    @FXML
+    public void anchorPaneMain_onMouseRelease(MouseEvent mouseEvent) {
+        // stop selecting but don't clear the rectangle yet as we need it for copying, zooming etc.
+        if (selectionStarted) {
+            selectionStarted = false;
+        }
+    }
+
     @FXML
     public void anchorPaneMain_onMouseDrag(MouseEvent mouseEvent) {
         if (selectionStarted) {
             if (selectionRectangle == null) {
+
+                // save this point for selecting in the reverse direction
+                selectionPivotX = mouseEvent.getX();
+                selectionPivotY = mouseEvent.getY();
+
                 selectionRectangle = new javafx.scene.shape.Rectangle();
                 selectionRectangle.setFill(Color.TRANSPARENT);
                 selectionRectangle.setStroke(Color.LIME);
                 selectionRectangle.setStrokeType(StrokeType.INSIDE);
                 selectionRectangle.setStrokeWidth(1.0);
 
-                selectionRectangle.setX(mouseEvent.getX());
-                selectionRectangle.setY(mouseEvent.getY());
+                selectionRectangle.setX(selectionPivotX);
+                selectionRectangle.setY(selectionPivotY);
                 anchorPaneMain.getChildren().add(selectionRectangle);
-
-                // save this point for selecting in the reverse direction
-                selectionPivotX = selectionRectangle.getX();
-                selectionPivotY = selectionRectangle.getY();
             } else {
+
                 double endX = mouseEvent.getX();
                 double endY = mouseEvent.getY();
                 double width, height;
@@ -305,35 +357,6 @@ public class MainWindowController implements Initializable {
                 selectionRectangle.setHeight(height);
             }
         }
-    }
-
-    @FXML
-    public void anchorPaneMain_onMousePress(MouseEvent mouseEvent) {
-        if (!selectionStarted && !mainScrollPane.isPannable() && mainViewModel.getSelectedImageModel() != null) {
-
-            // don't start selecting if initial point is outside imageview
-            if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX() ||
-                    mouseEvent.getY() < imageViewMain.getBoundsInParent().getMinY()) {
-
-                return;
-            }
-
-            selectionStarted = true;
-            anchorPaneMain.getChildren().remove(selectionRectangle);
-            selectionRectangle = null;
-        }
-    }
-
-    @FXML
-    public void anchorPaneMain_onMouseRelease(MouseEvent mouseEvent) {
-        // stop selecting but don't clear the rectangle yet as we need it for copying, zooming etc.
-        if (selectionStarted) {
-            selectionStarted = false;
-        }
-    }
-
-    @FXML
-    public void stackPaneMain_onClick(MouseEvent mouseEvent) {
     }
 
     @FXML
@@ -991,14 +1014,6 @@ public class MainWindowController implements Initializable {
         copyFileToWindow.setTitle("Copy File To");
         controller.setViewModel(new CopyFileToViewModel(mainViewModel.getSelectedImageModel()));
         copyFileToWindow.show();
-    }
-
-    private void clearSelectionRectangle() {
-        if (selectionStarted || selectionRectangle != null) {
-            selectionStarted = false;
-            anchorPaneMain.getChildren().remove(selectionRectangle);
-            selectionRectangle = null;
-        }
     }
 
     private FileChooser.ExtensionFilter[] getExtensionFilters() {
