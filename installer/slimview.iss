@@ -37,14 +37,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "..\target\bin\slimview.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\notice.txt"; DestDir: "{app}"
 Source: "..\target\bin\runtime\*"; DestDir: "{app}\runtime"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\target\bin\lib\commons-codec-1.11.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "..\target\bin\lib\commons-io-2.9.0.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "..\target\bin\lib\commons-logging-1.2.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "..\target\bin\lib\httpclient-4.5.13.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "..\target\bin\lib\httpcore-4.4.13.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "..\target\bin\lib\imgscalr-lib-4.2.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "..\target\bin\lib\metadata-extractor-2.16.0.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "..\target\bin\lib\xmpcore-6.1.11.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "..\target\bin\lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
