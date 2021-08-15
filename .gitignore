@@ -9,3 +9,4 @@ nb-configuration.xml
 *.sh
 !build.sh
 !run.sh
+target/
