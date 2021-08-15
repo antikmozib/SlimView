@@ -174,6 +174,16 @@ public class MainWindowController implements Initializable {
         // bind SelectionRectangle/pan mode buttons
         scrollPaneMain.pannableProperty().bindBidirectional(tButtonPanMode.selectedProperty());
 
+        // set focus on the ImageView whenever any Button on the Toolbar is actioned
+        toolBar.getItems().forEach(node -> {
+            if (node instanceof Button) {
+                Button button = (Button) node;
+                button.addEventHandler(ActionEvent.ACTION,(event -> {
+                    imageViewMain.requestFocus();
+                }));
+            }
+        });
+
         // start tracking resolution, zoom and SelectionRectangle
         imageViewMain.fitWidthProperty().addListener(new ImageSizeChangeListener());
         imageViewMain.fitHeightProperty().addListener(new ImageSizeChangeListener());
@@ -518,29 +528,34 @@ public class MainWindowController implements Initializable {
                     showPrevious();
                 }
                 break;
+
             case RIGHT:
             case PAGE_UP:
                 if (getViewingWidth() * 0.95 < scrollPaneMain.getWidth()) {
                     showNext();
                 }
                 break;
+
             case HOME:
                 showFirst();
                 break;
+
             case END:
                 showLast();
                 break;
+
             case ENTER:
                 toggleFullScreen();
                 break;
+
             case ESCAPE:
                 if (isViewingFullScreen.get()) {
                     toggleFullScreen();
                 } else {
                     Platform.exit();
                 }
-
                 break;
+
             default:
                 break;
         }
@@ -710,7 +725,6 @@ public class MainWindowController implements Initializable {
     public void tButtonFavorite_onAction(ActionEvent actionEvent) {
         mainViewModel.setAsFavorite(mainViewModel.getSelectedImageModel(),
                 ((ToggleButton) actionEvent.getSource()).isSelected());
-        imageViewMain.requestFocus();
     }
 
     @FXML
@@ -1156,13 +1170,12 @@ public class MainWindowController implements Initializable {
                     scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
                     scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-                    double targetWidth,
-                            targetHeight;
+                    double targetWidth, targetHeight;
 
                     if (isViewingFullScreen.get()) {
                         targetWidth = screenWidth;
                     } else {
-                        targetWidth = screenWidth - 8;
+                        targetWidth = screenWidth - 16; // window border size * 2
                     }
 
                     targetHeight = targetWidth / aspectRatio;
@@ -1186,6 +1199,8 @@ public class MainWindowController implements Initializable {
 
                     if (!isViewingFullScreen.get()) {
                         Window window = imageViewMain.getScene().getWindow();
+
+                        // add 8 pixels of gutting on each side of ImageView to account for window borders
                         window.setWidth(targetWidth + 16);
                         window.setHeight(targetHeight + titleBarHeight + fixedHeight);
                         window.setX(0);

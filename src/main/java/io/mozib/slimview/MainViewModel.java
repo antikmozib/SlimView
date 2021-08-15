@@ -367,8 +367,8 @@ public class MainViewModel {
                     + "  |  " + imageModel.getFormat()
                     + "  |  " + imageModel.getColorDepth() + "-bits"
                     + "  |  " + formatFileSize(imageModel.getFileSize())
-                    + "  |  C: " + formatTime(imageModel.getDateCreated())
-                    + "  |  M: " + formatTime(imageModel.getDateModified()));
+                    + "  |  Created: " + formatTime(imageModel.getDateCreated())
+                    + "  |  Modified: " + formatTime(imageModel.getDateModified()));
         }
     }
 
