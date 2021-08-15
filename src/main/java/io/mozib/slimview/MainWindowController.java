@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -55,7 +56,6 @@ public class MainWindowController implements Initializable {
     private final Preferences preferences = Preferences.userNodeForPackage(this.getClass());
 
     private final double zoomStep = 0.1;
-    private final int scrollPaneOffset = 2; // to force correct clipping of scroll pane
 
     // for favorite button
     private final Image favoriteOutline = new Image(getClass().getResourceAsStream("icons/favorite.png"));
@@ -79,6 +79,8 @@ public class MainWindowController implements Initializable {
     private double selectionPivotY = 0.0;
     private javafx.scene.shape.Rectangle selectionRectangle = null;
 
+    // Structure: ScrollPane > AnchorPane > Rectangle + [StackPane > ImageView]
+
     @FXML
     public RadioMenuItem menuStretched;
     @FXML
@@ -98,9 +100,11 @@ public class MainWindowController implements Initializable {
     @FXML
     public RadioMenuItem menuSortByModified;
     @FXML
-    public ScrollPane mainScrollPane;
+    public ScrollPane scrollPaneMain;
     @FXML
     public Label labelStatus;
+    @FXML
+    public Label labelPoints;
     @FXML
     public Label labelResolution;
     @FXML
@@ -133,14 +137,14 @@ public class MainWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // initialize only UI control listeners in this method
 
-        labelStatus.textProperty().bind(mainViewModel.statusProperty());
+        // reset control properties
         labelResolution.setText("");
+        labelPoints.setText("");
+        imageViewMain.setFitHeight(0);
+        imageViewMain.setFitWidth(0);
+        labelStatus.textProperty().bind(mainViewModel.statusProperty());
 
-        // start tracking resolution, zoom and selection rectangle
-        imageViewMain.fitWidthProperty().addListener(new ImageSizeChangeListener());
-        imageViewMain.fitHeightProperty().addListener(new ImageSizeChangeListener());
-
-        // menubar toggle group
+        // MenuBar toggle group
         menuFitToDesktop.setToggleGroup(toggleGroupViewStyle);
         menuStretched.setToggleGroup(toggleGroupViewStyle);
         menuFitToWindow.setToggleGroup(toggleGroupViewStyle);
@@ -168,7 +172,11 @@ public class MainWindowController implements Initializable {
         });
 
         // bind selection rectangle/pan mode buttons
-        mainScrollPane.pannableProperty().bindBidirectional(tButtonPanMode.selectedProperty());
+        scrollPaneMain.pannableProperty().bindBidirectional(tButtonPanMode.selectedProperty());
+
+        // start tracking resolution, zoom and selection rectangle
+        imageViewMain.fitWidthProperty().addListener(new ImageSizeChangeListener());
+        imageViewMain.fitHeightProperty().addListener(new ImageSizeChangeListener());
 
         // load recent files
         RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileLocation.RECENT_FILES);
@@ -204,7 +212,7 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Sets up the listeners to various virtual (view model) properties. Important to call this after the UI has loaded.
+     * Sets up the listeners to various virtual (ViewModel) properties. Important to call this after the UI has loaded.
      */
     public void initUIListeners() {
         // remove selection rectangle if window size is changed
@@ -234,7 +242,7 @@ public class MainWindowController implements Initializable {
     }
 
     private void clearSelectionRectangle() {
-        if (!selectionStarted && selectionRectangle != null) {
+        if (selectionRectangle != null) {
             anchorPaneMain.getChildren().remove(selectionRectangle);
             selectionRectangle = null;
         }
@@ -242,7 +250,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void anchorPaneMain_onMousePress(MouseEvent mouseEvent) {
-        if (!mainScrollPane.isPannable() && mainViewModel.getSelectedImageModel() != null) {
+        if (!scrollPaneMain.isPannable() && mainViewModel.getSelectedImageModel() != null) {
 
             // don't start selecting if initial point is outside imageview
             if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX() ||
@@ -285,6 +293,12 @@ public class MainWindowController implements Initializable {
                 selectionRectangle.setStroke(Color.LIME);
                 selectionRectangle.setStrokeType(StrokeType.INSIDE);
                 selectionRectangle.setStrokeWidth(1.0);
+                selectionRectangle.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        refreshCoordinates(event.getX(), event.getY());
+                    }
+                });
 
                 selectionRectangle.setX(selectionPivotX);
                 selectionRectangle.setY(selectionPivotY);
@@ -298,13 +312,13 @@ public class MainWindowController implements Initializable {
                 // we can only be outside a maximum of two boundaries at the same time, e.g. top-right
 
                 // outside right boundary
-                if (mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX()) {
-                    endX = imageViewMain.getBoundsInParent().getMaxX()-1;
+                if (mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX() ) {
+                    endX = imageViewMain.getBoundsInParent().getMaxX();
                 }
 
                 // outside bottom boundary
-                if (mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
-                    endY = imageViewMain.getBoundsInParent().getMaxY()-1;
+                if (mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY() ) {
+                    endY = imageViewMain.getBoundsInParent().getMaxY();
                 }
 
                 if (endX >= selectionPivotX) {
@@ -340,6 +354,20 @@ public class MainWindowController implements Initializable {
                 selectionRectangle.setHeight(height);
             }
         }
+    }
+
+    @FXML
+    public void imageViewMain_onMouseEnter(MouseEvent mouseEvent) {
+    }
+
+    @FXML
+    public void imageViewMain_onMouseExit(MouseEvent mouseEvent) {
+        labelPoints.setText("");
+    }
+
+    @FXML
+    public void imageViewMain_onMouseMove(MouseEvent mouseEvent) {
+        refreshCoordinates(mouseEvent.getX(), mouseEvent.getY());
     }
 
     @FXML
@@ -464,9 +492,9 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    public void mainScrollPane_onClick(MouseEvent mouseEvent) {
+    public void scrollPaneMain_onClick(MouseEvent mouseEvent) {
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-            mainScrollPane.requestFocus();
+            scrollPaneMain.requestFocus();
             if (mouseEvent.getClickCount() == 2) {
                 toggleFullScreen();
             }
@@ -476,18 +504,18 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    public void mainScrollPane_onKeyPress(KeyEvent keyEvent) {
+    public void scrollPaneMain_onKeyPress(KeyEvent keyEvent) {
         switch (keyEvent.getCode()) {
             // don't switch images if the scrollbar is visible
             case LEFT:
             case PAGE_DOWN:
-                if (getViewingWidth() * 0.95 < mainScrollPane.getWidth()) {
+                if (getViewingWidth() * 0.95 < scrollPaneMain.getWidth()) {
                     showPrevious();
                 }
                 break;
             case RIGHT:
             case PAGE_UP:
-                if (getViewingWidth() * 0.95 < mainScrollPane.getWidth()) {
+                if (getViewingWidth() * 0.95 < scrollPaneMain.getWidth()) {
                     showNext();
                 }
                 break;
@@ -514,7 +542,7 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    public void mainScrollPane_onScroll(ScrollEvent scrollEvent) {
+    public void scrollPaneMain_onScroll(ScrollEvent scrollEvent) {
         if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
             showPrevious();
         } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
@@ -712,7 +740,7 @@ public class MainWindowController implements Initializable {
         }
 
         boolean setFullScreen = !isViewingFullScreen.get();
-        ((Stage) mainScrollPane.getScene().getWindow()).setFullScreen(setFullScreen);
+        ((Stage) scrollPaneMain.getScene().getWindow()).setFullScreen(setFullScreen);
         menuBar.setVisible(!setFullScreen);
         toolBar.setVisible(!setFullScreen);
         statusBar.setVisible(!setFullScreen);
@@ -1009,6 +1037,17 @@ public class MainWindowController implements Initializable {
     }
 
     /**
+     * Shows the coordinates of the cursor point when the mouse is hovering over the image
+     */
+    private void refreshCoordinates(double x, double y) {
+        if (mainViewModel.getSelectedImageModel() == null) {
+            labelPoints.setText("");
+        } else {
+            labelPoints.setText("[ " + (int) x + ", " + (int) y + " ]");
+        }
+    }
+
+    /**
      * Triggered when the image is changed
      */
     private class ImageChangeListener implements ChangeListener<ImageModel> {
@@ -1071,11 +1110,11 @@ public class MainWindowController implements Initializable {
             imageViewMain.fitWidthProperty().unbind();
             imageViewMain.fitHeightProperty().unbind();
 
-            mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-            mainScrollPane.setFitToHeight(true);
-            mainScrollPane.setFitToWidth(true);
+            scrollPaneMain.setFitToHeight(true);
+            scrollPaneMain.setFitToWidth(true);
 
             if (imageViewMain.getImage() != null) {
                 imageViewMain.setFitWidth(mainViewModel.getSelectedImageModel().getWidth());
@@ -1087,16 +1126,14 @@ public class MainWindowController implements Initializable {
             switch (newValue) {
                 case ORIGINAL:
                     menuOriginalSize.setSelected(true);
-                    mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                    mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                    scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                    scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
                     break;
 
                 case FIT_TO_WINDOW:
                     menuFitToWindow.setSelected(true);
-                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
-                            scrollPaneOffset));
-                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
-                            scrollPaneOffset));
+                    imageViewMain.fitWidthProperty().bind(scrollPaneMain.widthProperty());
+                    imageViewMain.fitHeightProperty().bind(scrollPaneMain.heightProperty());
                     break;
 
                 case FIT_TO_DESKTOP:
@@ -1111,8 +1148,8 @@ public class MainWindowController implements Initializable {
                     double fixedHeight = menuBarHeight + toolBarHeight + statusBarHeight;
 
                     menuFitToDesktop.setSelected(true);
-                    mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                    mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                    scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                    scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
                     double targetWidth,
                             targetHeight;
@@ -1126,12 +1163,12 @@ public class MainWindowController implements Initializable {
                     targetHeight = targetWidth / aspectRatio;
 
                     if (isViewingFullScreen.get()) {
-                        if (targetHeight > screenHeight - 2) {
-                            targetHeight = screenHeight - 2;
+                        if (targetHeight > screenHeight) {
+                            targetHeight = screenHeight;
                             targetWidth = aspectRatio * targetHeight;
                         }
                     } else {
-                        double viewableHeight = screenHeight - taskBarHeight - titleBarHeight - fixedHeight - 2;
+                        double viewableHeight = screenHeight - taskBarHeight - titleBarHeight - fixedHeight;
                         if (targetHeight > viewableHeight) {
                             targetHeight = viewableHeight;
                             targetWidth = aspectRatio * targetHeight;
@@ -1145,7 +1182,7 @@ public class MainWindowController implements Initializable {
                     if (!isViewingFullScreen.get()) {
                         Window window = imageViewMain.getScene().getWindow();
                         window.setWidth(targetWidth + 16);
-                        window.setHeight(targetHeight + titleBarHeight + fixedHeight + 2);
+                        window.setHeight(targetHeight + titleBarHeight + fixedHeight);
                         window.setX(0);
                         window.setY(0);
                     }
@@ -1154,10 +1191,8 @@ public class MainWindowController implements Initializable {
                 case STRETCHED:
                     menuStretched.setSelected(true);
                     imageViewMain.setPreserveRatio(false);
-                    imageViewMain.fitWidthProperty().bind(mainScrollPane.widthProperty().subtract(
-                            scrollPaneOffset));
-                    imageViewMain.fitHeightProperty().bind(mainScrollPane.heightProperty().subtract(
-                            scrollPaneOffset));
+                    imageViewMain.fitWidthProperty().bind(scrollPaneMain.widthProperty());
+                    imageViewMain.fitHeightProperty().bind(scrollPaneMain.heightProperty());
                     break;
             }
 

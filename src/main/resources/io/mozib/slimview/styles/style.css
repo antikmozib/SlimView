@@ -6,22 +6,21 @@
     -fx-font-size: 14
 }
 
-#stackPaneMain, #mainScrollPane {
+#stackPaneMain, #scrollPaneMain, #anchorPaneMain {
     -fx-box-border: transparent;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
-    -fx-background-color: #000
-}
-
-#mainScrollPane {
-    -fx-background-insets: 0;
+    -fx-background-color: #000;
+    -fx-border-width: 0;
+	-fx-border-insets: 0;
+	-fx-background-insets: 0;
     -fx-padding: 0
 }
 
-#mainScrollPane:focused {
+#scrollPaneMain:focused {
     -fx-background-insets: 0
 }
 
-#mainScrollPane .corner {
+#stackPaneMain .corner, #anchorPaneMain .corner, #scrollPaneMain .corner {
     -fx-background-insets: 0
 }
