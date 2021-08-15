@@ -391,13 +391,13 @@
             </ToggleButton>
             </items>
         </ToolBar>
-        <ScrollPane id="mainScrollPane" fx:id="mainScrollPane" fitToHeight="true" fitToWidth="true" onKeyPressed="#mainScrollPane_onKeyPress" onMouseClicked="#mainScrollPane_onClick" onScroll="#mainScrollPane_onScroll" VBox.vgrow="ALWAYS">
+        <ScrollPane id="scrollPaneMain" fx:id="scrollPaneMain" fitToHeight="true" fitToWidth="true" onKeyPressed="#scrollPaneMain_onKeyPress" onMouseClicked="#scrollPaneMain_onClick" onScroll="#scrollPaneMain_onScroll" VBox.vgrow="ALWAYS">
          <content>
-            <AnchorPane fx:id="anchorPaneMain" onMouseDragged="#anchorPaneMain_onMouseDrag" onMousePressed="#anchorPaneMain_onMousePress" onMouseReleased="#anchorPaneMain_onMouseRelease">
+            <AnchorPane id="anchorPaneMain" fx:id="anchorPaneMain" onMouseDragged="#anchorPaneMain_onMouseDrag" onMousePressed="#anchorPaneMain_onMousePress" onMouseReleased="#anchorPaneMain_onMouseRelease">
                <children>
                       <StackPane id="stackPaneMain" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <children>
-                              <ImageView id="imageViewMain" fx:id="imageViewMain" fitHeight="500.0" fitWidth="500.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView id="imageViewMain" fx:id="imageViewMain" fitHeight="500.0" fitWidth="500.0" focusTraversable="true" onMouseEntered="#imageViewMain_onMouseEnter" onMouseExited="#imageViewMain_onMouseExit" onMouseMoved="#imageViewMain_onMouseMove" pickOnBounds="true" preserveRatio="true" />
                           </children>
                       </StackPane>
                </children>
@@ -410,13 +410,15 @@
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
+                  <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                       <Label fx:id="labelStatus" text="Statusbar" GridPane.hgrow="ALWAYS" />
-                  <Label fx:id="labelResolution" text="Resolution" textAlignment="RIGHT" GridPane.columnIndex="1" />
+                  <Label fx:id="labelPoints" text="Points" GridPane.columnIndex="1" />
+                  <Label fx:id="labelResolution" text="Resolution" textAlignment="RIGHT" GridPane.columnIndex="2" />
                </children>
             </GridPane>
          </children>
