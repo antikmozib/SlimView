@@ -53,7 +53,7 @@ public class Util {
 
     /**
      * @param dataFileLocation Path to the data file
-     * @return Path to the xml settings file
+     * @return Path to the XML settings file
      */
     public static String getDataFile(DataFileLocation dataFileLocation) {
         createSettingsDir();
@@ -202,19 +202,19 @@ public class Util {
     }
 
     /**
-     * @param classType        The type of object the xml mapper will map to
+     * @param classType        The type of object the XML mapper will map to
      * @param dataFileLocation The location of the setting file, determined through its enum
      * @param <T>              Generic type
-     * @return Data read from xml file and mapped to a JavaBean
+     * @return Data read from XML file and mapped to a JavaBean
      */
     public static <T> T readDataFile(Class<T> classType, DataFileLocation dataFileLocation) {
         XmlMapper xmlMapper = new XmlMapper();
-        String xml;
+        String xmlContents;
         T data = null;
 
         try {
-            xml = inputStreamToString(new FileInputStream(getDataFile(dataFileLocation)));
-            data = xmlMapper.readValue(xml, classType);
+            xmlContents = inputStreamToString(new FileInputStream(getDataFile(dataFileLocation)));
+            data = xmlMapper.readValue(xmlContents, classType);
         } catch (FileNotFoundException | JsonProcessingException ignored) {
             // ignore this error; this means we're running the app for the first time
         }
@@ -234,10 +234,10 @@ public class Util {
     }
 
     /**
-     * Serializes an object to a xml file
+     * Serializes an object to a XML file
      *
-     * @param data             Object to write to a xml file
-     * @param dataFileLocation Location of the xml file
+     * @param data             Object to write to a XML file
+     * @param dataFileLocation Location of the XML file
      */
     public static void writeDataFile(Object data, DataFileLocation dataFileLocation) {
         XmlMapper xmlMapper = new XmlMapper();

@@ -72,7 +72,7 @@ public class MainWindowController implements Initializable {
     // the ViewStyle to reset to when switching between images after zooming
     private ViewStyle cachedViewStyleZoom = viewStyleProperty.get();
 
-    // fields for selection rectangle
+    // fields for SelectionRectangle
     private boolean selectionStarted = false;
     // initial point where mouse was clicked
     private double selectionPivotX = 0.0;
@@ -162,7 +162,7 @@ public class MainWindowController implements Initializable {
         statusBar.managedProperty().bind(statusBar.visibleProperty());
         menuBar.managedProperty().bind(menuBar.visibleProperty());
 
-        // bind ImageView and Favorite Button to selectedImage
+        // bind ImageView and FavoriteButton to the SelectedImage
         tButtonFavorite.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 tButtonFavoriteImageView.setImage(favoriteSolid);
@@ -171,10 +171,10 @@ public class MainWindowController implements Initializable {
             }
         });
 
-        // bind selection rectangle/pan mode buttons
+        // bind SelectionRectangle/pan mode buttons
         scrollPaneMain.pannableProperty().bindBidirectional(tButtonPanMode.selectedProperty());
 
-        // start tracking resolution, zoom and selection rectangle
+        // start tracking resolution, zoom and SelectionRectangle
         imageViewMain.fitWidthProperty().addListener(new ImageSizeChangeListener());
         imageViewMain.fitHeightProperty().addListener(new ImageSizeChangeListener());
 
@@ -215,13 +215,13 @@ public class MainWindowController implements Initializable {
      * Sets up the listeners to various virtual (ViewModel) properties. Important to call this after the UI has loaded.
      */
     public void initUIListeners() {
-        // remove selection rectangle if window size is changed
+        // remove SelectionRectangle if window size is changed
         // Window must be called after stage has initialized
         Window window = imageViewMain.getScene().getWindow();
         window.widthProperty().addListener((observable -> clearSelectionRectangle()));
         window.heightProperty().addListener((observable -> clearSelectionRectangle()));
 
-        // bind change listeners
+        // bind ChangeListeners
         mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
         viewStyleProperty.addListener(new ViewStyleChangeListener(
                 menuBar.getHeight(), toolBar.getHeight(), statusBar.getHeight()));
@@ -233,7 +233,7 @@ public class MainWindowController implements Initializable {
         mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
                 preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
 
-        // force trigger view style if we're switching to fullscreen mode
+        // force trigger ViewStyle if we're switching to fullscreen mode
         isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
             ViewStyle old = viewStyleProperty.get();
             viewStyleProperty.set(null);
@@ -252,7 +252,7 @@ public class MainWindowController implements Initializable {
     public void anchorPaneMain_onMousePress(MouseEvent mouseEvent) {
         if (!scrollPaneMain.isPannable() && mainViewModel.getSelectedImageModel() != null) {
 
-            // don't start selecting if initial point is outside imageview
+            // don't start selecting if initial point is outside the ImageView
             if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX() ||
                     mouseEvent.getY() < imageViewMain.getBoundsInParent().getMinY() ||
                     mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX() ||
@@ -296,7 +296,8 @@ public class MainWindowController implements Initializable {
                 selectionRectangle.setOnMouseMoved(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
-                        refreshCoordinates(event.getX(), event.getY());
+                        // add 1 to account for SelectionRectangle's borders
+                        refreshCoordinates(event.getX() + 1, event.getY() + 1);
                     }
                 });
 
@@ -307,18 +308,22 @@ public class MainWindowController implements Initializable {
 
                 double endX = mouseEvent.getX();
                 double endY = mouseEvent.getY();
+                double topBoundary = imageViewMain.getBoundsInParent().getMinY();
+                double leftBoundary = imageViewMain.getBoundsInParent().getMinX();
+                double rightBoundary = imageViewMain.getBoundsInParent().getMaxX();
+                double bottomBoundary = imageViewMain.getBoundsInParent().getMaxY();
                 double width, height;
 
                 // we can only be outside a maximum of two boundaries at the same time, e.g. top-right
 
                 // outside right boundary
-                if (mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX() ) {
-                    endX = imageViewMain.getBoundsInParent().getMaxX();
+                if (endX > rightBoundary) {
+                    endX = rightBoundary;
                 }
 
                 // outside bottom boundary
-                if (mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY() ) {
-                    endY = imageViewMain.getBoundsInParent().getMaxY();
+                if (endY > bottomBoundary) {
+                    endY = bottomBoundary;
                 }
 
                 if (endX >= selectionPivotX) {
@@ -327,8 +332,8 @@ public class MainWindowController implements Initializable {
                     // selecting in the reverse direction
 
                     // outside left boundary
-                    if (endX < imageViewMain.getBoundsInParent().getMinX()) {
-                        endX = imageViewMain.getBoundsInParent().getMinX();
+                    if (endX < leftBoundary) {
+                        endX = leftBoundary;
                     }
 
                     selectionRectangle.setX(endX);
@@ -342,8 +347,8 @@ public class MainWindowController implements Initializable {
                     // selecting in the reverse direction
 
                     // outside top boundary
-                    if (endY < imageViewMain.getBoundsInParent().getMinY()) {
-                        endY = imageViewMain.getBoundsInParent().getMinY();
+                    if (endY < topBoundary) {
+                        endY = topBoundary;
                     }
 
                     selectionRectangle.setY(endY);
@@ -1067,7 +1072,7 @@ public class MainWindowController implements Initializable {
             } else {
                 oldViewStyle = cachedViewStyleZoom;
             }
-            viewStyleProperty.set(null); // force trigger change listener
+            viewStyleProperty.set(null); // force trigger ChangeListener
             viewStyleProperty.set(oldViewStyle);
 
             clearSelectionRectangle();
@@ -1082,7 +1087,7 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Triggered with the view style is changed
+     * Triggered with the ViewStyle is changed
      */
     private class ViewStyleChangeListener implements ChangeListener<ViewStyle> {
 
@@ -1209,7 +1214,7 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Triggered when the file sort style is changed
+     * Triggered when the file SortStyle is changed
      */
     private class SortStyleChangeListener implements ChangeListener<MainViewModel.SortStyle> {
 
