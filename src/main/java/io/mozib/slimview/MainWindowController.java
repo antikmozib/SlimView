@@ -307,7 +307,9 @@ public class MainWindowController implements Initializable {
                     @Override
                     public void handle(MouseEvent event) {
                         // add 1 to account for SelectionRectangle's borders
-                        refreshCoordinates(event.getX() + 1, event.getY() + 1);
+                        refreshCoordinates(
+                                event.getX() - imageViewMain.getBoundsInParent().getMinX() + 1,
+                                event.getY() - imageViewMain.getBoundsInParent().getMinY() + 1);
                     }
                 });
                 selectionRectangle.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -315,23 +317,22 @@ public class MainWindowController implements Initializable {
                     public void handle(MouseEvent event) {
                         // zoom selection into viewport
 
-                        double selectedWidth = selectionRectangle.getBoundsInParent().getMaxX() -
-                                selectionRectangle.getBoundsInParent().getMinX();
-                        double selectedHeight = selectionRectangle.getBoundsInParent().getMaxY() -
-                                selectionRectangle.getBoundsInParent().getMinY();
-                        double scaleFactor = scrollPaneMain.getViewportBounds().getMaxX() / selectedWidth;
+                        double selectedLeft = selectionRectangle.getX() - imageViewMain.getBoundsInParent().getMinX();
+                        double selectedTop = selectionRectangle.getY() - imageViewMain.getBoundsInParent().getMinY();
+                        double selectedWidth = selectionRectangle.getWidth();
+                        double selectedHeight = selectionRectangle.getHeight();
+                        double scaleFactor = scrollPaneMain.getViewportBounds().getWidth() / selectedWidth;
 
                         double targetWidth = scaleFactor * getViewingWidth();
                         double targetHeight = scaleFactor * getViewingHeight();
 
-                        double targetLeft = (selectionRectangle.getBoundsInParent().getMinX() -
-                                imageViewMain.getBoundsInParent().getMinX() + selectedWidth / 2) / getViewingWidth();
-                        double targetTop = (selectionRectangle.getBoundsInParent().getMinY() -
-                                imageViewMain.getBoundsInParent().getMinY() + selectedHeight / 2) / getViewingHeight();
-
                         mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(),
                                 (int) targetWidth, (int) targetHeight);
                         viewStyleProperty.set(ViewStyle.ORIGINAL);
+
+                        scrollPaneMain.layout();
+                        double targetLeft = (1/(scrollPaneMain.getViewportBounds().getWidth()/2) ) * ((selectedLeft + selectedWidth / 2) * scaleFactor);
+                        double targetTop = (selectedTop + selectedHeight) * scaleFactor / targetHeight;
                         scrollPaneMain.setHvalue(targetLeft);
                         scrollPaneMain.setVvalue(targetTop);
                     }
