@@ -16,7 +16,7 @@
             <TextField fx:id="textPath" editable="false" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <TabPane fx:id="tabPaneMain" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="40.0">
+      <TabPane fx:id="tabPaneMain" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="40.0">
          <tabs>
             <Tab text="Untitled Tab">
               <content>
@@ -25,7 +25,7 @@
             </Tab>
          </tabs>
       </TabPane>
-      <HBox alignment="CENTER_RIGHT" prefWidth="200.0" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
+      <HBox alignment="CENTER_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
          <children>
             <Button fx:id="buttonCopyToClipboard" onAction="#buttonCopyToClipboard_onAction" text="C_opy to Clipboard" />
             <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" onAction="#buttonOK_onAction" prefWidth="80.0" text="_Close" />

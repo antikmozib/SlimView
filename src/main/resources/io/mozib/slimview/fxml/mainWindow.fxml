@@ -25,7 +25,7 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.MainWindowController">
     <children>
-        <MenuBar fx:id="menuBar" onKeyPressed="#menuBar_onKeyPress">
+        <MenuBar fx:id="menuBar">
             <menus>
                 <Menu text="_File">
                     <items>
@@ -397,7 +397,7 @@
                <children>
                       <StackPane id="stackPaneMain" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <children>
-                              <ImageView id="imageViewMain" fx:id="imageViewMain" fitHeight="500.0" fitWidth="500.0" focusTraversable="true" onMouseEntered="#imageViewMain_onMouseEnter" onMouseExited="#imageViewMain_onMouseExit" onMouseMoved="#imageViewMain_onMouseMove" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView id="imageViewMain" fx:id="imageViewMain" fitHeight="500.0" fitWidth="500.0" focusTraversable="true" onMouseExited="#imageViewMain_onMouseExit" onMouseMoved="#imageViewMain_onMouseMove" pickOnBounds="true" preserveRatio="true" />
                           </children>
                       </StackPane>
                </children>

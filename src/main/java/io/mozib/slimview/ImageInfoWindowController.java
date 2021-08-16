@@ -43,7 +43,6 @@ public class ImageInfoWindowController implements Initializable {
         String path = imageModel.getBestPath();
         imageInfo = new StringBuilder();
         textPath.setText(path);
-        tabPaneMain.setTabMinWidth(50.0);
         tabPaneMain.getTabs().clear();
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(new File(path));
@@ -93,7 +92,7 @@ public class ImageInfoWindowController implements Initializable {
 
                 scrollPane.setContent(gridPane);
                 anchorPane.getChildren().add(scrollPane);
-                tab.setContent(anchorPane);
+                tab.setContent(anchorPane);                
                 tabPaneMain.getTabs().add(tab);
             }
         } catch (ImageProcessingException | IOException e) {
