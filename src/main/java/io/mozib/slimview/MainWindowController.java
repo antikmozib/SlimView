@@ -22,6 +22,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.*;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -29,8 +30,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.StrokeType;
 import javafx.stage.Window;
 import javafx.stage.*;
 
@@ -299,15 +298,40 @@ public class MainWindowController implements Initializable {
                 selectionPivotY = mouseEvent.getY();
 
                 selectionRectangle = new javafx.scene.shape.Rectangle();
-                selectionRectangle.setFill(Color.TRANSPARENT);
-                selectionRectangle.setStroke(Color.LIME);
-                selectionRectangle.setStrokeType(StrokeType.INSIDE);
-                selectionRectangle.setStrokeWidth(1.0);
+                selectionRectangle.getStyleClass().add("selectionRectangle");
+                selectionRectangle.setBlendMode(BlendMode.EXCLUSION);
                 selectionRectangle.setOnMouseMoved(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
                         // add 1 to account for SelectionRectangle's borders
                         refreshCoordinates(event.getX() + 1, event.getY() + 1);
+                    }
+                });
+                selectionRectangle.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        /*double selectedWidth = selectionRectangle.getBoundsInParent().getMaxX() -
+                                selectionRectangle.getBoundsInParent().getMinX();
+                        double selectedHeight = selectionRectangle.getBoundsInParent().getMaxY() -
+                                selectionRectangle.getBoundsInParent().getMinY();
+                        double scaleFactor = mainViewModel.getSelectedImageModel().getWidth() / getViewingWidth();
+                        double projectedWidth = selectedWidth * scaleFactor;
+                        double projectHeight = selectedHeight * scaleFactor;
+                        double zoomFactor = getViewingWidth() / projectedWidth;
+                        double targetWidth = scrollPaneMain.getWidth() * zoomFactor * 0.9;
+                        double targetHeight = targetWidth / mainViewModel.getSelectedImageModel().getAspectRatio();
+                        double targetLeft = (selectionRectangle.getBoundsInParent().getMinX() - 8) / (scrollPaneMain.getWidth() - 8);
+                        double targetTop = selectionRectangle.getBoundsInParent().getMinY() / scrollPaneMain.getHeight();
+                        targetLeft = targetLeft * 1.5;
+                        targetTop = targetTop * 1.5;
+
+                        mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(),
+                                (int) targetWidth, (int) targetHeight);
+
+                        viewStyleProperty.set(ViewStyle.ORIGINAL);
+                        scrollPaneMain.layout();
+                        scrollPaneMain.setHvalue(targetLeft);
+                        scrollPaneMain.setVvalue(targetTop);*/
                     }
                 });
 

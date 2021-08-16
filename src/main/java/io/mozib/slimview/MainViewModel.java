@@ -379,7 +379,7 @@ public class MainViewModel {
         }
 
         var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
-        var resized = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
+        var resized = Scalr.resize(image, Scalr.Method.SPEED, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
         createTempImage(resized, file, imageModel.getOriginal().getPath());
     }
 
@@ -392,7 +392,11 @@ public class MainViewModel {
         double targetWidth = width * (1 / scaleFactor);
         double targetHeight = height * (1 / scaleFactor);
         return Scalr.crop(
-                imageModel.getBufferedImage(), (int) targetX, (int) targetY, (int) targetWidth, (int) targetHeight);
+                imageModel.getBufferedImage(),
+                (int) Math.round(targetX),
+                (int) Math.round(targetY),
+                (int) Math.round(targetWidth),
+                (int) Math.round(targetHeight));
     }
 
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
