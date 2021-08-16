@@ -225,7 +225,7 @@ public class MainWindowController implements Initializable {
      */
     public void initUIListeners() {
         // remove SelectionRectangle if window size is changed
-        // Window must be called after stage has initialized
+        // Window must be called after the stage has initialized
         Window window = imageViewMain.getScene().getWindow();
         window.widthProperty().addListener((observable -> clearSelectionRectangle()));
         window.heightProperty().addListener((observable -> clearSelectionRectangle()));
@@ -335,11 +335,12 @@ public class MainWindowController implements Initializable {
                     }
                 });
 
-                selectionRectangle.setX(selectionPivotX);
-                selectionRectangle.setY(selectionPivotY);
+                /*selectionRectangle.setX(selectionPivotX);
+                selectionRectangle.setY(selectionPivotY);*/
                 anchorPaneMain.getChildren().add(selectionRectangle);
             } else {
-
+                double startX = selectionPivotX;
+                double startY = selectionPivotY;
                 double endX = mouseEvent.getX();
                 double endY = mouseEvent.getY();
                 double topBoundary = imageViewMain.getBoundsInParent().getMinY();
@@ -350,45 +351,23 @@ public class MainWindowController implements Initializable {
 
                 // we can only be outside a maximum of two boundaries at the same time, e.g. top-right
 
-                // outside right boundary
-                if (endX > rightBoundary) {
+                if (endX < leftBoundary)
+                    endX = leftBoundary;
+
+                if (endX > rightBoundary)
                     endX = rightBoundary;
-                }
 
-                // outside bottom boundary
-                if (endY > bottomBoundary) {
+                if (endY < topBoundary)
+                    endY = topBoundary;
+
+                if (endY > bottomBoundary)
                     endY = bottomBoundary;
-                }
 
-                if (endX >= selectionPivotX) {
-                    width = endX - selectionPivotX;
-                } else {
-                    // selecting in the reverse direction
+                width = Math.max(startX, endX) - Math.min(startX, endX);
+                height = Math.max(startY, endY) - Math.min(startY, endY);
 
-                    // outside left boundary
-                    if (endX < leftBoundary) {
-                        endX = leftBoundary;
-                    }
-
-                    selectionRectangle.setX(endX);
-                    width = selectionPivotX - endX;
-                }
-
-                // repeat the same for the Y-axis
-                if (endY >= selectionPivotY) {
-                    height = endY - selectionPivotY;
-                } else {
-                    // selecting in the reverse direction
-
-                    // outside top boundary
-                    if (endY < topBoundary) {
-                        endY = topBoundary;
-                    }
-
-                    selectionRectangle.setY(endY);
-                    height = selectionPivotY - endY;
-                }
-
+                selectionRectangle.setX(Math.min(startX, endX));
+                selectionRectangle.setY((Math.min(startY, endY)));
                 selectionRectangle.setWidth(width);
                 selectionRectangle.setHeight(height);
             }

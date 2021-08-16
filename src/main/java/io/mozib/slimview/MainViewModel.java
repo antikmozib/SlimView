@@ -387,12 +387,14 @@ public class MainViewModel {
                                    double x, double y,
                                    double width, double height,
                                    double scaleFactor) {
+
         double targetX = x * (1 / scaleFactor);
         double targetY = y * (1 / scaleFactor);
         double targetWidth = width * (1 / scaleFactor);
         double targetHeight = height * (1 / scaleFactor);
+
         return Scalr.crop(
-                imageModel.getBufferedImage(),
+                imageModel.hasOriginal() ? imageModel.getOriginal().getBufferedImage() : imageModel.getBufferedImage(),
                 (int) Math.round(targetX),
                 (int) Math.round(targetY),
                 (int) Math.round(targetWidth),
