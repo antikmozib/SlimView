@@ -313,6 +313,8 @@ public class MainWindowController implements Initializable {
                 selectionRectangle.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
+                        // zoom selection into viewport
+
                         double selectedWidth = selectionRectangle.getBoundsInParent().getMaxX() -
                                 selectionRectangle.getBoundsInParent().getMinX();
                         double selectedHeight = selectionRectangle.getBoundsInParent().getMaxY() -
@@ -380,12 +382,18 @@ public class MainWindowController implements Initializable {
                 selectionRectangle.setY((Math.min(startY, endY)));
                 selectionRectangle.setWidth(width);
                 selectionRectangle.setHeight(height);
+
+                // show the coordinates of the SelectionRectangle
+                labelPoints.setText("(" + (int) (selectionRectangle.getX() -
+                        imageViewMain.getBoundsInParent().getMinX()) + ", " +
+                        (int) (selectionRectangle.getY() -
+                                imageViewMain.getBoundsInParent().getMinY()) + "), (" +
+                        (int) (width + selectionRectangle.getX()
+                                - imageViewMain.getBoundsInParent().getMinX()) + ", " +
+                        (int) (height + selectionRectangle.getY()
+                                - imageViewMain.getBoundsInParent().getMinY()) + ")");
             }
         }
-    }
-
-    @FXML
-    public void imageViewMain_onMouseEnter(MouseEvent mouseEvent) {
     }
 
     @FXML
@@ -479,10 +487,6 @@ public class MainWindowController implements Initializable {
     @FXML
     public void menuFullScreen_onAction(ActionEvent actionEvent) {
         toggleFullScreen();
-    }
-
-    @FXML
-    public void menuBar_onKeyPress(KeyEvent keyEvent) {
     }
 
     @FXML
@@ -1000,6 +1004,9 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    /**
+     * Copies to clipboard the part of the image bounded by the SelectionRectangle
+     */
     private void copySelection() {
         if (mainViewModel.getSelectedImageModel() == null || selectionRectangle == null) return;
 
