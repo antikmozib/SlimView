@@ -253,12 +253,8 @@ public class MainViewModel {
         }
     }
 
-    public void copyToClipboard(ImageModel imageModel) {
-        if (imageModel.getImage() == null) {
-            return;
-        }
-        var transformedImage = SwingFXUtils.fromFXImage(imageModel.getImage(), null);
-        var transferableImage = new ImageTransferable(transformedImage);
+    public void copyToClipboard(BufferedImage bufferedImage) {
+        var transferableImage = new ImageTransferable(bufferedImage);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferableImage, null);
     }
 
@@ -385,6 +381,18 @@ public class MainViewModel {
         var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
         var resized = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
         createTempImage(resized, file, imageModel.getOriginal().getPath());
+    }
+
+    public BufferedImage cropImage(ImageModel imageModel,
+                                   double x, double y,
+                                   double width, double height,
+                                   double scaleFactor) {
+        double targetX = x * (1 / scaleFactor);
+        double targetY = y * (1 / scaleFactor);
+        double targetWidth = width * (1 / scaleFactor);
+        double targetHeight = height * (1 / scaleFactor);
+        return Scalr.crop(
+                imageModel.getBufferedImage(), (int) targetX, (int) targetY, (int) targetWidth, (int) targetHeight);
     }
 
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {

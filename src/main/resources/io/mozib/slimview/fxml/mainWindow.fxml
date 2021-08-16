@@ -416,8 +416,8 @@
                 <RowConstraints vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                      <Label fx:id="labelStatus" text="Statusbar" GridPane.hgrow="ALWAYS" />
-                  <Label fx:id="labelPoints" text="Points" GridPane.columnIndex="1" />
+                      <Label fx:id="labelStatus" text="Status" GridPane.hgrow="ALWAYS" />
+                  <Label fx:id="labelPoints" text="Coordinates" GridPane.columnIndex="1" />
                   <Label fx:id="labelResolution" text="Resolution" textAlignment="RIGHT" GridPane.columnIndex="2" />
                </children>
             </GridPane>

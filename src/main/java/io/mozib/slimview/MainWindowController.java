@@ -144,7 +144,7 @@ public class MainWindowController implements Initializable {
         imageViewMain.setFitWidth(0);
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
 
-        // MenuBar toggle group
+        // MenuBar ToggleGroup
         menuFitToDesktop.setToggleGroup(toggleGroupViewStyle);
         menuStretched.setToggleGroup(toggleGroupViewStyle);
         menuFitToWindow.setToggleGroup(toggleGroupViewStyle);
@@ -153,7 +153,7 @@ public class MainWindowController implements Initializable {
         menuSortByCreated.setToggleGroup(toggleGroupSortStyle);
         menuSortByModified.setToggleGroup(toggleGroupSortStyle);
 
-        // button toggle group
+        // Button ToggleGroup
         tButtonPanMode.setToggleGroup(toggleGroupSelectPan);
         tButtonSelectionMode.setToggleGroup(toggleGroupSelectPan);
 
@@ -178,7 +178,7 @@ public class MainWindowController implements Initializable {
         toolBar.getItems().forEach(node -> {
             if (node instanceof Button) {
                 Button button = (Button) node;
-                button.addEventHandler(ActionEvent.ACTION,(event -> {
+                button.addEventHandler(ActionEvent.ACTION, (event -> {
                     imageViewMain.requestFocus();
                 }));
             }
@@ -979,8 +979,25 @@ public class MainWindowController implements Initializable {
 
     private void copy() {
         if (mainViewModel.getSelectedImageModel() != null) {
-            mainViewModel.copyToClipboard(mainViewModel.getSelectedImageModel());
+            if (selectionRectangle == null) {
+                mainViewModel.copyToClipboard(mainViewModel.getSelectedImageModel().getBufferedImage());
+            } else {
+                copySelection();
+            }
         }
+    }
+
+    private void copySelection() {
+        if (mainViewModel.getSelectedImageModel() == null || selectionRectangle == null) return;
+
+        double x = selectionRectangle.getBoundsInParent().getMinX();
+        double y = selectionRectangle.getBoundsInParent().getMinY();
+        double width = selectionRectangle.getBoundsInParent().getMaxX() - x;
+        double height = selectionRectangle.getBoundsInParent().getMaxY() - y;
+        double scaleFactor = getViewingWidth() / mainViewModel.getSelectedImageModel().getWidth();
+
+        mainViewModel.copyToClipboard(
+                mainViewModel.cropImage(mainViewModel.getSelectedImageModel(), x, y, width, height, scaleFactor));
     }
 
     private void rotateLeft() {
