@@ -72,11 +72,12 @@ public class MainWindowController implements Initializable {
     private ViewStyle cachedViewStyleZoom = viewStyleProperty.get();
 
     // fields for SelectionRectangle
+    private javafx.scene.shape.Rectangle selectionRectangle = null;
     private boolean selectionStarted = false;
+    private boolean cursorInsideSelRect = false; // true if the cursor is inside the SelectionRectangle
     // initial point where mouse was clicked
     private double selectionPivotX = 0.0;
     private double selectionPivotY = 0.0;
-    private javafx.scene.shape.Rectangle selectionRectangle = null;
 
     // Structure: ScrollPane > AnchorPane > Rectangle + [StackPane > ImageView]
 
@@ -276,8 +277,10 @@ public class MainWindowController implements Initializable {
             selectionStarted = false;
         }
 
-        anchorPaneMain.getChildren().remove(selectionRectangle);
-        selectionRectangle = null;
+        if (!cursorInsideSelRect) {
+            anchorPaneMain.getChildren().remove(selectionRectangle);
+            selectionRectangle = null;
+        }
     }
 
     @FXML
@@ -310,33 +313,40 @@ public class MainWindowController implements Initializable {
                 selectionRectangle.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
-                        /*double selectedWidth = selectionRectangle.getBoundsInParent().getMaxX() -
+                        double selectedWidth = selectionRectangle.getBoundsInParent().getMaxX() -
                                 selectionRectangle.getBoundsInParent().getMinX();
                         double selectedHeight = selectionRectangle.getBoundsInParent().getMaxY() -
                                 selectionRectangle.getBoundsInParent().getMinY();
-                        double scaleFactor = mainViewModel.getSelectedImageModel().getWidth() / getViewingWidth();
-                        double projectedWidth = selectedWidth * scaleFactor;
-                        double projectHeight = selectedHeight * scaleFactor;
-                        double zoomFactor = getViewingWidth() / projectedWidth;
-                        double targetWidth = scrollPaneMain.getWidth() * zoomFactor * 0.9;
-                        double targetHeight = targetWidth / mainViewModel.getSelectedImageModel().getAspectRatio();
-                        double targetLeft = (selectionRectangle.getBoundsInParent().getMinX() - 8) / (scrollPaneMain.getWidth() - 8);
-                        double targetTop = selectionRectangle.getBoundsInParent().getMinY() / scrollPaneMain.getHeight();
-                        targetLeft = targetLeft * 1.5;
-                        targetTop = targetTop * 1.5;
+                        double scaleFactor = scrollPaneMain.getViewportBounds().getMaxX() / selectedWidth;
+
+                        double targetWidth = scaleFactor * getViewingWidth();
+                        double targetHeight = scaleFactor * getViewingHeight();
+
+                        double targetLeft = (selectionRectangle.getBoundsInParent().getMinX() -
+                                imageViewMain.getBoundsInParent().getMinX() + selectedWidth / 2) / getViewingWidth();
+                        double targetTop = (selectionRectangle.getBoundsInParent().getMinY() -
+                                imageViewMain.getBoundsInParent().getMinY() + selectedHeight / 2) / getViewingHeight();
 
                         mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(),
                                 (int) targetWidth, (int) targetHeight);
-
                         viewStyleProperty.set(ViewStyle.ORIGINAL);
-                        scrollPaneMain.layout();
                         scrollPaneMain.setHvalue(targetLeft);
-                        scrollPaneMain.setVvalue(targetTop);*/
+                        scrollPaneMain.setVvalue(targetTop);
+                    }
+                });
+                selectionRectangle.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        cursorInsideSelRect = true;
+                    }
+                });
+                selectionRectangle.setOnMouseExited(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        cursorInsideSelRect = false;
                     }
                 });
 
-                /*selectionRectangle.setX(selectionPivotX);
-                selectionRectangle.setY(selectionPivotY);*/
                 anchorPaneMain.getChildren().add(selectionRectangle);
             } else {
                 double startX = selectionPivotX;
@@ -993,10 +1003,12 @@ public class MainWindowController implements Initializable {
     private void copySelection() {
         if (mainViewModel.getSelectedImageModel() == null || selectionRectangle == null) return;
 
-        double x = selectionRectangle.getBoundsInParent().getMinX();
-        double y = selectionRectangle.getBoundsInParent().getMinY();
-        double width = selectionRectangle.getBoundsInParent().getMaxX() - x;
-        double height = selectionRectangle.getBoundsInParent().getMaxY() - y;
+        double x = selectionRectangle.getBoundsInParent().getMinX() - imageViewMain.getBoundsInParent().getMinX();
+        double y = selectionRectangle.getBoundsInParent().getMinY() - imageViewMain.getBoundsInParent().getMinY();
+        double width =
+                selectionRectangle.getBoundsInParent().getMaxX() - selectionRectangle.getBoundsInParent().getMinX();
+        double height =
+                selectionRectangle.getBoundsInParent().getMaxY() - selectionRectangle.getBoundsInParent().getMinY();
         double scaleFactor = getViewingWidth() / mainViewModel.getSelectedImageModel().getWidth();
 
         mainViewModel.copyToClipboard(
