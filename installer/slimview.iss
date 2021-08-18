@@ -66,6 +66,10 @@ Root: HKCR; Subkey: "{#MyAppName}.png"; ValueData: "{#MyAppName} PNG Image"; Fla
 Root: HKCR; Subkey: "{#MyAppName}.png\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}.png\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
+Root: HKCR; Subkey: ".bmp"; ValueData: "{#MyAppName}.bmp"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}.bmp"; ValueData: "{#MyAppName} Bitmap Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}.bmp\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}.bmp\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
