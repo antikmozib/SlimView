@@ -47,6 +47,7 @@ import static io.mozib.slimview.Util.getDataFile;
 import static io.mozib.slimview.Util.getOSType;
 
 public class MainWindowController implements Initializable {
+
     private enum ViewStyle {
         FIT_TO_WINDOW, FIT_TO_DESKTOP, ORIGINAL, STRETCHED
     }
@@ -80,7 +81,6 @@ public class MainWindowController implements Initializable {
     private double selectionPivotY = 0.0;
 
     // Structure: ScrollPane > AnchorPane > Rectangle + [StackPane > ImageView]
-
     @FXML
     public RadioMenuItem menuStretched;
     @FXML
@@ -136,6 +136,11 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // initialize only UI control listeners in this method
+
+        scrollPaneMain.hvalueProperty().addListener(((observable, oldValue, newValue) -> {
+            System.out.println(scrollPaneMain.getHmin() + ", " + newValue + ", " + scrollPaneMain.getHmax() +
+                    "\n" + scrollPaneMain.getViewportBounds().getWidth());
+        }));
 
         // reset control properties
         labelResolution.setText("");
@@ -263,10 +268,10 @@ public class MainWindowController implements Initializable {
         if (!scrollPaneMain.isPannable() && mainViewModel.getSelectedImageModel() != null) {
 
             // don't start selecting if initial point is outside the ImageView
-            if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX() ||
-                    mouseEvent.getY() < imageViewMain.getBoundsInParent().getMinY() ||
-                    mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX() ||
-                    mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
+            if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX()
+                    || mouseEvent.getY() < imageViewMain.getBoundsInParent().getMinY()
+                    || mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX()
+                    || mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
 
                 return;
             }
@@ -330,9 +335,10 @@ public class MainWindowController implements Initializable {
                                 (int) targetWidth, (int) targetHeight);
                         viewStyleProperty.set(ViewStyle.ORIGINAL);
 
+                        // scroll to the new zoomed point
                         scrollPaneMain.layout();
-                        double targetLeft = (1/(scrollPaneMain.getViewportBounds().getWidth()/2) ) * ((selectedLeft + selectedWidth / 2) * scaleFactor);
-                        double targetTop = (selectedTop + selectedHeight) * scaleFactor / targetHeight;
+                        double targetLeft = (selectedLeft + selectedWidth/2) * scaleFactor / targetWidth;
+                        double targetTop = (selectedTop + selectedHeight/2) * scaleFactor / targetHeight;
                         scrollPaneMain.setHvalue(targetLeft);
                         scrollPaneMain.setVvalue(targetTop);
                     }
@@ -360,24 +366,26 @@ public class MainWindowController implements Initializable {
                 double leftBoundary = imageViewMain.getBoundsInParent().getMinX();
                 double rightBoundary = imageViewMain.getBoundsInParent().getMaxX();
                 double bottomBoundary = imageViewMain.getBoundsInParent().getMaxY();
-                double width, height;
 
                 // we can only be outside a maximum of two boundaries at the same time, e.g. top-right
-
-                if (endX < leftBoundary)
+                if (endX < leftBoundary) {
                     endX = leftBoundary;
+                }
 
-                if (endX > rightBoundary)
+                if (endX > rightBoundary) {
                     endX = rightBoundary;
+                }
 
-                if (endY < topBoundary)
+                if (endY < topBoundary) {
                     endY = topBoundary;
+                }
 
-                if (endY > bottomBoundary)
+                if (endY > bottomBoundary) {
                     endY = bottomBoundary;
+                }
 
-                width = Math.max(startX, endX) - Math.min(startX, endX);
-                height = Math.max(startY, endY) - Math.min(startY, endY);
+                double width = Math.max(startX, endX) - Math.min(startX, endX);
+                double height = Math.max(startY, endY) - Math.min(startY, endY);
 
                 selectionRectangle.setX(Math.min(startX, endX));
                 selectionRectangle.setY((Math.min(startY, endY)));
@@ -385,14 +393,11 @@ public class MainWindowController implements Initializable {
                 selectionRectangle.setHeight(height);
 
                 // show the coordinates of the SelectionRectangle
-                labelPoints.setText("(" + (int) (selectionRectangle.getX() -
-                        imageViewMain.getBoundsInParent().getMinX()) + ", " +
-                        (int) (selectionRectangle.getY() -
-                                imageViewMain.getBoundsInParent().getMinY()) + "), (" +
-                        (int) (width + selectionRectangle.getX()
-                                - imageViewMain.getBoundsInParent().getMinX()) + ", " +
-                        (int) (height + selectionRectangle.getY()
-                                - imageViewMain.getBoundsInParent().getMinY()) + ")");
+                labelPoints.setText("(" +
+                        (int) (selectionRectangle.getX() - imageViewMain.getBoundsInParent().getMinX()) + ", " +
+                        (int) (selectionRectangle.getY() - imageViewMain.getBoundsInParent().getMinY()) + "), (" +
+                        (int) (width + selectionRectangle.getX() - imageViewMain.getBoundsInParent().getMinX()) + ", " +
+                        (int) (height + selectionRectangle.getY() - imageViewMain.getBoundsInParent().getMinY()) + ")");
             }
         }
     }
@@ -856,7 +861,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void deleteFile() {
-        if (mainViewModel.getSelectedImageModel() == null) return;
+        if (mainViewModel.getSelectedImageModel() == null) {
+            return;
+        }
         try {
             mainViewModel.trashImage(mainViewModel.getSelectedImageModel());
         } catch (Exception e) {
@@ -1009,14 +1016,16 @@ public class MainWindowController implements Initializable {
      * Copies to clipboard the part of the image bounded by the SelectionRectangle
      */
     private void copySelection() {
-        if (mainViewModel.getSelectedImageModel() == null || selectionRectangle == null) return;
+        if (mainViewModel.getSelectedImageModel() == null || selectionRectangle == null) {
+            return;
+        }
 
         double x = selectionRectangle.getBoundsInParent().getMinX() - imageViewMain.getBoundsInParent().getMinX();
         double y = selectionRectangle.getBoundsInParent().getMinY() - imageViewMain.getBoundsInParent().getMinY();
-        double width =
-                selectionRectangle.getBoundsInParent().getMaxX() - selectionRectangle.getBoundsInParent().getMinX();
-        double height =
-                selectionRectangle.getBoundsInParent().getMaxY() - selectionRectangle.getBoundsInParent().getMinY();
+        double width
+                = selectionRectangle.getBoundsInParent().getMaxX() - selectionRectangle.getBoundsInParent().getMinX();
+        double height
+                = selectionRectangle.getBoundsInParent().getMaxY() - selectionRectangle.getBoundsInParent().getMinY();
         double scaleFactor = getViewingWidth() / mainViewModel.getSelectedImageModel().getWidth();
 
         mainViewModel.copyToClipboard(
@@ -1210,7 +1219,8 @@ public class MainWindowController implements Initializable {
                     scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
                     scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-                    double targetWidth, targetHeight;
+                    double targetWidth,
+                            targetHeight;
 
                     if (isViewingFullScreen.get()) {
                         targetWidth = screenWidth;
