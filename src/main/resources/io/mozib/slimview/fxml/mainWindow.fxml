@@ -397,7 +397,7 @@
                <children>
                       <StackPane id="stackPaneMain" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <children>
-                              <ImageView id="imageViewMain" fx:id="imageViewMain" fitHeight="500.0" fitWidth="500.0" focusTraversable="true" onMouseExited="#imageViewMain_onMouseExit" onMouseMoved="#imageViewMain_onMouseMove" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView id="imageViewMain" fx:id="imageViewMain" focusTraversable="true" onMouseExited="#imageViewMain_onMouseExit" onMouseMoved="#imageViewMain_onMouseMove" pickOnBounds="true" preserveRatio="true" />
                           </children>
                       </StackPane>
                </children>

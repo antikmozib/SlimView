@@ -384,6 +384,15 @@ public class MainViewModel {
         createTempImage(resized, file, imageModel.getOriginal().getPath());
     }
 
+    /**
+     * @param imageModel  The image to crop
+     * @param x           Starting x position
+     * @param y           Starting y position
+     * @param width       Width of the crop
+     * @param height      Height of the crop
+     * @param scaleFactor The width of the original image as a ratio of the displayed width
+     * @return A cropped BufferedImage
+     */
     public BufferedImage cropImage(ImageModel imageModel,
                                    double x, double y,
                                    double width, double height,

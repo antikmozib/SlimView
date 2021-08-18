@@ -567,18 +567,21 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void scrollPaneMain_onKeyPress(KeyEvent keyEvent) {
+
         switch (keyEvent.getCode()) {
             // don't switch images if the scrollbar is visible
             case LEFT:
+            case DOWN:
             case PAGE_DOWN:
-                if (getViewingWidth() * 0.95 < scrollPaneMain.getWidth()) {
+                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth()) {
                     showPrevious();
                 }
                 break;
 
             case RIGHT:
+            case UP:
             case PAGE_UP:
-                if (getViewingWidth() * 0.95 < scrollPaneMain.getWidth()) {
+                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth()) {
                     showNext();
                 }
                 break;
@@ -610,6 +613,12 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void scrollPaneMain_onScroll(ScrollEvent scrollEvent) {
+        // don't switch images if scrollbar is visible
+        if (getViewingWidth() > scrollPaneMain.getViewportBounds().getWidth()
+                || getViewingHeight() > scrollPaneMain.getViewportBounds().getHeight()) {
+            return;
+        }
+
         if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
             showPrevious();
         } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
@@ -914,6 +923,9 @@ public class MainWindowController implements Initializable {
 
         // apply zoom in limit
         if (targetWidth > maxAllowedWidth || targetHeight > maxAllowedHeight) {
+            targetWidth = maxAllowedWidth;
+            targetHeight = maxAllowedHeight;
+        } else if (targetWidth == maxAllowedWidth || targetHeight == maxAllowedHeight) {
             return;
         }
 
@@ -926,6 +938,10 @@ public class MainWindowController implements Initializable {
 
         mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) targetWidth, (int) targetHeight);
         viewStyleProperty.set(ViewStyle.ORIGINAL);
+
+        // center new zoomed image
+        scrollPaneMain.setVvalue(0.5);
+        scrollPaneMain.setHvalue(0.5);
     }
 
     private void zoomOut() {
@@ -942,6 +958,9 @@ public class MainWindowController implements Initializable {
 
         // apply zoom out limit
         if (targetWidth < minAllowedWidth || targetHeight < minAllowedHeight) {
+            targetWidth = minAllowedWidth;
+            targetHeight = minAllowedHeight;
+        } else if (targetWidth == minAllowedWidth || targetHeight == minAllowedHeight) {
             return;
         }
 
@@ -954,6 +973,10 @@ public class MainWindowController implements Initializable {
 
         mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) targetWidth, (int) targetHeight);
         viewStyleProperty.set(ViewStyle.ORIGINAL);
+
+        // center new zoomed image
+        scrollPaneMain.setVvalue(0.5);
+        scrollPaneMain.setHvalue(0.5);
     }
 
     private void resetZoom() {
