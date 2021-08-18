@@ -371,6 +371,7 @@ public class MainViewModel {
     public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
         // resample image to ensure best resizing quality
         BufferedImage image;
+
         if (!imageModel.hasOriginal()) {
             imageModel.setOriginal(new ImageModel(imageModel.getPath()));
             image = imageModel.getBufferedImage();

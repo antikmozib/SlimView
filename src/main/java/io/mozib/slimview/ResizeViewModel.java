@@ -12,8 +12,10 @@ import java.text.DecimalFormat;
 public class ResizeViewModel {
     public SimpleStringProperty newHeightProperty = new SimpleStringProperty();
     public SimpleStringProperty newWidthProperty = new SimpleStringProperty();
-    public SimpleBooleanProperty useNewValues = new SimpleBooleanProperty(false);
     public SimpleBooleanProperty preserveAspectRatioProperty = new SimpleBooleanProperty(true);
+    // indicates whether we should use the new values
+    public SimpleBooleanProperty useNewValues = new SimpleBooleanProperty(false);
+
     private final double originalAspectRatio;
 
     public ResizeViewModel(double currentWidth, double currentHeight) {

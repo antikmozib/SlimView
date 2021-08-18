@@ -19,14 +19,14 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ResizeWindowController implements Initializable {
+    private ResizeViewModel resizeViewModel;
+
     @FXML
     public TextField textWidth;
     @FXML
     public TextField textHeight;
     @FXML
     public CheckBox checkBoxPreserveAspectRatio;
-
-    private ResizeViewModel resizeViewModel;
 
     public void setViewModel(ResizeViewModel resizeViewModel) {
         this.resizeViewModel = resizeViewModel;

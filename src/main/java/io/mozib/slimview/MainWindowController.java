@@ -331,14 +331,16 @@ public class MainWindowController implements Initializable {
                         double targetWidth = scaleFactor * getViewingWidth();
                         double targetHeight = scaleFactor * getViewingHeight();
 
-                        mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(),
-                                (int) targetWidth, (int) targetHeight);
+                        mainViewModel.resizeImage(
+                                mainViewModel.getSelectedImageModel(),
+                                (int) targetWidth,
+                                (int) targetHeight);
                         viewStyleProperty.set(ViewStyle.ORIGINAL);
 
                         // scroll to the new zoomed point
                         scrollPaneMain.layout();
-                        double targetLeft = (selectedLeft + selectedWidth/2) * scaleFactor / targetWidth;
-                        double targetTop = (selectedTop + selectedHeight/2) * scaleFactor / targetHeight;
+                        double targetLeft = (selectedLeft + selectedWidth / 2) * scaleFactor / targetWidth;
+                        double targetTop = (selectedTop + selectedHeight / 2) * scaleFactor / targetHeight;
                         scrollPaneMain.setHvalue(targetLeft);
                         scrollPaneMain.setVvalue(targetTop);
                     }

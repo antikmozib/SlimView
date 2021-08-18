@@ -10,34 +10,34 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane hgap="4.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" vgap="4.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.ResizeWindowController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="NEVER" />
-    <ColumnConstraints hgrow="ALWAYS" />
-      <ColumnConstraints hgrow="NEVER" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-  </rowConstraints>
-   <children>
-      <Label mnemonicParsing="true" text="_Width:" />
-      <Label mnemonicParsing="true" text="_Height:" GridPane.rowIndex="1" />
-      <TextField id="textWidth" fx:id="textWidth" GridPane.columnIndex="1" />
-      <TextField id="textHeight" fx:id="textHeight" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3">
-         <children>
-            <Button fx:id="buttonOK" defaultButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#buttonOK_onAction" text="OK" />
-            <Button fx:id="buttonCancel" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#buttonCancel_onAction" text="Cancel" />
-         </children>
-      </HBox>
-      <CheckBox fx:id="checkBoxPreserveAspectRatio" selected="true" text="_Preserve aspect ratio" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
-      <Label text="pixels" GridPane.columnIndex="2" />
-      <Label text="pixels" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-   </children>
-   <padding>
-      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-   </padding>
+<GridPane hgap="4.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" vgap="8.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.ResizeWindowController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" />
+        <ColumnConstraints hgrow="ALWAYS" />
+        <ColumnConstraints hgrow="SOMETIMES" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints fillHeight="false" vgrow="SOMETIMES" />
+        <RowConstraints fillHeight="false" vgrow="SOMETIMES" />
+        <RowConstraints fillHeight="false" vgrow="SOMETIMES" />
+        <RowConstraints fillHeight="false" valignment="BOTTOM" vgrow="ALWAYS" />
+    </rowConstraints>
+    <children>
+        <Label mnemonicParsing="true" text="_Width:" />
+        <Label mnemonicParsing="true" text="_Height:" GridPane.rowIndex="1" />
+        <TextField id="textWidth" fx:id="textWidth" GridPane.columnIndex="1" />
+        <TextField id="textHeight" fx:id="textHeight" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <HBox alignment="BOTTOM_RIGHT" spacing="8.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+            <children>
+                <Button fx:id="buttonOK" defaultButton="true" mnemonicParsing="false" onAction="#buttonOK_onAction" prefWidth="80.0" text="OK" />
+                <Button fx:id="buttonCancel" cancelButton="true" mnemonicParsing="false" onAction="#buttonCancel_onAction" prefWidth="80.0" text="Cancel" />
+            </children>
+        </HBox>
+        <CheckBox fx:id="checkBoxPreserveAspectRatio" selected="true" text="_Preserve aspect ratio" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
+        <Label text="pixels" GridPane.columnIndex="2" />
+        <Label text="pixels" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+    </children>
+    <padding>
+        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+    </padding>
 </GridPane>
