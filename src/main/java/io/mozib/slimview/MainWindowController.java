@@ -137,11 +137,6 @@ public class MainWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // initialize only UI control listeners in this method
 
-        scrollPaneMain.hvalueProperty().addListener(((observable, oldValue, newValue) -> {
-            System.out.println(scrollPaneMain.getHmin() + ", " + newValue + ", " + scrollPaneMain.getHmax() +
-                    "\n" + scrollPaneMain.getViewportBounds().getWidth());
-        }));
-
         // reset control properties
         labelResolution.setText("");
         labelPoints.setText("");
@@ -326,7 +321,13 @@ public class MainWindowController implements Initializable {
                         double selectedTop = selectionRectangle.getY() - imageViewMain.getBoundsInParent().getMinY();
                         double selectedWidth = selectionRectangle.getWidth();
                         double selectedHeight = selectionRectangle.getHeight();
-                        double scaleFactor = scrollPaneMain.getViewportBounds().getWidth() / selectedWidth;
+                        double scaleFactor;
+
+                        if (selectedWidth >= selectedHeight) {
+                            scaleFactor = scrollPaneMain.getViewportBounds().getWidth() / selectedWidth;
+                        } else {
+                            scaleFactor = scrollPaneMain.getViewportBounds().getHeight() / selectedHeight;
+                        }
 
                         double targetWidth = scaleFactor * getViewingWidth();
                         double targetHeight = scaleFactor * getViewingHeight();
@@ -339,8 +340,8 @@ public class MainWindowController implements Initializable {
 
                         // scroll to the new zoomed point
                         scrollPaneMain.layout();
-                        double targetLeft = (selectedLeft + selectedWidth / 2) * scaleFactor / targetWidth;
-                        double targetTop = (selectedTop + selectedHeight / 2) * scaleFactor / targetHeight;
+                        double targetLeft = ((selectedLeft + selectedWidth / 2) * scaleFactor) / targetWidth;
+                        double targetTop = ((selectedTop + selectedHeight / 2) * scaleFactor) / targetHeight;
                         scrollPaneMain.setHvalue(targetLeft);
                         scrollPaneMain.setVvalue(targetTop);
                     }
