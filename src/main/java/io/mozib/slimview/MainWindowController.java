@@ -368,21 +368,17 @@ public class MainWindowController implements Initializable {
                 double bottomBoundary = imageViewMain.getBoundsInParent().getMaxY();
 
                 // we can only be outside a maximum of two boundaries at the same time, e.g. top-right
-                if (endX < leftBoundary) {
+                if (endX < leftBoundary)
                     endX = leftBoundary;
-                }
 
-                if (endX > rightBoundary) {
+                if (endX > rightBoundary)
                     endX = rightBoundary;
-                }
 
-                if (endY < topBoundary) {
+                if (endY < topBoundary)
                     endY = topBoundary;
-                }
 
-                if (endY > bottomBoundary) {
+                if (endY > bottomBoundary)
                     endY = bottomBoundary;
-                }
 
                 double width = Math.max(startX, endX) - Math.min(startX, endX);
                 double height = Math.max(startY, endY) - Math.min(startY, endY);
