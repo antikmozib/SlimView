@@ -5,4 +5,4 @@ imgscalr.lib,metadata.extractor
 
 target/bin/runtime/bin/java --module-path target/bin/lib \
 	--add-modules $MODULES \
-	-jar target/slimview-1.0.5.jar
+	-jar target/slimview-1.0.6.jar
