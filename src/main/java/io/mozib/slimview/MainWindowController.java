@@ -13,6 +13,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -74,8 +76,13 @@ public class MainWindowController implements Initializable {
 
     // fields for SelectionRectangle
     private javafx.scene.shape.Rectangle selectionRectangle = null;
-    private boolean selectionStarted = false;
+    /**
+     * Set to true if and only if the mouse button is down. May be false even if the SelectionRectangle is visible.
+     */
+    private final SimpleBooleanProperty selectionStartedProperty = new SimpleBooleanProperty(false);
     private boolean cursorInsideSelRect = false; // true if the cursor is inside the SelectionRectangle
+    private final ImageCursor zoomInCursor
+            = new ImageCursor(new Image(getClass().getResourceAsStream("icons/zoom-in-cursor.png")));
     // initial point where mouse was clicked
     private double selectionPivotX = 0.0;
     private double selectionPivotY = 0.0;
@@ -156,6 +163,14 @@ public class MainWindowController implements Initializable {
         // Button ToggleGroup
         tButtonPanMode.setToggleGroup(toggleGroupSelectPan);
         tButtonSelectionMode.setToggleGroup(toggleGroupSelectPan);
+        tButtonSelectionMode.setSelected(preferences.getBoolean("CurrentSelectionMode", true));
+        tButtonPanMode.setSelected(!tButtonSelectionMode.isSelected());
+
+        // bind SelectionRectangle/pan mode buttons
+        scrollPaneMain.pannableProperty().bindBidirectional(tButtonPanMode.selectedProperty());
+        scrollPaneMain.pannableProperty().addListener(((observable, oldValue, newValue) -> {
+            preferences.putBoolean("CurrentSelectionMode", !newValue);
+        }));
 
         // bindings for fullscreen viewing
         toolBar.managedProperty().bind(toolBar.visibleProperty());
@@ -170,9 +185,6 @@ public class MainWindowController implements Initializable {
                 tButtonFavoriteImageView.setImage(favoriteOutline);
             }
         });
-
-        // bind SelectionRectangle/pan mode buttons
-        scrollPaneMain.pannableProperty().bindBidirectional(tButtonPanMode.selectedProperty());
 
         // set focus on the ImageView whenever any Button on the Toolbar is actioned
         toolBar.getItems().forEach(node -> {
@@ -271,10 +283,10 @@ public class MainWindowController implements Initializable {
                 return;
             }
 
-            selectionStarted = true;
+            selectionStartedProperty.set(true);
         } else {
             // most likely panning started; disable selection mode
-            selectionStarted = false;
+            selectionStartedProperty.set(false);
         }
 
         if (!cursorInsideSelRect) {
@@ -285,15 +297,23 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void anchorPaneMain_onMouseRelease(MouseEvent mouseEvent) {
+        imageViewMain.setCursor(Cursor.DEFAULT);
+
         // stop selecting but don't clear the rectangle yet as we need it for copying, zooming etc.
-        if (selectionStarted) {
-            selectionStarted = false;
+        if (selectionStartedProperty.get()) {
+            selectionStartedProperty.set(false);
         }
     }
 
     @FXML
     public void anchorPaneMain_onMouseDrag(MouseEvent mouseEvent) {
-        if (selectionStarted) {
+        if (tButtonPanMode.isSelected()) {
+            imageViewMain.setCursor(Cursor.MOVE);
+        } else {
+            imageViewMain.setCursor(Cursor.CROSSHAIR);
+        }
+
+        if (selectionStartedProperty.get()) {
             if (selectionRectangle == null) {
 
                 // save this point for selecting in the reverse direction
@@ -310,6 +330,10 @@ public class MainWindowController implements Initializable {
                         refreshCoordinates(
                                 event.getX() - imageViewMain.getBoundsInParent().getMinX() + 1,
                                 event.getY() - imageViewMain.getBoundsInParent().getMinY() + 1);
+
+                        if (!selectionStartedProperty.get()) {
+                            selectionRectangle.setCursor(zoomInCursor);
+                        }
                     }
                 });
                 selectionRectangle.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -323,6 +347,7 @@ public class MainWindowController implements Initializable {
                         double selectedHeight = selectionRectangle.getHeight();
                         double scaleFactor;
 
+                        // fit the biggest selected side
                         if (selectedWidth >= selectedHeight) {
                             scaleFactor = scrollPaneMain.getViewportBounds().getWidth() / selectedWidth;
                         } else {
