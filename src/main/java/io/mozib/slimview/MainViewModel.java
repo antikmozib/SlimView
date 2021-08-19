@@ -361,6 +361,7 @@ public class MainViewModel {
             selectedImageModelWrapper.set(imageModel);
             status.set((getCurrentIndex() + 1) + "/" + imageModels.size()
                     + "  |  " + imageModel.getFormat()
+                    + "  |  " + getMegapixelCount(imageModel)
                     + "  |  " + imageModel.getColorDepth() + "-bits"
                     + "  |  " + formatFileSize(imageModel.getFileSize())
                     + "  |  Created: " + formatTime(imageModel.getDateCreated())
@@ -404,7 +405,7 @@ public class MainViewModel {
         double targetHeight = height * (1 / scaleFactor);
 
         return Scalr.crop(
-                imageModel.hasOriginal() ? imageModel.getOriginal().getBufferedImage() : imageModel.getBufferedImage(),
+                imageModel.getBufferedImage(),
                 (int) Math.round(targetX),
                 (int) Math.round(targetY),
                 (int) Math.round(targetWidth),
@@ -456,5 +457,14 @@ public class MainViewModel {
 
     private boolean isFavorite(ImageModel imageModel) {
         return favoritesController.exists(imageModel.getBestPath());
+    }
+
+    private String getMegapixelCount(ImageModel imageModel) {
+        double megapixel
+                = (imageModel.hasOriginal() ? imageModel.getOriginal().getWidth() : imageModel.getWidth())
+                * (imageModel.hasOriginal() ? imageModel.getOriginal().getHeight() : imageModel.getHeight())
+                / 1e6;
+
+        return new DecimalFormat("#.##").format(megapixel);
     }
 }

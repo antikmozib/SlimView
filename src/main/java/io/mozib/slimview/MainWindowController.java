@@ -144,6 +144,11 @@ public class MainWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // initialize only UI control listeners in this method
 
+        // common EventHandler for all toolbar elements; focus on the ImageView whenever any element is actioned
+        EventHandler<ActionEvent> defaultToolbarEventHandler = event -> {
+            imageViewMain.requestFocus();
+        };
+
         // reset control properties
         labelResolution.setText("");
         labelPoints.setText("");
@@ -190,9 +195,10 @@ public class MainWindowController implements Initializable {
         toolBar.getItems().forEach(node -> {
             if (node instanceof Button) {
                 Button button = (Button) node;
-                button.addEventHandler(ActionEvent.ACTION, (event -> {
-                    imageViewMain.requestFocus();
-                }));
+                button.addEventHandler(ActionEvent.ACTION, defaultToolbarEventHandler);
+            } else if (node instanceof ToggleButton) {
+                ToggleButton toggleButton = (ToggleButton) node;
+                toggleButton.addEventHandler(ActionEvent.ACTION, defaultToolbarEventHandler);
             }
         });
 
@@ -573,17 +579,15 @@ public class MainWindowController implements Initializable {
             case LEFT:
             case DOWN:
             case PAGE_DOWN:
-                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth()) {
+                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth())
                     showPrevious();
-                }
                 break;
 
             case RIGHT:
             case UP:
             case PAGE_UP:
-                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth()) {
+                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth())
                     showNext();
-                }
                 break;
 
             case HOME:
@@ -1197,7 +1201,7 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Triggered with the ViewStyle is changed
+     * Triggered when the ViewStyle is changed
      */
     private class ViewStyleChangeListener implements ChangeListener<ViewStyle> {
 
@@ -1370,7 +1374,8 @@ public class MainWindowController implements Initializable {
                 labelResolution.setText(
                         (mainViewModel.getSelectedImageModel().hasOriginal()
                                 ? mainViewModel.getSelectedImageModel().getOriginal().getResolution()
-                                : mainViewModel.getSelectedImageModel().getResolution()) + " (" + Math.round(zoom) + "%)");
+                                : mainViewModel.getSelectedImageModel().getResolution())
+                                + " (" + Math.round(zoom) + "%)");
             }
         }
     }

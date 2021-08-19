@@ -70,16 +70,16 @@ public class ImageModel {
     }
 
     public Image getImage() {
-        if (image == null) {
+        if (image == null)
             image = new Image(new File(getPath()).toURI().toString());
-        }
+
         return image;
     }
 
     public BufferedImage getBufferedImage() {
-        if (bufferedImage == null) {
+        if (bufferedImage == null)
             bufferedImage = SwingFXUtils.fromFXImage(getImage(), null);
-        }
+
         return bufferedImage;
     }
 
@@ -90,9 +90,8 @@ public class ImageModel {
         image = null;
         bufferedImage = null;
 
-        if (hasOriginal()) {
+        if (hasOriginal())
             original = null;
-        }
     }
 
     public File getContainingFolder() {
