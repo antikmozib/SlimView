@@ -465,6 +465,6 @@ public class MainViewModel {
                 * (imageModel.hasOriginal() ? imageModel.getOriginal().getHeight() : imageModel.getHeight())
                 / 1e6;
 
-        return new DecimalFormat("#.##").format(megapixel);
+        return new DecimalFormat("#.##").format(megapixel) + "MP";
     }
 }
