@@ -13,12 +13,12 @@ module io.mozib.slimview {
     requires com.fasterxml.jackson.dataformat.xml;
     /*requires xmlgraphics.commons;*/
     requires com.twelvemonkeys.imageio.core;
+    requires com.twelvemonkeys.imageio.metadata;
     /*requires com.twelvemonkeys.imageio.batik;*/
     requires com.twelvemonkeys.imageio.bmp;
     requires com.twelvemonkeys.imageio.jpeg;
     requires com.twelvemonkeys.imageio.tiff;
     requires com.twelvemonkeys.imageio.psd;
-    requires com.twelvemonkeys.imageio.metadata;
     requires imgscalr.lib;
     requires metadata.extractor;
 
