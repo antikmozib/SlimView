@@ -11,7 +11,6 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
-import javafx.embed.swing.SwingFXUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
@@ -41,7 +40,10 @@ public class MainViewModel {
     private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper("Ready.");
     private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<SortStyle> selectedSortStyleWrapper = new ReadOnlyObjectWrapper<>();
-    private final String[] supportedExtensions = new String[]{"jpg", "jpeg", "bmp", "gif", "png"};
+    private final String[] supportedReadExtensions
+            = new String[]{"bmp", "png", "gif", "jpeg", "jpg", "tiff", "ico", /*"svg", "wmf",*/ "cur"};
+    private final String[] supportedWriteExtensions
+            = new String[]{"bmp", "png", "gif", "jpeg", "jpg", "tiff", "ico"};
 
     public MainViewModel() {
         selectedImageModelProperty().addListener(((observable, oldValue, newValue) -> {
@@ -75,7 +77,7 @@ public class MainViewModel {
         setSelectedImage(new ImageModel(path));
 
         // now scan the rest of the directory
-        loadDirectory = new LoadDirectory(new File(path).getParent(), supportedExtensions);
+        loadDirectory = new LoadDirectory(new File(path).getParent(), supportedReadExtensions);
         loadDirectory.setOnSucceeded((WorkerStateEvent event) -> {
             imageModels = (List<ImageModel>) event.getSource().getValue();
             sortImages(selectedSortStyleProperty().get());
@@ -155,15 +157,10 @@ public class MainViewModel {
                         .orElse(null));
     }
 
-    public void saveImage(ImageModel imageModel, String destination) {
+    public void saveImage(ImageModel imageModel, String destination) throws IOException {
         File file = new File(destination);
-        try {
-            file.createNewFile();
-            ImageIO.write(SwingFXUtils.fromFXImage(imageModel.getImage(), null),
-                    FilenameUtils.getExtension(destination), file);
-        } catch (IOException ignored) {
-
-        }
+        file.createNewFile();
+        ImageIO.write(imageModel.getBufferedImage(), FilenameUtils.getExtension(destination), file);
     }
 
     public void trashImage(ImageModel imageModel) throws Exception {
@@ -284,8 +281,12 @@ public class MainViewModel {
         return favoritesController;
     }
 
-    public String[] getSupportedExtensions() {
-        return supportedExtensions;
+    public String[] getSupportedReadExtensions() {
+        return supportedReadExtensions;
+    }
+
+    public String[] getSupportedWriteExtensions() {
+        return supportedWriteExtensions;
     }
 
     private String formatTime(long time) {

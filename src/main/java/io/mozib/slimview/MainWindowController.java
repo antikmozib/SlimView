@@ -74,7 +74,7 @@ public class MainWindowController implements Initializable {
     // the ViewStyle to reset to when switching between images after zooming
     private ViewStyle cachedViewStyleZoom = viewStyleProperty.get();
 
-    // fields for SelectionRectangle
+    // FIELDS FOR SELECTION RECTANGLE
     private javafx.scene.shape.Rectangle selectionRectangle = null;
     /**
      * Set to true if and only if the mouse button is down. May be false even if the SelectionRectangle is visible.
@@ -88,6 +88,7 @@ public class MainWindowController implements Initializable {
     private double selectionPivotY = 0.0;
 
     // Structure: ScrollPane > AnchorPane > Rectangle + [StackPane > ImageView]
+
     @FXML
     public RadioMenuItem menuStretched;
     @FXML
@@ -182,7 +183,7 @@ public class MainWindowController implements Initializable {
         statusBar.managedProperty().bind(statusBar.visibleProperty());
         menuBar.managedProperty().bind(menuBar.visibleProperty());
 
-        // bind ImageView and FavoriteButton to the SelectedImage
+        // bind ImageView and FavoriteButton to SelectedImage
         tButtonFavorite.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 tButtonFavoriteImageView.setImage(favoriteSolid);
@@ -261,7 +262,7 @@ public class MainWindowController implements Initializable {
         mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
                 preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
 
-        // force trigger ViewStyle if we're switching to fullscreen mode
+        // refresh ViewStyle if we're switching to fullscreen mode
         isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
             ViewStyle old = viewStyleProperty.get();
             viewStyleProperty.set(null);
@@ -619,9 +620,8 @@ public class MainWindowController implements Initializable {
     public void scrollPaneMain_onScroll(ScrollEvent scrollEvent) {
         // don't switch images if scrollbar is visible
         if (getViewingWidth() > scrollPaneMain.getViewportBounds().getWidth()
-                || getViewingHeight() > scrollPaneMain.getViewportBounds().getHeight()) {
+                || getViewingHeight() > scrollPaneMain.getViewportBounds().getHeight())
             return;
-        }
 
         if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
             showPrevious();
@@ -999,20 +999,20 @@ public class MainWindowController implements Initializable {
 
             // In Windows, put all extensions in one line
             StringBuilder stringBuilder = new StringBuilder();
-            for (String ext : mainViewModel.getSupportedExtensions()) {
+            for (String ext : mainViewModel.getSupportedReadExtensions()) {
                 stringBuilder.append("*").append(".").append(ext.toLowerCase()).append(";");
             }
             String extensions = stringBuilder.substring(0, stringBuilder.length() - 1);
 
             fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("All Images", extensions),
+                    new FileChooser.ExtensionFilter("All Supported Images", extensions),
                     new FileChooser.ExtensionFilter("All Files", "*.*"));
 
         } else {
 
             // *nix doesn't like Windows-style extension filters
             fileChooser.getExtensionFilters().addAll(
-                    getExtensionFilters());
+                    getExtensionFilters(mainViewModel.getSupportedReadExtensions()));
             fileChooser.getExtensionFilters().add(
                     new FileChooser.ExtensionFilter("All Files", "*.*"));
         }
@@ -1036,7 +1036,7 @@ public class MainWindowController implements Initializable {
         }
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(getExtensionFilters());
+        fileChooser.getExtensionFilters().addAll(getExtensionFilters(mainViewModel.getSupportedWriteExtensions()));
 
         fileChooser.setInitialFileName(mainViewModel.getSelectedImageModel().getName());
 
@@ -1048,8 +1048,13 @@ public class MainWindowController implements Initializable {
 
         File file = fileChooser.showSaveDialog(imageViewMain.getScene().getWindow());
         if (file != null) {
-            preferences.put("SaveAsLocation", file.getParentFile().getPath());
-            mainViewModel.saveImage(mainViewModel.getSelectedImageModel(), file.getPath());
+            try {
+                preferences.put("SaveAsLocation", file.getParentFile().getPath());
+                mainViewModel.saveImage(mainViewModel.getSelectedImageModel(), file.getPath());
+            } catch (IOException e) {
+                Util.showCustomErrorDialog(
+                        "Error saving file", "The file couldn't be saved.", imageViewMain.getScene().getWindow(), e);
+            }
         }
     }
 
@@ -1142,9 +1147,8 @@ public class MainWindowController implements Initializable {
         copyFileToWindow.show();
     }
 
-    private FileChooser.ExtensionFilter[] getExtensionFilters() {
+    private FileChooser.ExtensionFilter[] getExtensionFilters(String[] extensions) {
         ArrayList<FileChooser.ExtensionFilter> filters = new ArrayList<>();
-        String[] extensions = mainViewModel.getSupportedExtensions();
 
         // separate item for each extension
         for (String ext : extensions) {
@@ -1301,7 +1305,7 @@ public class MainWindowController implements Initializable {
                     if (!isViewingFullScreen.get()) {
                         Window window = imageViewMain.getScene().getWindow();
 
-                        // add 8 pixels of gutting on each side of ImageView to account for window borders
+                        // add 8 pixels of gutting on each side of the ImageView to account for window borders
                         window.setWidth(targetWidth + 16);
                         window.setHeight(targetHeight + titleBarHeight + fixedHeight);
                         window.setX(0);

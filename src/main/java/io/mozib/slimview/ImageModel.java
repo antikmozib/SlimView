@@ -8,6 +8,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.File;
@@ -70,15 +71,21 @@ public class ImageModel {
     }
 
     public Image getImage() {
-        if (image == null)
-            image = new Image(new File(getPath()).toURI().toString());
+        if (image == null) {
+            try {
+                bufferedImage = ImageIO.read(new File(getPath()));
+                image = SwingFXUtils.toFXImage(bufferedImage, null);
+            } catch (IOException e) {
+                image = null;
+            }
+        }
 
         return image;
     }
 
     public BufferedImage getBufferedImage() {
         if (bufferedImage == null)
-            bufferedImage = SwingFXUtils.fromFXImage(getImage(), null);
+            getImage();
 
         return bufferedImage;
     }
@@ -123,7 +130,7 @@ public class ImageModel {
     }
 
     public String getColorDepth() {
-        ColorModel colorModel = SwingFXUtils.fromFXImage(getImage(), null).getColorModel();
+        ColorModel colorModel = getBufferedImage().getColorModel();
         return String.valueOf(colorModel.getPixelSize());
     }
 
@@ -139,6 +146,9 @@ public class ImageModel {
         return isFavorite;
     }
 
+    /**
+     * @return Resolution in the format width x height px
+     */
     public String getResolution() {
         return Math.round(getWidth()) + " x " + Math.round(getHeight()) + " px";
     }
