@@ -304,6 +304,9 @@ public class MainViewModel {
         return fileSize + " B";
     }
 
+    /**
+     * Loads a directory in the background
+     */
     private static class LoadDirectory extends Service<List<ImageModel>> {
 
         private final String directoryPath;
@@ -367,6 +370,32 @@ public class MainViewModel {
                     + "  |  " + formatFileSize(imageModel.getFileSize())
                     + "  |  Created: " + formatTime(imageModel.getDateCreated())
                     + "  |  Modified: " + formatTime(imageModel.getDateModified()));
+        }
+    }
+
+    /**
+     * Resizes the image in the background
+     */
+    private static class ImageResizeService extends Service<ImageModel> {
+
+        private final ImageModel original;
+        private final double newWidth;
+        private final double newHeight;
+
+        public ImageResizeService(ImageModel original, double newWidth, double newHeight) {
+            this.original = original;
+            this.newWidth = newWidth;
+            this.newHeight = newHeight;
+        }
+
+        @Override
+        protected Task<ImageModel> createTask() {
+            return new Task<>() {
+                @Override
+                protected ImageModel call() {
+                    return null;
+                }
+            };
         }
     }
 
