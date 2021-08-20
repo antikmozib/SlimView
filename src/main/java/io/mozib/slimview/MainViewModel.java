@@ -387,13 +387,27 @@ public class MainViewModel {
 
         var resized = Scalr.resize(image, Scalr.Method.SPEED, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
         var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
-        setSelectedImage(createTempImage(resized, file, imageModel.getOriginal().getPath()));
+        setSelectedImage(createTempImage(resized, file, imageModel.getBestPath()));
     }
 
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
         var rotated = Scalr.rotate(imageModel.getBufferedImage(), rotation);
         var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
         setSelectedImage(createTempImage(rotated, file, imageModel.getBestPath()));
+    }
+
+    /**
+     * Creates a temporary, edited image and sets it as the currently displayed one
+     */
+    private ImageModel createTempImage(BufferedImage image, File tempFile, String originalPath) {
+        String format = FilenameUtils.getExtension(tempFile.getPath());
+        try {
+            tempFile.createNewFile();
+            ImageIO.write(image, format, tempFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ImageModel(tempFile.getPath(), originalPath);
     }
 
     /**
@@ -421,20 +435,6 @@ public class MainViewModel {
                 (int) Math.round(targetY),
                 (int) Math.round(targetWidth),
                 (int) Math.round(targetHeight));
-    }
-
-    /**
-     * Creates a temporary, edited image and sets it as the currently displayed one
-     */
-    private ImageModel createTempImage(BufferedImage image, File tempFile, String originalPath) {
-        String format = FilenameUtils.getExtension(tempFile.getPath());
-        try {
-            tempFile.createNewFile();
-            ImageIO.write(image, format, tempFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new ImageModel(tempFile.getPath(), originalPath);
     }
 
     /**
