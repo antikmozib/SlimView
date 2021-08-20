@@ -285,10 +285,8 @@ public class MainWindowController implements Initializable {
             if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX()
                     || mouseEvent.getY() < imageViewMain.getBoundsInParent().getMinY()
                     || mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX()
-                    || mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
-
+                    || mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY())
                 return;
-            }
 
             selectionStartedProperty.set(true);
         } else {
@@ -814,9 +812,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void toggleFullScreen() {
-        if (mainViewModel.getSelectedImageModel() == null) {
+        if (mainViewModel.getSelectedImageModel() == null)
             return;
-        }
+
 
         boolean setFullScreen = !isViewingFullScreen.get();
         ((Stage) scrollPaneMain.getScene().getWindow()).setFullScreen(setFullScreen);
@@ -832,9 +830,9 @@ public class MainWindowController implements Initializable {
      */
     private double getViewingWidth() {
         double width = imageViewMain.getFitHeight() * mainViewModel.getSelectedImageModel().getAspectRatio();
-        if (width > imageViewMain.getFitWidth()) {
+        if (width > imageViewMain.getFitWidth())
             width = imageViewMain.getFitWidth();
-        }
+
         return width;
     }
 
@@ -843,9 +841,9 @@ public class MainWindowController implements Initializable {
      */
     private double getViewingHeight() {
         double height = imageViewMain.getFitWidth() / mainViewModel.getSelectedImageModel().getAspectRatio();
-        if (height > imageViewMain.getFitHeight()) {
+        if (height > imageViewMain.getFitHeight())
             height = imageViewMain.getFitHeight();
-        }
+
         return height;
     }
 
@@ -1222,13 +1220,11 @@ public class MainWindowController implements Initializable {
                             ViewStyle oldValue,
                             ViewStyle newValue) {
 
-            if (mainViewModel.getSelectedImageModel() == null) {
+            if (mainViewModel.getSelectedImageModel() == null)
                 return;
-            }
 
-            if (newValue == null) {
+            if (newValue == null)
                 newValue = Objects.requireNonNullElse(oldValue, ViewStyle.FIT_TO_WINDOW);
-            }
 
             imageViewMain.fitWidthProperty().unbind();
             imageViewMain.fitHeightProperty().unbind();
