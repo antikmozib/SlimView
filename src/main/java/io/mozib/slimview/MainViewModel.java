@@ -36,7 +36,7 @@ public class MainViewModel {
 
     private final FavoritesController favoritesController = new FavoritesController();
     private List<ImageModel> imageModels = new ArrayList<>();
-    private LoadDirectory loadDirectory;
+    private LoadDirectory loadDirectory = null;
     private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper("Ready.");
     private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<SortStyle> selectedSortStyleWrapper = new ReadOnlyObjectWrapper<>();
@@ -373,33 +373,8 @@ public class MainViewModel {
         }
     }
 
-    /**
-     * Resizes the image in the background
-     */
-    private static class ImageResizeService extends Service<ImageModel> {
-
-        private final ImageModel original;
-        private final double newWidth;
-        private final double newHeight;
-
-        public ImageResizeService(ImageModel original, double newWidth, double newHeight) {
-            this.original = original;
-            this.newWidth = newWidth;
-            this.newHeight = newHeight;
-        }
-
-        @Override
-        protected Task<ImageModel> createTask() {
-            return new Task<>() {
-                @Override
-                protected ImageModel call() {
-                    return null;
-                }
-            };
-        }
-    }
-
     public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
+
         // resample image to ensure best resizing quality
         BufferedImage image;
 
@@ -410,9 +385,15 @@ public class MainViewModel {
             image = imageModel.getOriginal().getBufferedImage();
         }
 
-        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
         var resized = Scalr.resize(image, Scalr.Method.SPEED, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
-        createTempImage(resized, file, imageModel.getOriginal().getPath());
+        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
+        setSelectedImage(createTempImage(resized, file, imageModel.getOriginal().getPath()));
+    }
+
+    private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
+        var rotated = Scalr.rotate(imageModel.getBufferedImage(), rotation);
+        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
+        setSelectedImage(createTempImage(rotated, file, imageModel.getBestPath()));
     }
 
     /**
@@ -442,16 +423,10 @@ public class MainViewModel {
                 (int) Math.round(targetHeight));
     }
 
-    private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
-        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
-        var rotated = Scalr.rotate(imageModel.getBufferedImage(), rotation);
-        createTempImage(rotated, file, imageModel.getBestPath());
-    }
-
     /**
      * Creates a temporary, edited image and sets it as the currently displayed one
      */
-    private void createTempImage(BufferedImage image, File tempFile, String originalPath) {
+    private ImageModel createTempImage(BufferedImage image, File tempFile, String originalPath) {
         String format = FilenameUtils.getExtension(tempFile.getPath());
         try {
             tempFile.createNewFile();
@@ -459,7 +434,7 @@ public class MainViewModel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setSelectedImage(new ImageModel(tempFile.getPath(), originalPath));
+        return new ImageModel(tempFile.getPath(), originalPath);
     }
 
     /**
