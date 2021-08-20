@@ -1,6 +1,9 @@
 imgscalr by Riyad Kalla
 https://github.com/rkalla/imgscalr
 ---
+TwelveMonkeys ImageIO by Harald Kuhr
+https://github.com/haraldk/TwelveMonkeys
+---
 Icon made by Smashicons from Flaticon
 https://www.flaticon.com/authors/smashicons
 ---
