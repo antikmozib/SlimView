@@ -27,7 +27,7 @@
         <Label mnemonicParsing="true" text="_Height:" GridPane.rowIndex="1" />
         <TextField id="textWidth" fx:id="textWidth" GridPane.columnIndex="1" />
         <TextField id="textHeight" fx:id="textHeight" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <HBox alignment="BOTTOM_RIGHT" spacing="8.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+        <HBox alignment="BOTTOM_RIGHT" spacing="8.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" GridPane.rowSpan="2147483647" GridPane.valignment="BOTTOM">
             <children>
                 <Button fx:id="buttonOK" defaultButton="true" mnemonicParsing="false" onAction="#buttonOK_onAction" prefWidth="80.0" text="OK" />
                 <Button fx:id="buttonCancel" cancelButton="true" mnemonicParsing="false" onAction="#buttonCancel_onAction" prefWidth="80.0" text="Cancel" />
