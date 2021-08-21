@@ -1198,7 +1198,6 @@ public class MainWindowController implements Initializable {
             // check if image is corrupted
             if (newValue != null && newValue.getImage() == null) {
                 showLoadingFailedError(null);
-                return;
             }
 
             tButtonFavorite.setSelected(newValue.getIsFavorite());

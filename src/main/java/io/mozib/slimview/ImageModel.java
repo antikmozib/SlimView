@@ -113,11 +113,11 @@ public class ImageModel {
     }
 
     public double getWidth() {
-        return getImage().getWidth();
+        return getImage() != null ? getImage().getWidth() : 0;
     }
 
     public double getHeight() {
-        return getImage().getHeight();
+        return getImage() != null ? getImage().getHeight() : 0;
     }
 
     public long getDateModified() {
@@ -129,6 +129,9 @@ public class ImageModel {
     }
 
     public String getColorDepth() {
+        if (getImage() == null)
+            return "";
+
         ColorModel colorModel = getBufferedImage().getColorModel();
         return String.valueOf(colorModel.getPixelSize());
     }

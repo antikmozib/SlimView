@@ -373,14 +373,22 @@ public class MainViewModel {
             imageModel.setIsFavorite(isFavorite(imageModel));
 
             selectedImageModelWrapper.set(imageModel);
-            status.set((getCurrentIndex() + 1) + "/" + imageModels.size()
-                    + "  |  " + imageModel.getFormat()
-                    + "  |  " + getMegapixelCount(imageModel)
-                    + "  |  " + imageModel.getColorDepth() + "-bits"
-                    + "  |  " + formatFileSize(imageModel.getFileSize())
-                    + (imageModel.hasOriginal() ? " (" + formatFileSize(imageModel.getOriginal().getFileSize()) + ")" : "")
-                    + "  |  Created: " + formatTime(imageModel.getDateCreated())
-                    + "  |  Modified: " + formatTime(imageModel.getDateModified()));
+
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(getCurrentIndex() + 1).append("/").append(imageModels.size());
+            if (imageModel.getImage() != null) {
+                stringBuilder
+                        .append("  |  ").append(imageModel.getFormat())
+                        .append("  |  ").append(getMegapixelCount(imageModel))
+                        .append("  |  ").append(imageModel.getColorDepth()).append("-bits")
+                        .append("  |  ").append(formatFileSize(imageModel.getFileSize()))
+                        .append(imageModel.hasOriginal()
+                                ? " (" + formatFileSize(imageModel.getOriginal().getFileSize()) + ")"
+                                : "")
+                        .append("  |  Created: ").append(formatTime(imageModel.getDateCreated()))
+                        .append("  |  Modified: ").append(formatTime(imageModel.getDateModified()));
+            }
+            status.set(stringBuilder.toString());
         }
     }
 
