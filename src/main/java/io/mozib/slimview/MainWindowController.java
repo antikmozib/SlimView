@@ -1253,7 +1253,6 @@ public class MainWindowController implements Initializable {
                 case ORIGINAL:
 
                     menuOriginalSize.setSelected(true);
-
                     break;
 
                 case FIT_TO_WINDOW:
@@ -1261,7 +1260,6 @@ public class MainWindowController implements Initializable {
                     menuFitToWindow.setSelected(true);
                     imageViewMain.fitWidthProperty().bind(scrollPaneMain.widthProperty());
                     imageViewMain.fitHeightProperty().bind(scrollPaneMain.heightProperty());
-
                     break;
 
                 case FIT_TO_DESKTOP:
@@ -1300,7 +1298,6 @@ public class MainWindowController implements Initializable {
                     menuFitToDesktop.setSelected(true);
                     imageViewMain.setFitWidth(finalWidth);
                     imageViewMain.setFitHeight(finalHeight);
-
                     break;
 
                 case STRETCHED:
@@ -1309,7 +1306,6 @@ public class MainWindowController implements Initializable {
                     imageViewMain.setPreserveRatio(false);
                     imageViewMain.fitWidthProperty().bind(scrollPaneMain.widthProperty());
                     imageViewMain.fitHeightProperty().bind(scrollPaneMain.heightProperty());
-
                     break;
             }
 
