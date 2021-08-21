@@ -397,7 +397,7 @@ public class MainViewModel {
     }
 
     /**
-     * Creates a temporary, edited image and sets it as the currently displayed one
+     * Creates a temporary, edited image
      */
     private ImageModel createTempImage(BufferedImage image, File tempFile, String originalPath) {
         String format = FilenameUtils.getExtension(tempFile.getPath());

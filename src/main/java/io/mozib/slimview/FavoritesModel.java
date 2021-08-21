@@ -33,7 +33,7 @@ public class FavoritesModel implements Serializable {
         }
 
         public void setPath(String path) {
-            this.path = path;            
+            this.path = path;
         }
 
         public FavoriteModel() {
