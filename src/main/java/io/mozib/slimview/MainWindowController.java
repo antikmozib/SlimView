@@ -258,8 +258,8 @@ public class MainWindowController implements Initializable {
         // bind ChangeListeners
         mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
         viewStyleProperty.addListener(new ViewStyleChangeListener(
-                window.getWidth() - window.getScene().getWidth(),
-                window.getHeight() - window.getScene().getHeight()
+                window.getWidth() - window.getScene().getWidth(), /* Window borders */
+                window.getHeight() - window.getScene().getHeight() /* Title bar */
                         + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight()));
         mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
 
@@ -366,8 +366,8 @@ public class MainWindowController implements Initializable {
                             scaleFactor = scrollPaneMain.getViewportBounds().getHeight() / selectedHeight;
                         }
 
-                        double targetWidth = scaleFactor * getViewingWidth();
-                        double targetHeight = scaleFactor * getViewingHeight();
+                        double targetWidth = Math.round(scaleFactor * getViewingWidth());
+                        double targetHeight = Math.round(scaleFactor * getViewingHeight());
 
                         mainViewModel.resizeImage(
                                 mainViewModel.getSelectedImageModel(),
@@ -1217,6 +1217,10 @@ public class MainWindowController implements Initializable {
         private final double fixedWidth;
         private final double fixedHeight;
 
+        /**
+         * @param fixedWidth  Width of the fixed UI elements such as window borders
+         * @param fixedHeight Height of the fixed UI elements such as title bar and menu bar
+         */
         public ViewStyleChangeListener(double fixedWidth, double fixedHeight) {
             this.fixedWidth = fixedWidth;
             this.fixedHeight = fixedHeight;
@@ -1247,16 +1251,21 @@ public class MainWindowController implements Initializable {
 
             switch (newValue) {
                 case ORIGINAL:
+
                     menuOriginalSize.setSelected(true);
+
                     break;
 
                 case FIT_TO_WINDOW:
+
                     menuFitToWindow.setSelected(true);
                     imageViewMain.fitWidthProperty().bind(scrollPaneMain.widthProperty());
                     imageViewMain.fitHeightProperty().bind(scrollPaneMain.heightProperty());
+
                     break;
 
                 case FIT_TO_DESKTOP:
+
                     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                     double screenWidth = screenSize.getWidth();
                     double screenHeight = screenSize.getHeight();
@@ -1265,17 +1274,17 @@ public class MainWindowController implements Initializable {
                     double desktopHeight
                             = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getHeight();
                     double aspectRatio = mainViewModel.getSelectedImageModel().getAspectRatio();
-                    double effectiveWidth = desktopWidth - fixedWidth;
-                    double effectiveHeight = desktopHeight - fixedHeight;
+                    double viewportWidth = desktopWidth - fixedWidth;
+                    double viewportHeight = desktopHeight - fixedHeight;
                     double finalWidth, finalHeight;
 
                     if (!isViewingFullScreen.get()) {
                         Window window = imageViewMain.getScene().getWindow();
 
-                        finalWidth = effectiveWidth;
+                        finalWidth = viewportWidth;
                         finalHeight = finalWidth / aspectRatio;
-                        if (finalHeight > effectiveHeight) {
-                            finalHeight = effectiveHeight;
+                        if (finalHeight > viewportHeight) {
+                            finalHeight = viewportHeight;
                             finalWidth = aspectRatio * finalHeight;
                         }
 
@@ -1291,15 +1300,16 @@ public class MainWindowController implements Initializable {
                     menuFitToDesktop.setSelected(true);
                     imageViewMain.setFitWidth(finalWidth);
                     imageViewMain.setFitHeight(finalHeight);
+
                     break;
 
                 case STRETCHED:
+
                     menuStretched.setSelected(true);
                     imageViewMain.setPreserveRatio(false);
                     imageViewMain.fitWidthProperty().bind(scrollPaneMain.widthProperty());
                     imageViewMain.fitHeightProperty().bind(scrollPaneMain.heightProperty());
 
-                    System.out.println(scrollPaneMain.getWidth());
                     break;
             }
 
