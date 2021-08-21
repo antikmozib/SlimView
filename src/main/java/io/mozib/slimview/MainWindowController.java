@@ -33,6 +33,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Window;
 import javafx.stage.*;
 
@@ -91,6 +93,8 @@ public class MainWindowController implements Initializable {
     // Structure: ScrollPane > AnchorPane > Rectangle + [StackPane > ImageView]
 
     @FXML
+    public BorderPane borderPaneWindow;
+    @FXML
     public RadioMenuItem menuStretched;
     @FXML
     public ImageView imageViewMain;
@@ -119,7 +123,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public ToolBar toolBar;
     @FXML
-    public AnchorPane statusBar;
+    public GridPane gridPaneStatusBar;
     @FXML
     public AnchorPane anchorPaneMain;
     @FXML
@@ -181,7 +185,7 @@ public class MainWindowController implements Initializable {
 
         // bindings for fullscreen viewing
         toolBar.managedProperty().bind(toolBar.visibleProperty());
-        statusBar.managedProperty().bind(statusBar.visibleProperty());
+        gridPaneStatusBar.managedProperty().bind(gridPaneStatusBar.visibleProperty());
         menuBar.managedProperty().bind(menuBar.visibleProperty());
 
         // bind ImageView and FavoriteButton to SelectedImage
@@ -254,7 +258,9 @@ public class MainWindowController implements Initializable {
         // bind ChangeListeners
         mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
         viewStyleProperty.addListener(new ViewStyleChangeListener(
-                menuBar.getHeight(), toolBar.getHeight(), statusBar.getHeight()));
+                window.getWidth() - window.getScene().getWidth(),
+                window.getHeight() - window.getScene().getHeight()
+                        + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight()));
         mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
 
         // restore previous settings
@@ -821,7 +827,7 @@ public class MainWindowController implements Initializable {
         ((Stage) scrollPaneMain.getScene().getWindow()).setFullScreen(setFullScreen);
         menuBar.setVisible(!setFullScreen);
         toolBar.setVisible(!setFullScreen);
-        statusBar.setVisible(!setFullScreen);
+        gridPaneStatusBar.setVisible(!setFullScreen);
         isViewingFullScreen.set(setFullScreen);
         menuFullScreen.setSelected(setFullScreen);
     }
@@ -1208,12 +1214,12 @@ public class MainWindowController implements Initializable {
      */
     private class ViewStyleChangeListener implements ChangeListener<ViewStyle> {
 
-        private final double menuBarHeight, toolBarHeight, statusBarHeight;
+        private final double fixedWidth;
+        private final double fixedHeight;
 
-        public ViewStyleChangeListener(double menuBarHeight, double toolBarHeight, double statusBarHeight) {
-            this.menuBarHeight = menuBarHeight;
-            this.toolBarHeight = toolBarHeight;
-            this.statusBarHeight = statusBarHeight;
+        public ViewStyleChangeListener(double fixedWidth, double fixedHeight) {
+            this.fixedWidth = fixedWidth;
+            this.fixedHeight = fixedHeight;
         }
 
         @Override
@@ -1227,27 +1233,21 @@ public class MainWindowController implements Initializable {
             if (newValue == null)
                 newValue = Objects.requireNonNullElse(oldValue, ViewStyle.FIT_TO_WINDOW);
 
+            imageViewMain.setPreserveRatio(true);
             imageViewMain.fitWidthProperty().unbind();
             imageViewMain.fitHeightProperty().unbind();
+            scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-            scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
-            scrollPaneMain.setFitToHeight(true);
-            scrollPaneMain.setFitToWidth(true);
-
+            // reset image size first
             if (imageViewMain.getImage() != null) {
                 imageViewMain.setFitWidth(mainViewModel.getSelectedImageModel().getWidth());
                 imageViewMain.setFitHeight(mainViewModel.getSelectedImageModel().getHeight());
             }
 
-            imageViewMain.setPreserveRatio(true);
-
             switch (newValue) {
                 case ORIGINAL:
                     menuOriginalSize.setSelected(true);
-                    scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                    scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
                     break;
 
                 case FIT_TO_WINDOW:
@@ -1258,56 +1258,39 @@ public class MainWindowController implements Initializable {
 
                 case FIT_TO_DESKTOP:
                     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                    Rectangle desktopSize
-                            = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-                    double taskBarHeight = screenSize.height - desktopSize.height;
-                    double titleBarHeight = taskBarHeight;
                     double screenWidth = screenSize.getWidth();
                     double screenHeight = screenSize.getHeight();
+                    double desktopWidth
+                            = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getWidth();
+                    double desktopHeight
+                            = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getHeight();
                     double aspectRatio = mainViewModel.getSelectedImageModel().getAspectRatio();
-                    double fixedHeight = menuBarHeight + toolBarHeight + statusBarHeight;
-
-                    menuFitToDesktop.setSelected(true);
-                    scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                    scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-                    double targetWidth,
-                            targetHeight;
-
-                    if (isViewingFullScreen.get()) {
-                        targetWidth = screenWidth;
-                    } else {
-                        targetWidth = screenWidth - 16; // window border size * 2
-                    }
-
-                    targetHeight = targetWidth / aspectRatio;
-
-                    if (isViewingFullScreen.get()) {
-                        if (targetHeight > screenHeight) {
-                            targetHeight = screenHeight;
-                            targetWidth = aspectRatio * targetHeight;
-                        }
-                    } else {
-                        double viewableHeight = screenHeight - taskBarHeight - titleBarHeight - fixedHeight;
-                        if (targetHeight > viewableHeight) {
-                            targetHeight = viewableHeight;
-                            targetWidth = aspectRatio * targetHeight;
-                        }
-                    }
-
-                    imageViewMain.setPreserveRatio(false);
-                    imageViewMain.setFitWidth(targetWidth);
-                    imageViewMain.setFitHeight(targetHeight);
+                    double effectiveWidth = desktopWidth - fixedWidth;
+                    double effectiveHeight = desktopHeight - fixedHeight;
+                    double finalWidth, finalHeight;
 
                     if (!isViewingFullScreen.get()) {
                         Window window = imageViewMain.getScene().getWindow();
 
-                        // add 8 pixels of gutting on each side of the ImageView to account for window borders
-                        window.setWidth(targetWidth + 16);
-                        window.setHeight(targetHeight + titleBarHeight + fixedHeight);
+                        finalWidth = effectiveWidth;
+                        finalHeight = finalWidth / aspectRatio;
+                        if (finalHeight > effectiveHeight) {
+                            finalHeight = effectiveHeight;
+                            finalWidth = aspectRatio * finalHeight;
+                        }
+
                         window.setX(0);
                         window.setY(0);
+                        window.setWidth(finalWidth + fixedWidth);
+                        window.setHeight(finalHeight + fixedHeight);
+                    } else {
+                        finalWidth = screenWidth;
+                        finalHeight = screenHeight;
                     }
+
+                    menuFitToDesktop.setSelected(true);
+                    imageViewMain.setFitWidth(finalWidth);
+                    imageViewMain.setFitHeight(finalHeight);
                     break;
 
                 case STRETCHED:
@@ -1315,6 +1298,8 @@ public class MainWindowController implements Initializable {
                     imageViewMain.setPreserveRatio(false);
                     imageViewMain.fitWidthProperty().bind(scrollPaneMain.widthProperty());
                     imageViewMain.fitHeightProperty().bind(scrollPaneMain.heightProperty());
+
+                    System.out.println(scrollPaneMain.getWidth());
                     break;
             }
 

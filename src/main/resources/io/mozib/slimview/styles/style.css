@@ -17,12 +17,19 @@
     -fx-padding: 0
 }
 
-#scrollPaneMain:focused {
+#scrollPaneMain:focused, #borderPaneWindow:focused {
     -fx-background-insets: 0
 }
 
-#stackPaneMain .corner, #anchorPaneMain .corner, #scrollPaneMain .corner {
+#stackPaneMain .corner, #anchorPaneMain .corner, #scrollPaneMain .corner, #borderPaneWindow .corner {
     -fx-background-insets: 0
+}
+
+#borderPaneWindow {
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0
 }
 
 .selectionRectangle {

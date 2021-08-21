@@ -41,7 +41,7 @@ public class MainViewModel {
     private final ReadOnlyObjectWrapper<ImageModel> selectedImageModelWrapper = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<SortStyle> selectedSortStyleWrapper = new ReadOnlyObjectWrapper<>();
     private final String[] supportedReadExtensions
-            = new String[]{"bmp", "png", "gif", "jpeg", "jpg", "tiff", "ico", /*"svg", "wmf",*/ "cur"};
+            = new String[]{"bmp", "png", "gif", "jpeg", "jpg", "tiff", "ico", "cur", "psd", "psb" /*, "svg", "wmf"*/};
     private final String[] supportedWriteExtensions
             = new String[]{"bmp", "png", "gif", "jpeg", "jpg", "tiff", "ico"};
 
@@ -69,20 +69,28 @@ public class MainViewModel {
     @SuppressWarnings("unchecked")
     public void loadImage(String path) throws IOException {
         File file = new File(path);
-        if (!file.exists() || !Files.isReadable(file.toPath())) {
+        ImageModel imageModel = new ImageModel(path);
+
+        // ensure the file exists and is a valid image file
+        if (!file.exists() || !Files.isReadable(file.toPath()) || imageModel.getImage() == null) {
             throw new IOException();
         }
 
         // first, show the image requested while the directory is being scanned
-        setSelectedImage(new ImageModel(path));
+        setSelectedImage(imageModel);
 
         // now scan the rest of the directory
         loadDirectory = new LoadDirectory(new File(path).getParent(), supportedReadExtensions);
         loadDirectory.setOnSucceeded((WorkerStateEvent event) -> {
+
             imageModels = (List<ImageModel>) event.getSource().getValue();
             sortImages(selectedSortStyleProperty().get());
-            setSelectedImage(imageModels.stream().filter(image -> image.getPath().equals(path))
-                    .findFirst().orElse(null));
+
+            // swap out the new item in the list with the one being displayed
+            var newItem = imageModels.stream().filter(image -> image.getPath().equals(path))
+                    .findFirst().orElse(null);
+            imageModels.add(imageModels.indexOf(newItem), imageModel);
+            imageModels.remove(newItem);
         });
         status.bind(loadDirectory.messageProperty());
         loadDirectory.start();
@@ -260,6 +268,8 @@ public class MainViewModel {
     }
 
     public void sortImages(SortStyle sortStyle) {
+        if (sortStyle == null) return;
+
         if (imageModels.size() > 0) {
             switch (sortStyle) {
                 case DATE_MODIFIED:
@@ -368,6 +378,7 @@ public class MainViewModel {
                     + "  |  " + getMegapixelCount(imageModel)
                     + "  |  " + imageModel.getColorDepth() + "-bits"
                     + "  |  " + formatFileSize(imageModel.getFileSize())
+                    + (imageModel.hasOriginal() ? " (" + formatFileSize(imageModel.getOriginal().getFileSize()) + ")" : "")
                     + "  |  Created: " + formatTime(imageModel.getDateCreated())
                     + "  |  Modified: " + formatTime(imageModel.getDateModified()));
         }
@@ -400,7 +411,18 @@ public class MainViewModel {
      * Creates a temporary, edited image
      */
     private ImageModel createTempImage(BufferedImage image, File tempFile, String originalPath) {
-        String format = FilenameUtils.getExtension(tempFile.getPath());
+        String suppliedFormat = FilenameUtils.getExtension(tempFile.getPath());
+        String format;
+
+        // if we're working with one of the read-only image types (e.g. psd), convert and save it as a jpg instead
+        if (!Arrays.stream(getSupportedWriteExtensions()).anyMatch(
+                s -> s.equalsIgnoreCase(suppliedFormat))) {
+            format = "jpg";
+            tempFile = new File(tempFile.getPath().replaceFirst("\\.[^.]+$", "." + format));
+        } else {
+            format = suppliedFormat;
+        }
+
         try {
             tempFile.createNewFile();
             ImageIO.write(image, format, tempFile);

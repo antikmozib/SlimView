@@ -71,7 +71,7 @@ public class ImageModel {
     }
 
     public Image getImage() {
-        if (image == null)
+        if (image == null && getBufferedImage() != null)
             image = SwingFXUtils.toFXImage(getBufferedImage(), null);
 
         return image;
@@ -82,7 +82,7 @@ public class ImageModel {
             try {
                 bufferedImage = ImageIO.read(new File(getPath()));
             } catch (IOException e) {
-                bufferedImage = null;
+                bufferedImage = null; // corrupt image
             }
         }
 

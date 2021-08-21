@@ -34,10 +34,14 @@ public class SlimView extends Application {
         stage.setTitle("SlimView");
         stage.getIcons().add(new Image(this.getClass().getResourceAsStream("icons/slimview.png")));
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-        stage.setWidth(preferences.getDouble("MainWindowWidth", 960));
-        stage.setHeight(preferences.getDouble("MainWindowHeight", 720));
-        stage.setY(preferences.getDouble("MainWindowTop", 0.0));
-        stage.setX(preferences.getDouble("MainWindowLeft", 0.0));
+
+        stage.setWidth(preferences.getDouble("MainWindowWidth", 854));
+        stage.setHeight(preferences.getDouble("MainWindowHeight", 640));
+        stage.setX(preferences.getDouble("MainWindowLeft",
+                Screen.getPrimary().getVisualBounds().getWidth() / 2 - stage.getWidth() / 2));
+        stage.setY(preferences.getDouble("MainWindowTop",
+                Screen.getPrimary().getVisualBounds().getHeight() / 2 - stage.getHeight() / 2));
+
         if (stage.getWidth() > 0.9 * Screen.getPrimary().getVisualBounds().getWidth() &&
                 stage.getHeight() > 0.9 * Screen.getPrimary().getVisualBounds().getHeight()) {
             stage.setMaximized(true);

@@ -83,7 +83,7 @@ public class Util {
     }
 
     /**
-     * @return Path to the directory where to save temp, edited images
+     * @return Path to the directory where to save temporary, edited images
      */
     public static String tempDirectory() {
         createSettingsDir(); // ensure settings directory exists
