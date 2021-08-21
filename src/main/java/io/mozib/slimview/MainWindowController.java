@@ -144,6 +144,8 @@ public class MainWindowController implements Initializable {
     public ToggleButton tButtonSelectionMode;
     @FXML
     public ImageView tButtonFavoriteImageView;
+    @FXML
+    public Label labelQuickInfo;
 
     @FXML
     @Override
@@ -158,6 +160,8 @@ public class MainWindowController implements Initializable {
         // reset control properties
         labelResolution.setText("");
         labelPoints.setText("");
+        labelQuickInfo.setText("");
+        labelQuickInfo.setBlendMode(BlendMode.EXCLUSION);
         imageViewMain.setFitHeight(0);
         imageViewMain.setFitWidth(0);
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
@@ -187,6 +191,7 @@ public class MainWindowController implements Initializable {
         toolBar.managedProperty().bind(toolBar.visibleProperty());
         gridPaneStatusBar.managedProperty().bind(gridPaneStatusBar.visibleProperty());
         menuBar.managedProperty().bind(menuBar.visibleProperty());
+        labelQuickInfo.visibleProperty().bind(isViewingFullScreen);
 
         // bind ImageView and FavoriteButton to SelectedImage
         tButtonFavorite.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -333,7 +338,7 @@ public class MainWindowController implements Initializable {
                 selectionPivotY = mouseEvent.getY();
 
                 selectionRectangle = new javafx.scene.shape.Rectangle();
-                selectionRectangle.getStyleClass().add("selectionRectangle");
+                selectionRectangle.getStyleClass().add("selection-rect");
                 selectionRectangle.setBlendMode(BlendMode.EXCLUSION);
                 selectionRectangle.setOnMouseMoved(new EventHandler<MouseEvent>() {
                     @Override
@@ -878,11 +883,7 @@ public class MainWindowController implements Initializable {
         try {
             mainViewModel.loadImage(path);
         } catch (IOException e) {
-            Util.showCustomErrorDialog(
-                            "Loading failed",
-                            "The requested file doesn't exist or is unreadable.",
-                            imageViewMain.getScene().getWindow(), e)
-                    .show();
+            showLoadingFailedError(e);
         }
     }
 
@@ -1175,6 +1176,15 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    private void showLoadingFailedError(Exception e) {
+
+        Util.showCustomErrorDialog(
+                        "Loading failed",
+                        "The requested file doesn't exist or is unreadable.",
+                        imageViewMain.getScene().getWindow(), e)
+                .show();
+    }
+
     /**
      * Triggered when the image is changed
      */
@@ -1185,8 +1195,15 @@ public class MainWindowController implements Initializable {
                             ImageModel oldValue,
                             ImageModel newValue) {
 
+            // check if image is corrupted
+            if (newValue != null && newValue.getImage() == null) {
+                showLoadingFailedError(null);
+                return;
+            }
+
             tButtonFavorite.setSelected(newValue.getIsFavorite());
             imageViewMain.setImage(newValue.getImage());
+            labelQuickInfo.setText("");
 
             // reset the ViewStyle if we've zoomed image
             ViewStyle oldViewStyle;
@@ -1198,6 +1215,7 @@ public class MainWindowController implements Initializable {
             viewStyleProperty.set(null); // force trigger ChangeListener
             viewStyleProperty.set(oldViewStyle);
 
+            labelQuickInfo.setText(newValue.getBestPath());
             clearSelectionRectangle();
             imageViewMain.requestFocus();
 
@@ -1277,8 +1295,6 @@ public class MainWindowController implements Initializable {
                     double finalWidth, finalHeight;
 
                     if (!isViewingFullScreen.get()) {
-                        Window window = imageViewMain.getScene().getWindow();
-
                         finalWidth = viewportWidth;
                         finalHeight = finalWidth / aspectRatio;
                         if (finalHeight > viewportHeight) {
@@ -1286,16 +1302,22 @@ public class MainWindowController implements Initializable {
                             finalWidth = aspectRatio * finalHeight;
                         }
 
+                        Window window = imageViewMain.getScene().getWindow();
                         window.setX(0);
                         window.setY(0);
                         window.setWidth(finalWidth + fixedWidth);
                         window.setHeight(finalHeight + fixedHeight);
                     } else {
                         finalWidth = screenWidth;
-                        finalHeight = screenHeight;
+                        finalHeight = finalWidth / aspectRatio;
+                        if (finalHeight > screenHeight) {
+                            finalHeight = screenHeight;
+                            finalWidth = aspectRatio * finalHeight;
+                        }
                     }
 
                     menuFitToDesktop.setSelected(true);
+                    imageViewMain.setPreserveRatio(false);
                     imageViewMain.setFitWidth(finalWidth);
                     imageViewMain.setFitHeight(finalHeight);
                     break;

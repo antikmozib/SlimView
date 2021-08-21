@@ -412,23 +412,23 @@ public class MainViewModel {
      */
     private ImageModel createTempImage(BufferedImage image, File tempFile, String originalPath) {
         String suppliedFormat = FilenameUtils.getExtension(tempFile.getPath());
-        String format;
+        String targetFormat;
 
-        // if we're working with one of the read-only image types (e.g. psd), convert and save it as a jpg instead
-        if (!Arrays.stream(getSupportedWriteExtensions()).anyMatch(
-                s -> s.equalsIgnoreCase(suppliedFormat))) {
-            format = "jpg";
-            tempFile = new File(tempFile.getPath().replaceFirst("\\.[^.]+$", "." + format));
+        // if we're working with one of the read-only image types (e.g. psd), convert and save it as a bmp instead
+        if (Arrays.stream(getSupportedWriteExtensions()).noneMatch(s -> s.equalsIgnoreCase(suppliedFormat))) {
+            targetFormat = "bmp";
+            tempFile = new File(tempFile.getPath().replaceFirst("\\.[^.]+$", "." + targetFormat));
         } else {
-            format = suppliedFormat;
+            targetFormat = suppliedFormat;
         }
 
         try {
             tempFile.createNewFile();
-            ImageIO.write(image, format, tempFile);
+            ImageIO.write(image, targetFormat, tempFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return new ImageModel(tempFile.getPath(), originalPath);
     }
 

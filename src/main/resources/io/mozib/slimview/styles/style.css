@@ -3,7 +3,7 @@
  */
 
 .tooltip {
-    -fx-font-size: 14
+    -fx-font-size: 14;
 }
 
 #stackPaneMain, #scrollPaneMain, #anchorPaneMain {
@@ -14,27 +14,32 @@
     -fx-border-width: 0;
     -fx-border-insets: 0;
     -fx-background-insets: 0;
-    -fx-padding: 0
+    -fx-padding: 0;
 }
 
 #scrollPaneMain:focused, #borderPaneWindow:focused {
-    -fx-background-insets: 0
+    -fx-background-insets: 0;
 }
 
 #stackPaneMain .corner, #anchorPaneMain .corner, #scrollPaneMain .corner, #borderPaneWindow .corner {
-    -fx-background-insets: 0
+    -fx-background-insets: 0;
 }
 
 #borderPaneWindow {
     -fx-border-width: 0;
     -fx-border-insets: 0;
     -fx-background-insets: 0;
-    -fx-padding: 0
+    -fx-padding: 0;
 }
 
-.selectionRectangle {
+#labelQuickInfo {
+    -fx-text-fill: white;
+    -fx-font-family: monospace;
+}
+
+.selection-rect {
     -fx-fill: transparent;
     -fx-stroke: white;
+    -fx-stroke-type: inside;
     -fx-stroke-width: 1;
-    -fx-stroke-type: inside
 }

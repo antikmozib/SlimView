@@ -23,6 +23,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane id="borderPaneWindow" fx:id="borderPaneWindow" prefHeight="400.0" prefWidth="854.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.MainWindowController">
    <top>
@@ -410,6 +411,14 @@
                               <ImageView id="imageViewMain" fx:id="imageViewMain" focusTraversable="true" onMouseExited="#imageViewMain_onMouseExit" onMouseMoved="#imageViewMain_onMouseMove" pickOnBounds="true" preserveRatio="true" />
                           </children>
                       </StackPane>
+                  <Label id="labelQuickInfo" fx:id="labelQuickInfo" text="Label" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                     </padding>
+                  </Label>
                </children>
             </AnchorPane>
          </content>
