@@ -4,8 +4,6 @@
 
 package io.mozib.slimview;
 
-import io.mozib.slimview.CopyFileToViewModel;
-import io.mozib.slimview.CopyToDestinations;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -195,7 +193,7 @@ public class CopyFileToWindowController implements Initializable {
 
     @FXML
     public void listViewMain_onClick(MouseEvent mouseEvent) {
-        if (mouseEvent.getButton()== MouseButton.PRIMARY && mouseEvent.getClickCount()==2) {
+        if (mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
             copy();
         }
     }

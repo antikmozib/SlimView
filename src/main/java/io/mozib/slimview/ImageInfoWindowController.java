@@ -92,7 +92,7 @@ public class ImageInfoWindowController implements Initializable {
 
                 scrollPane.setContent(gridPane);
                 anchorPane.getChildren().add(scrollPane);
-                tab.setContent(anchorPane);                
+                tab.setContent(anchorPane);
                 tabPaneMain.getTabs().add(tab);
             }
         } catch (ImageProcessingException | IOException e) {
