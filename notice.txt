@@ -4,8 +4,8 @@ https://github.com/rkalla/imgscalr
 TwelveMonkeys ImageIO by Harald Kuhr
 https://github.com/haraldk/TwelveMonkeys
 ---
-Icon made by Smashicons from Flaticon
-https://www.flaticon.com/authors/smashicons
----
 metadata-extractor by Drew Noakes
 https://github.com/drewnoakes/metadata-extractor
+---
+Icon made by Smashicons from Flaticon
+https://www.flaticon.com/authors/smashicons
