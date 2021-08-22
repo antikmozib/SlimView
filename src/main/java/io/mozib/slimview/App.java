@@ -4,6 +4,10 @@
 
 package io.mozib.slimview;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -14,14 +18,16 @@ public class App {
     public static void main(String[] args) {
         if (args.length > 0 && args[0].equalsIgnoreCase("--uninst")) {
             try {
+                // clear Java prefs
                 Preferences.userNodeForPackage(App.class).clear();
-            } catch (BackingStoreException e) {
+                // delete settings files
+                Util.deleteDirectoryRecursively(new File(Util.getTempDirectory()).getParent());
+                //FileUtils.deleteDirectory(new File(Util.getTempDirectory()).getParentFile());
+            } catch (BackingStoreException | IOException e) {
                 e.printStackTrace();
             }
-
             return;
         }
-
         SlimView.main(args);
     }
 }

@@ -85,7 +85,7 @@ public class Util {
     /**
      * @return Path to the directory where to save temporary, edited images
      */
-    public static String tempDirectory() {
+    public static String getTempDirectory() {
         createSettingsDir(); // ensure settings directory exists
         Path path = Paths.get(System.getProperty("user.home"), ".slimview", "cache");
         if (!Files.exists(path)) {
@@ -305,5 +305,21 @@ public class Util {
             alert.getDialogPane().setExpandableContent(expContent);
         }
         return alert;
+    }
+
+    public static void deleteDirectoryRecursively(String path) throws IOException {
+        File root = new File(path);
+
+        if (root.isDirectory()) {
+            for (File file : root.listFiles()) {
+                if (!file.isDirectory()) {
+                    if (!file.delete()) throw new IOException();
+                } else {
+                    deleteDirectoryRecursively(file.getPath());
+                }
+            }
+        }
+
+        if (!root.delete()) throw new IOException();
     }
 }

@@ -407,13 +407,13 @@ public class MainViewModel {
         }
 
         var resized = Scalr.resize(image, Scalr.Method.SPEED, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
-        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
+        var file = new File(Paths.get(getTempDirectory(), imageModel.getName()).toString());
         setSelectedImage(createTempImage(resized, file, imageModel.getBestPath()));
     }
 
     private void rotateImage(ImageModel imageModel, Scalr.Rotation rotation) {
         var rotated = Scalr.rotate(imageModel.getBufferedImage(), rotation);
-        var file = new File(Paths.get(tempDirectory(), imageModel.getName()).toString());
+        var file = new File(Paths.get(getTempDirectory(), imageModel.getName()).toString());
         setSelectedImage(createTempImage(rotated, file, imageModel.getBestPath()));
     }
 

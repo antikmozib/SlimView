@@ -41,7 +41,10 @@ import javafx.stage.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -262,14 +265,15 @@ public class MainWindowController implements Initializable {
 
         // *nix (esp Ubuntu) has weird desktop bound measurement system; account for this
         double titleBarHeight = window.getHeight() - window.getScene().getHeight();
-        double windowBorderWidth = window.getWidth() - window.getScene().getWidth();
+        double windowBorderLeftRight = window.getWidth() - window.getScene().getWidth();
         double fixedWidth, fixedHeight;
+
         if (getOSType() == Util.OSType.WINDOWS) {
-            fixedWidth = windowBorderWidth;
+            fixedWidth = windowBorderLeftRight;
             fixedHeight = titleBarHeight + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight();
         } else {
-            fixedWidth = 16;
-            fixedHeight = 40 + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight();
+            fixedWidth = 0;
+            fixedHeight = 8 + titleBarHeight + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight();
         }
 
         // bind ChangeListeners
@@ -869,11 +873,22 @@ public class MainWindowController implements Initializable {
     }
 
     /**
+     * @return Size of the displayed image as a ratio of the size of the original image
+     */
+    private double getCurrentViewingZoom() {
+        return BigDecimal.valueOf(100 * getViewingWidth()
+                        / (mainViewModel.getSelectedImageModel().hasOriginal()
+                        ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
+                        : mainViewModel.getSelectedImageModel().getWidth()))
+                .setScale(1, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    /**
      * Updates the title of the application window.
      */
     private void updateTitle() {
         Stage stage = (Stage) imageViewMain.getScene().getWindow();
-        String title = "";
+        String title;
         if (mainViewModel.getSelectedImageModel() == null) {
             title = "SlimView";
         } else {
@@ -1026,10 +1041,10 @@ public class MainWindowController implements Initializable {
         } else {
 
             // *nix doesn't like Windows-style extension filters
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("All Files", "*"));
             fileChooser.getExtensionFilters().addAll(
                     getExtensionFilters(mainViewModel.getSupportedReadExtensions()));
-            fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("All Files", "*.*"));
         }
 
         File initialDirectory = new File(preferences.get("OpenLocation", System.getProperty("user.home")));
@@ -1223,7 +1238,6 @@ public class MainWindowController implements Initializable {
             viewStyleProperty.set(null); // force trigger ChangeListener
             viewStyleProperty.set(oldViewStyle);
 
-            labelQuickInfo.setText(newValue.getBestPath());
             clearSelectionRectangle();
             imageViewMain.requestFocus();
 
@@ -1348,6 +1362,8 @@ public class MainWindowController implements Initializable {
             }
 
             preferences.put("LastViewStyle", newValue.toString());
+            labelQuickInfo.setText(
+                    mainViewModel.getSelectedImageModel().getBestPath() + " (" + getCurrentViewingZoom() + "%)");
             clearSelectionRectangle();
             imageViewMain.requestFocus();
         }
@@ -1391,15 +1407,11 @@ public class MainWindowController implements Initializable {
             clearSelectionRectangle();
 
             if (mainViewModel.getSelectedImageModel() != null) {
-                double currentWidth = mainViewModel.getSelectedImageModel().hasOriginal()
-                        ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
-                        : mainViewModel.getSelectedImageModel().getWidth();
-                double zoom = getViewingWidth() / currentWidth * 100;
                 labelResolution.setText(
                         (mainViewModel.getSelectedImageModel().hasOriginal()
                                 ? mainViewModel.getSelectedImageModel().getOriginal().getResolution()
                                 : mainViewModel.getSelectedImageModel().getResolution())
-                                + " (" + Math.round(zoom) + "%)");
+                                + " (" + getCurrentViewingZoom() + "%)");
             }
         }
     }
