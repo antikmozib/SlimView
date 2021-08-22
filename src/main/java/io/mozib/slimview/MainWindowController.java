@@ -35,8 +35,10 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.stage.*;
 
 import java.awt.*;
 import java.io.File;
@@ -44,7 +46,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -78,11 +79,9 @@ public class MainWindowController implements Initializable {
     private final SimpleObjectProperty<ViewStyle> viewStyleProperty
             = new SimpleObjectProperty<>(ViewStyle.FIT_TO_DESKTOP);
 
-    // the ViewStyle to reset to when switching between images after zooming
-    private ViewStyle cachedViewStyleZoom = viewStyleProperty.get();
-
     // FIELDS FOR SELECTION RECTANGLE
     private javafx.scene.shape.Rectangle selectionRectangle = null;
+    private final SimpleBooleanProperty selectionModeActive = new SimpleBooleanProperty();
     /**
      * Set to true if and only if the mouse button is down. May be false even if the SelectionRectangle is visible.
      */
@@ -94,7 +93,7 @@ public class MainWindowController implements Initializable {
     private double selectionPivotX = 0.0;
     private double selectionPivotY = 0.0;
 
-    // Structure: ScrollPane > AnchorPane > Rectangle + [StackPane > ImageView]
+    // Structure: AnchorPane > Label + [ScrollPane > AnchorPane > Rectangle + [StackPane > ImageView]]
 
     @FXML
     public BorderPane borderPaneWindow;
@@ -165,6 +164,7 @@ public class MainWindowController implements Initializable {
         labelResolution.setText("");
         labelPoints.setText("");
         labelQuickInfo.setText("");
+        labelQuickInfo.toFront();
         imageViewMain.setFitHeight(0);
         imageViewMain.setFitWidth(0);
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
@@ -181,14 +181,19 @@ public class MainWindowController implements Initializable {
         // Button ToggleGroup
         tButtonPanMode.setToggleGroup(toggleGroupSelectPan);
         tButtonSelectionMode.setToggleGroup(toggleGroupSelectPan);
-        tButtonSelectionMode.setSelected(preferences.getBoolean("CurrentSelectionMode", true));
-        tButtonPanMode.setSelected(!tButtonSelectionMode.isSelected());
+        tButtonPanMode.selectedProperty().bindBidirectional(scrollPaneMain.pannableProperty());
+        tButtonSelectionMode.selectedProperty().bindBidirectional(selectionModeActive);
 
-        // bind SelectionRectangle/pan mode buttons
-        scrollPaneMain.pannableProperty().bindBidirectional(tButtonPanMode.selectedProperty());
-        scrollPaneMain.pannableProperty().addListener(((observable, oldValue, newValue) -> {
-            preferences.putBoolean("CurrentSelectionMode", !newValue);
+        // bind SelectionRectangle properties
+        selectionModeActive.set(preferences.getBoolean("CurrentSelectionMode", true));
+        selectionModeActive.addListener(((observable, oldValue, newValue) -> {
+            preferences.putBoolean("CurrentSelectionMode", newValue);
+            scrollPaneMain.setPannable(!newValue);
+            if (!newValue) clearSelectionRectangle();
         }));
+        var currentSelectionMode = selectionModeActive.get();
+        selectionModeActive.set(!currentSelectionMode);
+        selectionModeActive.set(currentSelectionMode);
 
         // bindings for fullscreen viewing
         toolBar.managedProperty().bind(toolBar.visibleProperty());
@@ -272,8 +277,8 @@ public class MainWindowController implements Initializable {
             fixedWidth = windowBorderLeftRight;
             fixedHeight = titleBarHeight + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight();
         } else {
-            fixedWidth = 0;
-            fixedHeight = 8 + titleBarHeight + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight();
+            fixedWidth = 12;
+            fixedHeight = 12 + titleBarHeight + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight();
         }
 
         // bind ChangeListeners
@@ -304,7 +309,8 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void anchorPaneMain_onMousePress(MouseEvent mouseEvent) {
-        if (!scrollPaneMain.isPannable() && mainViewModel.getSelectedImageModel() != null) {
+        if (selectionModeActive.get() && mainViewModel.getSelectedImageModel() != null) {
+            clearSelectionRectangle();
 
             // don't start selecting if initial point is outside the ImageView
             if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX()
@@ -314,14 +320,10 @@ public class MainWindowController implements Initializable {
                 return;
 
             selectionStartedProperty.set(true);
-        } else {
-            // most likely panning started; disable selection mode
-            selectionStartedProperty.set(false);
         }
 
-        if (!cursorInsideSelRect) {
-            anchorPaneMain.getChildren().remove(selectionRectangle);
-            selectionRectangle = null;
+        if (!cursorInsideSelRect && !selectionStartedProperty.get()) {
+            clearSelectionRectangle();
         }
     }
 
@@ -330,14 +332,12 @@ public class MainWindowController implements Initializable {
         imageViewMain.setCursor(Cursor.DEFAULT);
 
         // stop selecting but don't clear the rectangle yet as we need it for copying, zooming etc.
-        if (selectionStartedProperty.get()) {
-            selectionStartedProperty.set(false);
-        }
+        selectionStartedProperty.set(false);
     }
 
     @FXML
     public void anchorPaneMain_onMouseDrag(MouseEvent mouseEvent) {
-        if (tButtonPanMode.isSelected()) {
+        if (!selectionModeActive.get()) {
             imageViewMain.setCursor(Cursor.MOVE);
         } else {
             imageViewMain.setCursor(Cursor.CROSSHAIR);
@@ -632,6 +632,14 @@ public class MainWindowController implements Initializable {
             case CONTROL:
                 isCtrlDown = true;
 
+            case S:
+                selectionModeActive.set(true);
+                break;
+
+            case P:
+                selectionModeActive.set(false);
+                break;
+
             default:
                 break;
         }
@@ -910,6 +918,11 @@ public class MainWindowController implements Initializable {
         stage.setTitle(title);
     }
 
+    private void updateFullScreenInfo() {
+        labelQuickInfo.setText(
+                mainViewModel.getSelectedImageModel().getBestPath() + " [" + getCurrentViewingZoom() + "%]");
+    }
+
     /**
      * Main method to load an image into the application. Don't use ViewModel's function directly.
      *
@@ -1128,7 +1141,6 @@ public class MainWindowController implements Initializable {
         Scene scene = new Scene(root);
         ImageInfoWindowController controller = fxmlLoader.getController();
         Stage imageInfoWindow = new Stage();
-        scene.getStylesheets().add(getClass().getResource("styles/imageInfoWindowStyle.css").toExternalForm());
         imageInfoWindow.setScene(scene);
         imageInfoWindow.initModality(Modality.WINDOW_MODAL);
         imageInfoWindow.getIcons().add(((Stage) imageViewMain.getScene().getWindow()).getIcons().get(0));
@@ -1209,17 +1221,13 @@ public class MainWindowController implements Initializable {
             labelQuickInfo.setText("");
 
             // reset the ViewStyle if we've zoomed image
-            ViewStyle oldViewStyle;
-            if (newValue.hasOriginal() || oldValue == null) {
-                oldViewStyle = viewStyleProperty.get();
-            } else {
-                oldViewStyle = cachedViewStyleZoom;
-            }
+            ViewStyle currentViewStyle = viewStyleProperty.get();
             viewStyleProperty.set(null); // force trigger ChangeListener
-            viewStyleProperty.set(oldViewStyle);
+            viewStyleProperty.set(currentViewStyle);
 
             clearSelectionRectangle();
             imageViewMain.requestFocus();
+            updateFullScreenInfo();
 
             try {
                 updateTitle();
@@ -1336,15 +1344,7 @@ public class MainWindowController implements Initializable {
                     break;
             }
 
-            // cache ViewStyle for use after zooming
-            if (!mainViewModel.getSelectedImageModel().hasOriginal()
-                    || mainViewModel.getSelectedImageModel() == null) {
-                cachedViewStyleZoom = newValue;
-            }
-
             preferences.put("LastViewStyle", newValue.toString());
-            labelQuickInfo.setText(
-                    mainViewModel.getSelectedImageModel().getBestPath() + " (" + getCurrentViewingZoom() + "%)");
             clearSelectionRectangle();
             imageViewMain.requestFocus();
         }
@@ -1384,6 +1384,7 @@ public class MainWindowController implements Initializable {
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 
             updateTitle();
+            updateFullScreenInfo();
             labelResolution.setText("");
             clearSelectionRectangle();
 

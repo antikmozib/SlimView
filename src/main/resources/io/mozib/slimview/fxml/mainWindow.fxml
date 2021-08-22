@@ -226,7 +226,7 @@
                       <Separator />
                   <ToggleButton fx:id="tButtonSelectionMode" mnemonicParsing="false" selected="true">
                       <tooltip>
-                          <Tooltip text="Selection Mode" />
+                          <Tooltip text="Selection Mode (S)" />
                       </tooltip>
                      <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
@@ -238,7 +238,7 @@
                   </ToggleButton>
                   <ToggleButton fx:id="tButtonPanMode" mnemonicParsing="false">
                       <tooltip>
-                          <Tooltip text="Pan Mode" />
+                          <Tooltip text="Pan Mode (P)" />
                       </tooltip>
                      <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
@@ -402,27 +402,31 @@
       </VBox>
    </top>
    <center>
-        <ScrollPane id="scrollPaneMain" fx:id="scrollPaneMain" fitToHeight="true" fitToWidth="true" onKeyPressed="#scrollPaneMain_onKeyPress" onKeyReleased="#scrollPaneMain_onKeyRelease" onMouseClicked="#scrollPaneMain_onClick" onScroll="#scrollPaneMain_onScroll" BorderPane.alignment="CENTER">
-         <content>
-            <AnchorPane id="anchorPaneMain" fx:id="anchorPaneMain" onMouseDragged="#anchorPaneMain_onMouseDrag" onMousePressed="#anchorPaneMain_onMousePress" onMouseReleased="#anchorPaneMain_onMouseRelease">
-               <children>
-                      <StackPane id="stackPaneMain" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <children>
-                              <ImageView id="imageViewMain" fx:id="imageViewMain" focusTraversable="true" onMouseExited="#imageViewMain_onMouseExit" onMouseMoved="#imageViewMain_onMouseMove" pickOnBounds="true" preserveRatio="true" />
-                          </children>
-                      </StackPane>
-                  <Label id="labelQuickInfo" fx:id="labelQuickInfo" blendMode="DIFFERENCE" text="Label" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <padding>
-                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                     </padding>
-                  </Label>
-               </children>
-            </AnchorPane>
-         </content>
-        </ScrollPane>
+      <AnchorPane styleClass="no-border" BorderPane.alignment="CENTER">
+         <children>
+            <Label id="labelQuickInfo" fx:id="labelQuickInfo" blendMode="DIFFERENCE" text="Path" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <padding>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </padding>
+            </Label>
+              <ScrollPane id="scrollPaneMain" fx:id="scrollPaneMain" fitToHeight="true" fitToWidth="true" onKeyPressed="#scrollPaneMain_onKeyPress" onKeyReleased="#scrollPaneMain_onKeyRelease" onMouseClicked="#scrollPaneMain_onClick" onScroll="#scrollPaneMain_onScroll" styleClass="no-border" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <content>
+                  <AnchorPane fx:id="anchorPaneMain" onMouseDragged="#anchorPaneMain_onMouseDrag" onMousePressed="#anchorPaneMain_onMousePress" onMouseReleased="#anchorPaneMain_onMouseRelease" styleClass="no-border">
+                     <children>
+                            <StackPane styleClass="no-border" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <children>
+                                    <ImageView fx:id="imageViewMain" focusTraversable="true" onMouseExited="#imageViewMain_onMouseExit" onMouseMoved="#imageViewMain_onMouseMove" pickOnBounds="true" preserveRatio="true" />
+                                </children>
+                            </StackPane>
+                     </children>
+                  </AnchorPane>
+               </content>
+              </ScrollPane>
+         </children>
+      </AnchorPane>
    </center>
    <bottom>
       <GridPane fx:id="gridPaneStatusBar" hgap="16.0">

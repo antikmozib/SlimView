@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.prefs.Preferences;
 
-import static io.mozib.slimview.Util.getOSType;
 import static io.mozib.slimview.Util.getTempDirectory;
 
 public class SlimView extends Application {
@@ -58,7 +57,7 @@ public class SlimView extends Application {
             preferences.putDouble("MainWindowLeft", stage.getScene().getWindow().getX());
         });
 
-        stage.show();
+        stage.show(); // must be invoked AFTER setting up OnShown handler
 
         if (cmdLineArgs != null && cmdLineArgs.length > 0) {
             controller.openImage(cmdLineArgs[0]);

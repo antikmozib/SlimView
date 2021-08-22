@@ -6,7 +6,7 @@
     -fx-font-size: 14;
 }
 
-#stackPaneMain, #scrollPaneMain, #anchorPaneMain {
+.no-border {
     -fx-box-border: transparent;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
@@ -17,11 +17,11 @@
     -fx-padding: 0;
 }
 
-#scrollPaneMain:focused, #borderPaneWindow:focused {
+.no-border:focused {
     -fx-background-insets: 0;
 }
 
-#stackPaneMain .corner, #anchorPaneMain .corner, #scrollPaneMain .corner, #borderPaneWindow .corner {
+.no-border .corner {
     -fx-background-insets: 0;
 }
 
