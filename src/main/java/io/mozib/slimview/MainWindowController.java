@@ -486,6 +486,14 @@ public class MainWindowController implements Initializable {
         resizeWindow.initOwner(imageViewMain.getScene().getWindow());
         ResizeWindowController controller = fxmlLoader.getController();
         controller.setViewModel(resizeViewModel);
+
+        /*resizeWindow.setOnShown((event -> {
+            Window owner = imageViewMain.getScene().getWindow();
+            resizeWindow.setX(owner.getX() + owner.getWidth() / 2 - resizeWindow.getWidth() / 2);
+            resizeWindow.setY(owner.getY() + owner.getHeight() / 3 - resizeWindow.getHeight() / 2);
+        }));*/
+
+        childWindowInCentre(imageViewMain.getScene().getWindow(), resizeWindow);
         resizeWindow.showAndWait();
 
         if (resizeViewModel.useNewValues.get()) {
@@ -540,6 +548,7 @@ public class MainWindowController implements Initializable {
         aboutWindow.initOwner(imageViewMain.getScene().getWindow());
         aboutWindow.getIcons().add(((Stage) imageViewMain.getScene().getWindow()).getIcons().get(0));
         aboutWindow.setTitle("About");
+        childWindowInCentre(imageViewMain.getScene().getWindow(), aboutWindow);
         aboutWindow.show();
         controller.buttonOK.requestFocus();
     }
@@ -848,6 +857,7 @@ public class MainWindowController implements Initializable {
         favoritesWindow.initOwner(imageViewMain.getScene().getWindow());
         favoritesWindow.setTitle("Favorites Manager");
         controller.setFavoritesController(mainViewModel.getFavoritesController());
+        childWindowInCentre(imageViewMain.getScene().getWindow(), favoritesWindow);
         favoritesWindow.showAndWait();
 
         if (controller.getSelectedFavorite().get() != null) {
@@ -1151,6 +1161,7 @@ public class MainWindowController implements Initializable {
         imageInfoWindow.initOwner(imageViewMain.getScene().getWindow());
         imageInfoWindow.setTitle("Image Properties");
         controller.loadInfo(mainViewModel.getSelectedImageModel());
+        childWindowInCentre(imageViewMain.getScene().getWindow(), imageInfoWindow);
         imageInfoWindow.show();
     }
 
@@ -1170,6 +1181,7 @@ public class MainWindowController implements Initializable {
         copyFileToWindow.initOwner(imageViewMain.getScene().getWindow());
         copyFileToWindow.setTitle("Copy File To");
         controller.setViewModel(new CopyFileToViewModel(mainViewModel.getSelectedImageModel()));
+        childWindowInCentre(imageViewMain.getScene().getWindow(), copyFileToWindow);
         copyFileToWindow.show();
     }
 
@@ -1203,6 +1215,13 @@ public class MainWindowController implements Initializable {
                         "The requested file doesn't exist or is unreadable.",
                         imageViewMain.getScene().getWindow(), e)
                 .show();
+    }
+
+    private void childWindowInCentre(Window owner, Window child) {
+        child.setOnShown(event -> {
+            child.setX(owner.getX() + owner.getWidth() / 2 - child.getWidth() / 2);
+            child.setY(owner.getY() + owner.getHeight() / 3 - child.getHeight() / 2);
+        });
     }
 
     /**

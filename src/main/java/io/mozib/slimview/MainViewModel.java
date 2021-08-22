@@ -394,7 +394,7 @@ public class MainViewModel {
             image = imageModel.getOriginal().getBufferedImage();
         }
 
-        var resized = Scalr.resize(image, Scalr.Method.SPEED, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
+        var resized = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
         var file = new File(Paths.get(getTempDirectory(), imageModel.getName()).toString());
         setSelectedImage(createTempImage(resized, file, imageModel.getBestPath()));
     }
