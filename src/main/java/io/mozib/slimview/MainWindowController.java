@@ -260,12 +260,21 @@ public class MainWindowController implements Initializable {
         window.widthProperty().addListener((observable -> clearSelectionRectangle()));
         window.heightProperty().addListener((observable -> clearSelectionRectangle()));
 
+        // *nix (esp Ubuntu) has weird desktop bound measurement system; account for this
+        double titleBarHeight = window.getHeight() - window.getScene().getHeight();
+        double windowBorderWidth = window.getWidth() - window.getScene().getWidth();
+        double fixedWidth, fixedHeight;
+        if (getOSType() == Util.OSType.WINDOWS) {
+            fixedWidth = windowBorderWidth;
+            fixedHeight = titleBarHeight + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight();
+        } else {
+            fixedWidth = 16;
+            fixedHeight = 40 + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight();
+        }
+
         // bind ChangeListeners
         mainViewModel.selectedImageModelProperty().addListener(new ImageChangeListener());
-        viewStyleProperty.addListener(new ViewStyleChangeListener(
-                window.getWidth() - window.getScene().getWidth(), /* Window borders */
-                window.getHeight() - window.getScene().getHeight() /* Title bar */
-                        + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight()));
+        viewStyleProperty.addListener(new ViewStyleChangeListener(fixedWidth, fixedHeight));
         mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
 
         // restore previous settings
@@ -1284,13 +1293,15 @@ public class MainWindowController implements Initializable {
                     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                     double screenWidth = screenSize.getWidth();
                     double screenHeight = screenSize.getHeight();
-                    double desktopWidth
+                    double desktopViewportWidth
                             = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getWidth();
-                    double desktopHeight
+                    double desktopViewportHeight
                             = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getHeight();
                     double aspectRatio = mainViewModel.getSelectedImageModel().getAspectRatio();
-                    double viewportWidth = desktopWidth - fixedWidth;
-                    double viewportHeight = desktopHeight - fixedHeight;
+
+                    double viewportWidth = desktopViewportWidth - fixedWidth;
+                    double viewportHeight = desktopViewportHeight - fixedHeight;
+
                     double finalWidth, finalHeight;
 
                     if (!isViewingFullScreen.get()) {

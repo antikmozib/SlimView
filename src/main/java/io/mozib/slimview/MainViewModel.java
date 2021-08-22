@@ -387,6 +387,8 @@ public class MainViewModel {
                                 : "")
                         .append("  |  Created: ").append(formatTime(imageModel.getDateCreated()))
                         .append("  |  Modified: ").append(formatTime(imageModel.getDateModified()));
+            } else {
+                stringBuilder.append("  |  Error");
             }
             status.set(stringBuilder.toString());
         }
