@@ -309,7 +309,11 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void anchorPaneMain_onMousePress(MouseEvent mouseEvent) {
-        if (selectionModeActive.get() && mainViewModel.getSelectedImageModel() != null) {
+        if (selectionModeActive.get()
+                && !selectionStartedProperty.get()
+                && !cursorInsideSelRect
+                && mainViewModel.getSelectedImageModel() != null) {
+
             clearSelectionRectangle();
 
             // don't start selecting if initial point is outside the ImageView
