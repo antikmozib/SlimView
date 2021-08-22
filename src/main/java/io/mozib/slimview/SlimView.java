@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.prefs.Preferences;
 
+import static io.mozib.slimview.Util.getOSType;
 import static io.mozib.slimview.Util.getTempDirectory;
 
 public class SlimView extends Application {
@@ -34,23 +35,21 @@ public class SlimView extends Application {
         stage.setTitle("SlimView");
         stage.getIcons().add(new Image(this.getClass().getResourceAsStream("icons/slimview.png")));
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-
         stage.setWidth(preferences.getDouble("MainWindowWidth", 854));
         stage.setHeight(preferences.getDouble("MainWindowHeight", 640));
         stage.setX(preferences.getDouble("MainWindowLeft",
                 Screen.getPrimary().getVisualBounds().getWidth() / 2 - stage.getWidth() / 2));
         stage.setY(preferences.getDouble("MainWindowTop",
                 Screen.getPrimary().getVisualBounds().getHeight() / 2 - stage.getHeight() / 2));
+        stage.setOnShown(windowEvent -> {
+            // initialize listeners; must be called after UI has loaded
+            controller.initUIListeners();
 
-        if (stage.getWidth() > 0.9 * Screen.getPrimary().getVisualBounds().getWidth() &&
-                stage.getHeight() > 0.9 * Screen.getPrimary().getVisualBounds().getHeight()) {
-            stage.setMaximized(true);
-        }
-        stage.show();
-
-        // initialize listeners; must be called after UI has loaded
-        controller.initUIListeners();
-
+            if (stage.getWidth() >= 0.99 * Screen.getPrimary().getVisualBounds().getWidth()
+                    && stage.getHeight() >= 0.99 * Screen.getPrimary().getVisualBounds().getHeight()) {
+                stage.setMaximized(true);
+            }
+        });
         stage.setOnCloseRequest(event -> {
             // save window positions
             preferences.putDouble("MainWindowHeight", stage.getScene().getWindow().getHeight());
@@ -58,6 +57,8 @@ public class SlimView extends Application {
             preferences.putDouble("MainWindowTop", stage.getScene().getWindow().getY());
             preferences.putDouble("MainWindowLeft", stage.getScene().getWindow().getX());
         });
+
+        stage.show();
 
         if (cmdLineArgs != null && cmdLineArgs.length > 0) {
             controller.openImage(cmdLineArgs[0]);

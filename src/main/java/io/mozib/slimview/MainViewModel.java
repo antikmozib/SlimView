@@ -153,18 +153,6 @@ public class MainViewModel {
         rotateImage(getSelectedImageModel(), Scalr.Rotation.FLIP_HORZ);
     }
 
-    public void resetZoom() {
-        if (!getSelectedImageModel().hasOriginal()) {
-            return;
-        }
-        setSelectedImage(
-                imageModels.stream()
-                        .filter(item ->
-                                item.getPath().equals(getSelectedImageModel().getOriginal().getPath()))
-                        .findFirst()
-                        .orElse(null));
-    }
-
     public void saveImage(ImageModel imageModel, String destination) throws IOException {
         File file = new File(destination);
         file.createNewFile();

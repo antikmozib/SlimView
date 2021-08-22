@@ -64,6 +64,7 @@ public class MainWindowController implements Initializable {
     private final Preferences preferences = Preferences.userNodeForPackage(this.getClass());
 
     private final double zoomStep = 0.1;
+    private boolean isCtrlDown = false;
 
     // for favorite button
     private final Image favoriteOutline = new Image(getClass().getResourceAsStream("icons/favorite.png"));
@@ -164,7 +165,6 @@ public class MainWindowController implements Initializable {
         labelResolution.setText("");
         labelPoints.setText("");
         labelQuickInfo.setText("");
-        labelQuickInfo.setBlendMode(BlendMode.EXCLUSION);
         imageViewMain.setFitHeight(0);
         imageViewMain.setFitWidth(0);
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
@@ -263,7 +263,7 @@ public class MainWindowController implements Initializable {
         window.widthProperty().addListener((observable -> clearSelectionRectangle()));
         window.heightProperty().addListener((observable -> clearSelectionRectangle()));
 
-        // *nix (esp Ubuntu) has weird desktop bound measurement system; account for this
+        // *nix (esp Ubuntu) has a weird desktop bound measurement system; account for this
         double titleBarHeight = window.getHeight() - window.getScene().getHeight();
         double windowBorderLeftRight = window.getWidth() - window.getScene().getWidth();
         double fixedWidth, fixedHeight;
@@ -387,11 +387,7 @@ public class MainWindowController implements Initializable {
                         double targetWidth = Math.round(scaleFactor * getViewingWidth());
                         double targetHeight = Math.round(scaleFactor * getViewingHeight());
 
-                        mainViewModel.resizeImage(
-                                mainViewModel.getSelectedImageModel(),
-                                (int) targetWidth,
-                                (int) targetHeight);
-                        viewStyleProperty.set(ViewStyle.ORIGINAL);
+                        zoom(targetWidth, targetHeight);
 
                         // scroll to the new zoomed point
                         scrollPaneMain.layout();
@@ -633,6 +629,8 @@ public class MainWindowController implements Initializable {
                     Platform.exit();
                 }
                 break;
+            case CONTROL:
+                isCtrlDown = true;
 
             default:
                 break;
@@ -640,17 +638,31 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    public void scrollPaneMain_onScroll(ScrollEvent scrollEvent) {
-        // don't switch images if scrollbar is visible
-        if (getViewingWidth() > scrollPaneMain.getViewportBounds().getWidth()
-                || getViewingHeight() > scrollPaneMain.getViewportBounds().getHeight())
-            return;
+    public void scrollPaneMain_onKeyRelease(KeyEvent keyEvent) {
+        isCtrlDown = false;
+    }
 
-        if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
-            showPrevious();
-        } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
-            showNext();
+    @FXML
+    public void scrollPaneMain_onScroll(ScrollEvent scrollEvent) {
+        if (!isCtrlDown) {
+            // don't switch images if scrollbar is visible
+            if (getViewingWidth() > scrollPaneMain.getViewportBounds().getWidth()
+                    || getViewingHeight() > scrollPaneMain.getViewportBounds().getHeight())
+                return;
+
+            if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
+                showPrevious();
+            } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
+                showNext();
+            }
+        } else {
+            if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
+                zoomIn();
+            } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
+                zoomOut();
+            }
         }
+
         scrollEvent.consume();
     }
 
@@ -941,84 +953,52 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    private void zoomIn() {
-        double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal()
+    private void zoom(double targetWidth, double targetHeight) {
+        double maxAllowedWidth = 5
+                * (mainViewModel.getSelectedImageModel().hasOriginal()
                 ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
-                : mainViewModel.getSelectedImageModel().getWidth();
-        double originalHeight = mainViewModel.getSelectedImageModel().hasOriginal()
+                : mainViewModel.getSelectedImageModel().getWidth());
+        double maxAllowedHeight = 5
+                * (mainViewModel.getSelectedImageModel().hasOriginal()
                 ? mainViewModel.getSelectedImageModel().getOriginal().getHeight()
-                : mainViewModel.getSelectedImageModel().getHeight();
-        double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
-        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
-        double targetWidth = getViewingWidth() + getViewingWidth() * zoomStep;
-        double targetHeight = getViewingHeight() + getViewingHeight() * zoomStep;
-        double maxAllowedWidth = Math.min(5 * originalWidth, 3 * screenWidth);
-        double maxAllowedHeight = Math.min(5 * originalHeight, 3 * screenHeight);
+                : mainViewModel.getSelectedImageModel().getHeight());
+        double minAllowedWidth = Math.max(1, maxAllowedWidth / 5 * 0.1);
+        double minAllowedHeight = Math.max(1, maxAllowedHeight / 5 * 0.1);
 
-        // apply zoom in limit
-        if (targetWidth > maxAllowedWidth || targetHeight > maxAllowedHeight) {
-            targetWidth = maxAllowedWidth;
-            targetHeight = maxAllowedHeight;
-        } else if (targetWidth == maxAllowedWidth || targetHeight == maxAllowedHeight) {
-            return;
-        }
+        if (targetWidth > maxAllowedWidth) targetWidth = maxAllowedWidth;
+        if (targetWidth < minAllowedWidth) targetWidth = minAllowedWidth;
+        if (targetHeight > maxAllowedHeight) targetHeight = maxAllowedHeight;
+        if (targetHeight < minAllowedHeight) targetHeight = minAllowedHeight;
 
-        // latch onto the original size if we're around it
-        if ((targetWidth >= 0.95 * originalWidth && targetWidth <= 1.05 * originalWidth)
-                || (targetHeight >= 0.95 * originalHeight && targetHeight <= 1.05 * originalHeight)) {
-            targetWidth = originalWidth;
-            targetHeight = originalHeight;
-        }
-
-        mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) targetWidth, (int) targetHeight);
-        viewStyleProperty.set(ViewStyle.ORIGINAL);
+        imageViewMain.fitHeightProperty().unbind();
+        imageViewMain.fitWidthProperty().unbind();
+        imageViewMain.setFitWidth(targetWidth);
+        imageViewMain.setFitHeight(targetHeight);
 
         // center new zoomed image
         scrollPaneMain.setVvalue(0.5);
         scrollPaneMain.setHvalue(0.5);
+    }
+
+    private void zoomIn() {
+        double targetWidth = getViewingWidth() * (1 + zoomStep);
+        double targetHeight = getViewingHeight() * (1 + zoomStep);
+        zoom(targetWidth, targetHeight);
     }
 
     private void zoomOut() {
-        double originalWidth = mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
-                : mainViewModel.getSelectedImageModel().getWidth();
-        double originalHeight = mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginal().getHeight()
-                : mainViewModel.getSelectedImageModel().getHeight();
-        double targetWidth = getViewingWidth() - getViewingWidth() * zoomStep;
-        double targetHeight = getViewingHeight() - getViewingHeight() * zoomStep;
-        double minAllowedWidth = Math.max(0.1 * originalWidth, 8.0);
-        double minAllowedHeight = Math.max(0.1 * originalHeight, 8.0);
-
-        // apply zoom out limit
-        if (targetWidth < minAllowedWidth || targetHeight < minAllowedHeight) {
-            targetWidth = minAllowedWidth;
-            targetHeight = minAllowedHeight;
-        } else if (targetWidth == minAllowedWidth || targetHeight == minAllowedHeight) {
-            return;
-        }
-
-        // latch onto the original size if we're around it
-        if ((targetWidth >= 0.95 * originalWidth && targetWidth <= 1.05 * originalWidth)
-                || (targetHeight >= 0.95 * originalHeight && targetHeight <= 1.05 * originalHeight)) {
-            targetWidth = originalWidth;
-            targetHeight = originalHeight;
-        }
-
-        mainViewModel.resizeImage(mainViewModel.getSelectedImageModel(), (int) targetWidth, (int) targetHeight);
-        viewStyleProperty.set(ViewStyle.ORIGINAL);
-
-        // center new zoomed image
-        scrollPaneMain.setVvalue(0.5);
-        scrollPaneMain.setHvalue(0.5);
+        double targetWidth = getViewingWidth() * (1 - zoomStep);
+        double targetHeight = getViewingHeight() * (1 - zoomStep);
+        zoom(targetWidth, targetHeight);
     }
 
     private void resetZoom() {
+        viewStyleProperty.set(null);
         viewStyleProperty.set(ViewStyle.ORIGINAL);
-        mainViewModel.resetZoom();
     }
 
     private void bestFit() {
+        viewStyleProperty.set(null);
         viewStyleProperty.set(ViewStyle.FIT_TO_WINDOW);
     }
 
@@ -1327,6 +1307,7 @@ public class MainWindowController implements Initializable {
                         }
 
                         Window window = imageViewMain.getScene().getWindow();
+                        ((Stage) window).setMaximized(false);
                         window.setX(0);
                         window.setY(0);
                         window.setWidth(finalWidth + fixedWidth);
