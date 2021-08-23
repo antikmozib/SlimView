@@ -6,12 +6,12 @@ package io.mozib.slimview;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +92,7 @@ public class CopyFileToViewModel {
             }
 
             try {
-                FileUtils.copyFile(original, copied);
+                Files.copy(original.toPath(), copied.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 exceptions.add(e);
             }
@@ -103,7 +103,7 @@ public class CopyFileToViewModel {
 
     public String getNewFilePath(String originalFilePath) {
         String dirPath = new File(originalFilePath).getParent();
-        String fileExt = FilenameUtils.getExtension(originalFilePath);
+        String fileExt = Util.getFileExt(originalFilePath);
         String fileNameWithExt = new File(originalFilePath).getName();
         String fileNameWithoutExt = fileNameWithExt.substring(0, fileNameWithExt.length() - fileExt.length() - 1);
         int i = 1;

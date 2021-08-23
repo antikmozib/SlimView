@@ -2,12 +2,16 @@ package io.mozib.slimview;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestUtil {
     @Test
     public void testGetFileExt() {
         assertEquals("jpg", Util.getFileExt("test.bmp.jpg"));
+        assertEquals("", Util.getFileExt("Test.This Folder\\test"));
         assertEquals("", Util.getFileExt("test"));
     }
 
@@ -15,5 +19,27 @@ public class TestUtil {
     public void testReplaceFileExt() {
         assertEquals("test.bmp.jpg", Util.replaceFileExt("test.bmp.gif", "jpg"));
         assertEquals("test.jpg", Util.replaceFileExt("test", "jpg"));
+    }
+
+    @Test
+    public void testGetFileName() {
+        assertEquals("test.jpg", Util.getFileName("C:\\\\Test Folder\\\\test.jpg"));
+        assertEquals("test.jpg", Util.getFileName("C:\\Test Folder\\test.jpg"));
+        assertEquals("test.jpg", Util.getFileName("C:/Test Folder/test.jpg"));
+        assertEquals("test.jpg", Util.getFileName("test.jpg"));
+    }
+
+    @Test
+    public void testWriteStringToFile() throws IOException {
+        File file = new File("test.txt");
+        String content = "The quick brown fox\nJumps over the lazy dog";
+        file.delete();
+
+        assertEquals(false, file.exists());
+        Util.writeStringToFile(file.getPath(), content);
+        assertEquals(true, file.exists());
+        assertEquals(true, file.length() >= content.length());
+
+        file.delete();
     }
 }

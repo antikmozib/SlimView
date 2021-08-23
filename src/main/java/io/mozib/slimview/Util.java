@@ -333,9 +333,15 @@ public class Util {
         return filename.substring(0, filename.length() - getFileExt(filename).length()) + newExt;
     }
 
+    /**
+     * Extracts and returns the extension of a given file.
+     *
+     * @param filename The name of or the path to the file.
+     * @return The extension of the provided filename, without the period.
+     */
     public static String getFileExt(String filename) {
         if (filename.contains(".")) {
-            Pattern pattern = Pattern.compile("\\.([^.]+$)");
+            Pattern pattern = Pattern.compile("\\.([^.\\\\/]+$)");
             Matcher matcher = pattern.matcher(filename);
             if (matcher.find()) {
                 return matcher.group(1);
@@ -343,5 +349,29 @@ public class Util {
         }
 
         return "";
+    }
+
+    public static String getFileName(String filePath) {
+        Pattern pattern = Pattern.compile("[\\\\{1,2}/]([^\\\\/]+$)");
+        Matcher matcher = pattern.matcher(filePath);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+
+        return filePath;
+    }
+
+    public static void writeStringToFile(String out, String content) throws IOException {
+        File file = new File(out);
+
+        if (file.exists() && !file.isDirectory()) {
+            if (!file.delete()) throw new IOException();
+        }
+
+        if (!file.createNewFile()) throw new IOException();
+
+        try (PrintWriter printWriter = new PrintWriter(out)) {
+            printWriter.println(content);
+        }
     }
 }

@@ -12,7 +12,6 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
 
 import javax.imageio.ImageIO;
@@ -20,7 +19,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -156,7 +154,7 @@ public class MainViewModel {
     public void saveImage(ImageModel imageModel, String destination) throws IOException {
         File file = new File(destination);
         file.createNewFile();
-        ImageIO.write(imageModel.getBufferedImage(), FilenameUtils.getExtension(destination), file);
+        ImageIO.write(imageModel.getBufferedImage(), Util.getFileExt(destination), file);
     }
 
     public void trashImage(ImageModel imageModel) throws Exception {
@@ -186,13 +184,13 @@ public class MainViewModel {
                         Paths.get(System.getProperty("user.home"), ".local", "share", "Trash").toString();
 
                 // write .trashinfo file
-                FileUtils.writeStringToFile(new File(Paths.get(
-                                pathToTrash, "info", FilenameUtils.getName(path) + ".trashinfo").toString()),
-                        trashInfo, Charset.defaultCharset());
+                Util.writeStringToFile(
+                        Paths.get(pathToTrash, "info", Util.getFileName(path) + ".trashinfo").toString(),
+                        trashInfo);
 
                 // move file to actual trash folder
                 FileUtils.moveFile(new File(path),
-                        new File(Paths.get(pathToTrash, "files", FilenameUtils.getName(path)).toString()));
+                        new File(Paths.get(pathToTrash, "files", Util.getFileName(path)).toString()));
 
                 success = true;
                 break;
@@ -334,7 +332,7 @@ public class MainViewModel {
                         for (File file : files) {
                             if (file.isDirectory()) continue;
 
-                            String ext = FilenameUtils.getExtension(file.getName());
+                            String ext = Util.getFileExt(file.getName());
                             if (Arrays.stream(supportedExtensions).anyMatch(s -> s.equalsIgnoreCase(ext))) {
 
                                 ImageModel image = new ImageModel(file.getPath());
@@ -409,7 +407,7 @@ public class MainViewModel {
      * Creates a temporary, edited image
      */
     private ImageModel createTempImage(BufferedImage image, File tempFile, String originalPath) {
-        String suppliedFormat = FilenameUtils.getExtension(tempFile.getPath());
+        String suppliedFormat = Util.getFileExt(tempFile.getPath());
         String targetFormat;
 
         // if we're working with one of the read-only image types (e.g. psd), convert and save it as a bmp instead

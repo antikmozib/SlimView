@@ -6,7 +6,6 @@ package io.mozib.slimview;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -105,7 +104,7 @@ public class ImageModel {
     }
 
     public String getFormat() {
-        return FilenameUtils.getExtension(getPath()).toUpperCase();
+        return Util.getFileExt(getPath()).toUpperCase();
     }
 
     public long getFileSize() {
