@@ -81,6 +81,9 @@ public class MainWindowController implements Initializable {
 
     // FIELDS FOR SELECTION RECTANGLE
     private javafx.scene.shape.Rectangle selectionRectangle = null;
+    /**
+     * Set to true if selection mode is active and pan mode is inactive
+     */
     private final SimpleBooleanProperty selectionModeActive = new SimpleBooleanProperty();
     /**
      * Set to true if and only if the mouse button is down. May be false even if the SelectionRectangle is visible.
@@ -287,10 +290,10 @@ public class MainWindowController implements Initializable {
         mainViewModel.selectedSortStyleProperty().addListener(new SortStyleChangeListener());
 
         // restore previous settings
-        viewStyleProperty.set(ViewStyle.valueOf(
+        viewStyleProperty.set(ViewStyle.valueOf( /* Default view style */
                 preferences.get("LastViewStyle", ViewStyle.FIT_TO_DESKTOP.toString())));
-        mainViewModel.sortImages(MainViewModel.SortStyle.valueOf(
-                preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString()))); // default sorting
+        mainViewModel.sortImages(MainViewModel.SortStyle.valueOf( /* Default sort style */
+                preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString())));
 
         // refresh ViewStyle if we're switching to fullscreen mode
         isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
@@ -486,13 +489,6 @@ public class MainWindowController implements Initializable {
         resizeWindow.initOwner(imageViewMain.getScene().getWindow());
         ResizeWindowController controller = fxmlLoader.getController();
         controller.setViewModel(resizeViewModel);
-
-        /*resizeWindow.setOnShown((event -> {
-            Window owner = imageViewMain.getScene().getWindow();
-            resizeWindow.setX(owner.getX() + owner.getWidth() / 2 - resizeWindow.getWidth() / 2);
-            resizeWindow.setY(owner.getY() + owner.getHeight() / 3 - resizeWindow.getHeight() / 2);
-        }));*/
-
         childWindowInCentre(imageViewMain.getScene().getWindow(), resizeWindow);
         resizeWindow.showAndWait();
 
@@ -642,8 +638,10 @@ public class MainWindowController implements Initializable {
                     Platform.exit();
                 }
                 break;
+
             case CONTROL:
                 isCtrlDown = true;
+                break;
 
             case S:
                 selectionModeActive.set(true);
@@ -652,6 +650,12 @@ public class MainWindowController implements Initializable {
             case P:
                 selectionModeActive.set(false);
                 break;
+
+            /*case F:
+                mainViewModel.setAsFavorite(mainViewModel.getSelectedImageModel(),
+                        !mainViewModel.getSelectedImageModel().getIsFavorite());
+                tButtonFavorite.setSelected(mainViewModel.getSelectedImageModel().getIsFavorite());
+                break;*/
 
             default:
                 break;
@@ -677,6 +681,7 @@ public class MainWindowController implements Initializable {
                 showNext();
             }
         } else {
+            // ctrl is down; zoom image instead of switching
             if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
                 zoomIn();
             } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
@@ -1217,6 +1222,12 @@ public class MainWindowController implements Initializable {
                 .show();
     }
 
+    /**
+     * Positions a child window at the center of a parent window
+     *
+     * @param owner The owning window
+     * @param child The window to be centered
+     */
     private void childWindowInCentre(Window owner, Window child) {
         child.setOnShown(event -> {
             child.setX(owner.getX() + owner.getWidth() / 2 - child.getWidth() / 2);
