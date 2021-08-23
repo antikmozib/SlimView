@@ -360,7 +360,7 @@
                           </graphic>
                       </Button>
                   <Separator orientation="VERTICAL" />
-                      <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#buttonEdit_onAction" prefHeight="32.0">
+                      <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#buttonEdit_onAction">
                           <tooltip>
                               <Tooltip text="Edit" />
                           </tooltip>
@@ -374,7 +374,7 @@
                       </Button>
                       <Button fx:id="buttonImageInfo" mnemonicParsing="false" onAction="#buttonImageInfo_onAction">
                           <tooltip>
-                              <Tooltip text="Information" />
+                              <Tooltip text="Properties" />
                           </tooltip>
                           <graphic>
                               <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
