@@ -371,7 +371,7 @@ public class Util {
         if (!file.createNewFile()) throw new IOException();
 
         try (PrintWriter printWriter = new PrintWriter(out)) {
-            printWriter.println(content);
+            printWriter.print(content);
         }
     }
 }
