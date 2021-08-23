@@ -327,7 +327,7 @@ public class Util {
 
     public static String replaceFileExt(String filename, String newExt) {
         if (!filename.contains(".")) {
-            return replaceFileExt(filename + ".", newExt);
+            return filename + "." + newExt;
         }
 
         return filename.substring(0, filename.length() - getFileExt(filename).length()) + newExt;
