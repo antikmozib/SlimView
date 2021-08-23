@@ -879,7 +879,6 @@ public class MainWindowController implements Initializable {
         if (mainViewModel.getSelectedImageModel() == null)
             return;
 
-
         boolean setFullScreen = !isViewingFullScreen.get();
         ((Stage) scrollPaneMain.getScene().getWindow()).setFullScreen(setFullScreen);
         menuBar.setVisible(!setFullScreen);

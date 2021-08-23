@@ -23,6 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A collection of various static utility methods
@@ -321,5 +323,21 @@ public class Util {
         }
 
         if (!root.delete()) throw new IOException();
+    }
+
+    /*public static String replaceFileExt(String filename, String newExt) {
+        return filename.substring(0, filename.length() -)
+    }*/
+
+    public static String getFileExt(String filename) {
+        if (filename.contains(".")) {
+            Pattern pattern = Pattern.compile("\\.([^.]+$)");
+            Matcher matcher = pattern.matcher(filename);
+            if (matcher.find()) {
+                return matcher.group(1);
+            }
+        }
+
+        return "";
     }
 }
