@@ -325,9 +325,13 @@ public class Util {
         if (!root.delete()) throw new IOException();
     }
 
-    /*public static String replaceFileExt(String filename, String newExt) {
-        return filename.substring(0, filename.length() -)
-    }*/
+    public static String replaceFileExt(String filename, String newExt) {
+        if (!filename.contains(".")) {
+            return replaceFileExt(filename + ".", newExt);
+        }
+
+        return filename.substring(0, filename.length() - getFileExt(filename).length()) + newExt;
+    }
 
     public static String getFileExt(String filename) {
         if (filename.contains(".")) {

@@ -10,4 +10,10 @@ public class TestUtil {
         assertEquals("jpg", Util.getFileExt("test.bmp.jpg"));
         assertEquals("", Util.getFileExt("test"));
     }
+
+    @Test
+    public void testReplaceFileExt() {
+        assertEquals("test.bmp.jpg", Util.replaceFileExt("test.bmp.gif", "jpg"));
+        assertEquals("test.jpg", Util.replaceFileExt("test", "jpg"));
+    }
 }
