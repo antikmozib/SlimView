@@ -1093,8 +1093,9 @@ public class MainWindowController implements Initializable {
                 preferences.put("SaveAsLocation", file.getParentFile().getPath());
                 mainViewModel.saveImage(mainViewModel.getSelectedImageModel(), file.getPath());
             } catch (IOException e) {
-                Util.showCustomErrorDialog(
-                        "Error saving file", "The file couldn't be saved.", imageViewMain.getScene().getWindow(), e);
+                Util.showCustomErrorDialog("Error saving file",
+                        "The file couldn't be saved.",
+                        imageViewMain.getScene().getWindow(), e);
             }
         }
     }
