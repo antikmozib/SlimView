@@ -25,6 +25,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<!--
+  ~ Copyright (C) 2021 Antik Mozib. All rights reserved.
+  -->
+
 <BorderPane id="borderPaneWindow" fx:id="borderPaneWindow" prefHeight="400.0" prefWidth="854.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.MainWindowController">
    <top>
       <VBox BorderPane.alignment="CENTER">

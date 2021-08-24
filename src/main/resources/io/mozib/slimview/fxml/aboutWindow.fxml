@@ -12,6 +12,10 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
+<!--
+  ~ Copyright (C) 2021 Antik Mozib. All rights reserved.
+  -->
+
 <AnchorPane id="AnchorPane" prefWidth="440.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.AboutWindowController">
     <children>
       <GridPane hgap="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
