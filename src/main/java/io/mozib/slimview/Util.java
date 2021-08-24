@@ -351,6 +351,12 @@ public class Util {
         return "";
     }
 
+    /**
+     * Extracts the filename from a given path.
+     *
+     * @param filePath Full path to the file, e.g. /home/test/test.jpg
+     * @return The name of the file including the extension, e.g. test.jpg
+     */
     public static String getFileName(String filePath) {
         Pattern pattern = Pattern.compile("[\\\\{1,2}/]([^\\\\/]+$)");
         Matcher matcher = pattern.matcher(filePath);
@@ -361,6 +367,13 @@ public class Util {
         return filePath;
     }
 
+    /**
+     * Writes a given string to a specified file. A new file will be created, replacing any existing one.
+     *
+     * @param out     The full path to the output file
+     * @param content The content to write to the file
+     * @throws IOException if a new file cannot be created, or it cannot be written to
+     */
     public static void writeStringToFile(String out, String content) throws IOException {
         File file = new File(out);
 

@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2021 Antik Mozib. All rights reserved.
+ */
+
 package io.mozib.slimview;
 
 import org.junit.jupiter.api.Test;
@@ -5,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUtil {
     @Test
@@ -35,10 +39,10 @@ public class TestUtil {
         String content = "The quick brown fox\nJumps over the lazy dog";
         file.delete();
 
-        assertEquals(false, file.exists());
+        assertFalse(file.exists());
         Util.writeStringToFile(file.getPath(), content);
-        assertEquals(true, file.exists());
-        assertEquals(true, file.length() >= content.length());
+        assertTrue(file.exists());
+        assertTrue(file.length() >= content.length());
 
         file.delete();
     }
