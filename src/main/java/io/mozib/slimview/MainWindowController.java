@@ -81,7 +81,7 @@ public class MainWindowController implements Initializable {
     // FIELDS FOR SELECTION RECTANGLE
     private javafx.scene.shape.Rectangle selectionRectangle = null;
     /**
-     * Set to true if selection mode is active and pan mode is inactive
+     * Set to true if selection mode is active and pan mode is inactive.
      */
     private final SimpleBooleanProperty selectionModeActive = new SimpleBooleanProperty();
     /**
@@ -150,11 +150,13 @@ public class MainWindowController implements Initializable {
     @FXML
     public ImageView tButtonFavoriteImageView;
     @FXML
-    public AnchorPane anchorPaneQuickInfo;
+    public GridPane gridPaneQuickInfo;
     @FXML
     public Label labelQuickInfo;
     @FXML
     public Label labelQuickInfo2;
+    @FXML
+    public Label labelQuickInfo3;
 
     @FXML
     @Override
@@ -171,7 +173,8 @@ public class MainWindowController implements Initializable {
         labelPoints.setText("");
         labelQuickInfo.setText("");
         labelQuickInfo2.setText("");
-        anchorPaneQuickInfo.toFront();
+        labelQuickInfo3.setText("");
+        gridPaneQuickInfo.toFront();
         imageViewMain.setFitHeight(0);
         imageViewMain.setFitWidth(0);
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
@@ -206,7 +209,7 @@ public class MainWindowController implements Initializable {
         toolBar.managedProperty().bind(toolBar.visibleProperty());
         gridPaneStatusBar.managedProperty().bind(gridPaneStatusBar.visibleProperty());
         menuBar.managedProperty().bind(menuBar.visibleProperty());
-        anchorPaneQuickInfo.visibleProperty().bind(isViewingFullScreen);
+        gridPaneQuickInfo.visibleProperty().bind(isViewingFullScreen);
 
         // bind ImageView and FavoriteButton to SelectedImage
         tButtonFavorite.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -364,7 +367,6 @@ public class MainWindowController implements Initializable {
 
                 selectionRectangle = new javafx.scene.shape.Rectangle();
                 selectionRectangle.getStyleClass().add("selection-rect");
-                /*selectionRectangle.setBlendMode(BlendMode.EXCLUSION);*/
                 selectionRectangle.setOnMouseMoved(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -946,9 +948,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void updateFullScreenInfo() {
-        labelQuickInfo.setText(
-                mainViewModel.getSelectedImageModel().getBestPath() + " [" + getCurrentViewingZoom() + "%]");
-        labelQuickInfo2.setText(
+        labelQuickInfo.setText(mainViewModel.getSelectedImageModel().getBestPath());
+        labelQuickInfo2.setText(getCurrentViewingZoom() + "%");
+        labelQuickInfo3.setText(
                 (mainViewModel.getIndex(mainViewModel.getSelectedImageModel()) + 1) + "/"
                         + mainViewModel.getFileCount()
         );

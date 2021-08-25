@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+  ~ Copyright (C) 2021 Antik Mozib. All rights reserved.
+  -->
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -25,440 +29,442 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<!--
-  ~ Copyright (C) 2021 Antik Mozib. All rights reserved.
-  -->
-
 <BorderPane id="borderPaneWindow" fx:id="borderPaneWindow" prefHeight="400.0" prefWidth="854.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.MainWindowController">
-   <top>
-      <VBox BorderPane.alignment="CENTER">
-         <children>
-              <MenuBar fx:id="menuBar">
-                  <menus>
-                      <Menu text="_File">
-                          <items>
-                              <MenuItem id="menuOpen" fx:id="menuOpen" onAction="#menuOpen_onAction" text="_Open...">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                                  </accelerator>
-                              </MenuItem>
-                              <Menu id="menuOpenRecent" fx:id="menuRecent" text="Open _Recent" />
-                              <SeparatorMenuItem mnemonicParsing="false" />
-                              <MenuItem id="menuOpenContainingFolder" fx:id="menuOpenContainingFolder" onAction="#menuOpenContainingFolder_onAction" text="Open _Containing Folder" />
-                              <MenuItem id="menuOpenInExternalEditor" fx:id="menuOpenInExternalEditor" onAction="#menuOpenInExternalEditor_onAction" text="Open in _External Editor" />
-                              <SeparatorMenuItem mnemonicParsing="false" />
-                              <MenuItem id="menuSaveAs" fx:id="menuSaveAs" onAction="#menuSaveAs_onAction" text="_Save As...">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                                  </accelerator>
-                              </MenuItem>
-                              <SeparatorMenuItem mnemonicParsing="false" />
-                              <MenuItem id="menuDeleteFile" fx:id="menuDelete" onAction="#menuDelete_onAction" text="_Delete File">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="UP" code="DELETE" control="UP" meta="ANY" shift="UP" shortcut="UP" />
-                                  </accelerator>
-                              </MenuItem>
-                              <SeparatorMenuItem mnemonicParsing="false" />
-                              <MenuItem id="menuExit" fx:id="menuClose" onAction="#menuClose_onAction" text="E_xit">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="DOWN" code="F4" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                                  </accelerator>
-                              </MenuItem>
-                          </items>
-                      </Menu>
-                      <Menu text="_Edit">
-                          <items>
-                              <MenuItem id="menuCopy" fx:id="menuCopy" onAction="#menuCopy_onAction" text="_Copy">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                                  </accelerator>
-                              </MenuItem>
-                        <MenuItem fx:id="menuCopyFileTo" onAction="#menuCopyFileTo_onAction" text="Copy File _To...">
-                           <accelerator>
-                              <KeyCodeCombination alt="ANY" code="F8" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                           </accelerator>
-                        </MenuItem>
-                              <SeparatorMenuItem mnemonicParsing="false" />
-                              <Menu id="menuRotate" fx:id="menuRotate" text="Ro_tate">
-                                  <items>
-                                      <MenuItem id="menuRotateLeft" fx:id="menuRotateLeft" onAction="#menuRotateLeft_onAction" text="Rotate _Left">
-                                          <accelerator>
-                                              <KeyCodeCombination alt="ANY" code="L" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                                          </accelerator>
-                                      </MenuItem>
-                                      <MenuItem id="menuRotateRight" fx:id="menuRotateRight" onAction="#menuRotateRight_onAction" text="Rotate _Right">
-                                          <accelerator>
-                                              <KeyCodeCombination alt="ANY" code="R" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                                          </accelerator>
-                                      </MenuItem>
-                                  </items>
-                              </Menu>
-                              <Menu text="F_lip">
-                                  <items>
-                                      <MenuItem id="menuFlipVertically" fx:id="menuFlipVertically" onAction="#menuFlipVertically_onAction" text="Flip _Vertically">
-                                          <accelerator>
-                                              <KeyCodeCombination alt="ANY" code="V" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                                          </accelerator>
-                                      </MenuItem>
-                                      <MenuItem id="menuFlipHorizontally" fx:id="menuFlipHorizontally" onAction="#menuFlipHorizontally_onAction" text="Flip _Horizontally">
-                                          <accelerator>
-                                              <KeyCodeCombination alt="ANY" code="H" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                                          </accelerator>
-                                      </MenuItem>
-                                  </items>
-                              </Menu>
-                              <SeparatorMenuItem mnemonicParsing="false" />
-                              <MenuItem id="menuResize" fx:id="menuResize" onAction="#menuResize_onAction" text="R_esize">
-                           <accelerator>
-                              <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                           </accelerator>
-                        </MenuItem>
-                              <SeparatorMenuItem mnemonicParsing="false" />
-                              <Menu text="Sor_t">
-                                  <items>
-                                      <RadioMenuItem fx:id="menuSortByName" onAction="#menuSortByName_onAction" text="Sort By _Name" />
-                                      <RadioMenuItem fx:id="menuSortByCreated" onAction="#menuSortByCreated_onAction" text="Sort By Date _Created" />
-                                      <RadioMenuItem fx:id="menuSortByModified" onAction="#menuSortByModified_onAction" text="Sort By Date _Modified" />
-                                  </items>
-                              </Menu>
-                          </items>
-                      </Menu>
-                      <Menu text="_View">
-                          <items>
-                              <RadioMenuItem fx:id="menuFitToWindow" onAction="#menuFitToWindow_onAction" text="Fit To _Window">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="UP" code="F" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                                  </accelerator>
-                              </RadioMenuItem>
-                        <RadioMenuItem fx:id="menuFitToDesktop" onAction="#menuFitToDesktop_onAction" text="Fit To _Desktop">
-                           <accelerator>
-                              <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                           </accelerator>
-                        </RadioMenuItem>
-                              <RadioMenuItem fx:id="menuOriginalSize" onAction="#menuOriginalSize_onAction" text="_Original Size">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="UP" code="H" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                                  </accelerator>
-                              </RadioMenuItem>
-                              <RadioMenuItem fx:id="menuStretched" onAction="#menuStretched_onAction" text="_Stretched" />
-                              <SeparatorMenuItem mnemonicParsing="false" />
-                              <MenuItem id="menuZoomIn" fx:id="menuZoomIn" onAction="#menuZoomIn_onAction" text="Zoom _In">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="ANY" code="EQUALS" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                                  </accelerator>
-                              </MenuItem>
-                              <MenuItem id="menuZoomOut" fx:id="menuZoomOut" onAction="#menuZoomOut_onAction" text="Zoom Ou_t">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="ANY" code="MINUS" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                                  </accelerator>
-                              </MenuItem>
-                              <MenuItem fx:id="menuResetZoom" onAction="#menuResetZoom_onAction" text="_Reset Zoom">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="UP" code="DIGIT0" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                                  </accelerator>
-                              </MenuItem>
-                              <SeparatorMenuItem mnemonicParsing="false" />
-                              <RadioMenuItem fx:id="menuFullScreen" onAction="#menuFullScreen_onAction" text="_Full Screen">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="UP" code="F11" control="UP" meta="UP" shift="UP" shortcut="ANY" />
-                                  </accelerator>
-                              </RadioMenuItem>
-                          </items>
-                      </Menu>
-                  <Menu text="_Tools">
+    <top>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <MenuBar fx:id="menuBar">
+                    <menus>
+                        <Menu text="_File">
+                            <items>
+                                <MenuItem id="menuOpen" fx:id="menuOpen" onAction="#menuOpen_onAction" text="_Open...">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                                <Menu id="menuOpenRecent" fx:id="menuRecent" text="Open _Recent" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem id="menuOpenContainingFolder" fx:id="menuOpenContainingFolder" onAction="#menuOpenContainingFolder_onAction" text="Open _Containing Folder" />
+                                <MenuItem id="menuOpenInExternalEditor" fx:id="menuOpenInExternalEditor" onAction="#menuOpenInExternalEditor_onAction" text="Open in _External Editor" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem id="menuSaveAs" fx:id="menuSaveAs" onAction="#menuSaveAs_onAction" text="_Save As...">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem id="menuDeleteFile" fx:id="menuDelete" onAction="#menuDelete_onAction" text="_Delete File">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="DELETE" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem id="menuExit" fx:id="menuClose" onAction="#menuClose_onAction" text="E_xit">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="DOWN" code="F4" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                            </items>
+                        </Menu>
+                        <Menu text="_Edit">
+                            <items>
+                                <MenuItem id="menuCopy" fx:id="menuCopy" onAction="#menuCopy_onAction" text="_Copy">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                                <MenuItem fx:id="menuCopyFileTo" onAction="#menuCopyFileTo_onAction" text="Copy File _To...">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="ANY" code="F8" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <Menu id="menuRotate" fx:id="menuRotate" text="Ro_tate">
+                                    <items>
+                                        <MenuItem id="menuRotateLeft" fx:id="menuRotateLeft" onAction="#menuRotateLeft_onAction" text="Rotate _Left">
+                                            <accelerator>
+                                                <KeyCodeCombination alt="ANY" code="L" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                                            </accelerator>
+                                        </MenuItem>
+                                        <MenuItem id="menuRotateRight" fx:id="menuRotateRight" onAction="#menuRotateRight_onAction" text="Rotate _Right">
+                                            <accelerator>
+                                                <KeyCodeCombination alt="ANY" code="R" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                                            </accelerator>
+                                        </MenuItem>
+                                    </items>
+                                </Menu>
+                                <Menu text="F_lip">
+                                    <items>
+                                        <MenuItem id="menuFlipVertically" fx:id="menuFlipVertically" onAction="#menuFlipVertically_onAction" text="Flip _Vertically">
+                                            <accelerator>
+                                                <KeyCodeCombination alt="ANY" code="V" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                                            </accelerator>
+                                        </MenuItem>
+                                        <MenuItem id="menuFlipHorizontally" fx:id="menuFlipHorizontally" onAction="#menuFlipHorizontally_onAction" text="Flip _Horizontally">
+                                            <accelerator>
+                                                <KeyCodeCombination alt="ANY" code="H" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                                            </accelerator>
+                                        </MenuItem>
+                                    </items>
+                                </Menu>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem id="menuResize" fx:id="menuResize" onAction="#menuResize_onAction" text="R_esize">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <Menu text="Sor_t">
+                                    <items>
+                                        <RadioMenuItem fx:id="menuSortByName" onAction="#menuSortByName_onAction" text="Sort By _Name" />
+                                        <RadioMenuItem fx:id="menuSortByCreated" onAction="#menuSortByCreated_onAction" text="Sort By Date _Created" />
+                                        <RadioMenuItem fx:id="menuSortByModified" onAction="#menuSortByModified_onAction" text="Sort By Date _Modified" />
+                                    </items>
+                                </Menu>
+                            </items>
+                        </Menu>
+                        <Menu text="_View">
+                            <items>
+                                <RadioMenuItem fx:id="menuFitToWindow" onAction="#menuFitToWindow_onAction" text="Fit To _Window">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="F" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </RadioMenuItem>
+                                <RadioMenuItem fx:id="menuFitToDesktop" onAction="#menuFitToDesktop_onAction" text="Fit To _Desktop">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </RadioMenuItem>
+                                <RadioMenuItem fx:id="menuOriginalSize" onAction="#menuOriginalSize_onAction" text="_Original Size">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="H" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </RadioMenuItem>
+                                <RadioMenuItem fx:id="menuStretched" onAction="#menuStretched_onAction" text="_Stretched" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem id="menuZoomIn" fx:id="menuZoomIn" onAction="#menuZoomIn_onAction" text="Zoom _In">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="ANY" code="EQUALS" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                                <MenuItem id="menuZoomOut" fx:id="menuZoomOut" onAction="#menuZoomOut_onAction" text="Zoom Ou_t">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="ANY" code="MINUS" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                                <MenuItem fx:id="menuResetZoom" onAction="#menuResetZoom_onAction" text="_Reset Zoom">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="DIGIT0" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <RadioMenuItem fx:id="menuFullScreen" onAction="#menuFullScreen_onAction" text="_Full Screen">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="F11" control="UP" meta="UP" shift="UP" shortcut="ANY" />
+                                    </accelerator>
+                                </RadioMenuItem>
+                            </items>
+                        </Menu>
+                        <Menu text="_Tools">
+                            <items>
+                                <MenuItem fx:id="menuImageInfo" onAction="#menuImageInfo_onAction" text="Image _Information...">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="ANY" code="I" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem fx:id="menuViewFavorites" onAction="#menuViewFavorites_onAction" text="_Favorites Manager">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                            </items>
+                        </Menu>
+                        <Menu text="_Help">
+                            <items>
+                                <MenuItem id="menuCheckForUpdates" fx:id="menuCheckForUpdates" onAction="#menuCheckForUpdates_onAction" text="Check For _Updates..." />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem fx:id="menuAbout" onAction="#menuAbout_onAction" text="_About" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+                <ToolBar fx:id="toolBar" prefHeight="40.0" prefWidth="200.0">
                     <items>
-                              <MenuItem fx:id="menuImageInfo" onAction="#menuImageInfo_onAction" text="Image _Information...">
-                                  <accelerator>
-                                      <KeyCodeCombination alt="ANY" code="I" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                                  </accelerator>
-                              </MenuItem>
-                              <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="menuViewFavorites" onAction="#menuViewFavorites_onAction" text="_Favorites Manager">
-                           <accelerator>
-                              <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
-                           </accelerator>
-                        </MenuItem>
+                        <Button id="buttonOpen" fx:id="buttonOpen" mnemonicParsing="false" onAction="#buttonOpen_onAction">
+                            <tooltip>
+                                <Tooltip text="Open" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/open.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button id="buttonSave" fx:id="buttonSave" mnemonicParsing="false" onAction="#buttonSave_onAction">
+                            <tooltip>
+                                <Tooltip text="Save As" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/save.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button id="buttonCopy" fx:id="buttonCopy" mnemonicParsing="false" onAction="#buttonCopy_onAction">
+                            <tooltip>
+                                <Tooltip text="Copy" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/copy.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Separator />
+                        <ToggleButton fx:id="tButtonSelectionMode" mnemonicParsing="false" selected="true">
+                            <tooltip>
+                                <Tooltip text="Selection Mode (S)" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/selection-mode.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </ToggleButton>
+                        <ToggleButton fx:id="tButtonPanMode" mnemonicParsing="false">
+                            <tooltip>
+                                <Tooltip text="Pan Mode (P)" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/pan-mode.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </ToggleButton>
+                        <Separator orientation="VERTICAL" />
+                        <Button fx:id="buttonFirst" mnemonicParsing="false" onAction="#buttonFirst_onAction" prefHeight="32.0">
+                            <tooltip>
+                                <Tooltip text="First" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/first.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="buttonPrevious" mnemonicParsing="false" onAction="#buttonPrevious_onAction" prefHeight="32.0">
+                            <tooltip>
+                                <Tooltip text="Previous" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/prev.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="buttonNext" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonNext_onAction" prefHeight="32.0">
+                            <tooltip>
+                                <Tooltip text="Next" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/next.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="buttonLast" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonLast_onAction" prefHeight="32.0">
+                            <tooltip>
+                                <Tooltip text="Last" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/last.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Separator />
+                        <Button id="buttonZoomIn" fx:id="buttonZoomIn" mnemonicParsing="false" onAction="#buttonZoomIn_onAction">
+                            <tooltip>
+                                <Tooltip text="Zoom In" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/zoomin.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button id="buttonZoomOut" fx:id="buttonZoomOut" mnemonicParsing="false" onAction="#buttonZoomOut_onAction">
+                            <tooltip>
+                                <Tooltip text="Zoom Out" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/zoomout.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button id="buttonResetZoom" fx:id="buttonResetZoom" mnemonicParsing="false" onAction="#buttonResetZoom_onAction">
+                            <tooltip>
+                                <Tooltip text="Best Fit" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/reset.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Separator orientation="VERTICAL" />
+                        <Button fx:id="buttonRotateLeft" mnemonicParsing="false" onAction="#buttonRotateLeft_onAction">
+                            <tooltip>
+                                <Tooltip text="Rotate Left" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/rotate-left.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="buttonRotateRight" mnemonicParsing="false" onAction="#buttonRotateRight_onAction">
+                            <tooltip>
+                                <Tooltip text="Rotate Right" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/rotate-right.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Separator orientation="VERTICAL" />
+                        <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#buttonEdit_onAction">
+                            <tooltip>
+                                <Tooltip text="Edit" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/edit.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="buttonImageInfo" mnemonicParsing="false" onAction="#buttonImageInfo_onAction">
+                            <tooltip>
+                                <Tooltip text="Properties" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/imageinfo.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <ToggleButton fx:id="tButtonFavorite" mnemonicParsing="false" onAction="#tButtonFavorite_onAction">
+                            <tooltip>
+                                <Tooltip text="Add To Favorites" />
+                            </tooltip>
+                            <graphic>
+                                <ImageView fx:id="tButtonFavoriteImageView" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/favorite.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </ToggleButton>
                     </items>
-                  </Menu>
-                      <Menu text="_Help">
-                          <items>
-                              <MenuItem id="menuCheckForUpdates" fx:id="menuCheckForUpdates" onAction="#menuCheckForUpdates_onAction" text="Check For _Updates..." />
-                              <SeparatorMenuItem mnemonicParsing="false" />
-                              <MenuItem fx:id="menuAbout" onAction="#menuAbout_onAction" text="_About" />
-                          </items>
-                      </Menu>
-                  </menus>
-              </MenuBar>
-              <ToolBar fx:id="toolBar" prefHeight="40.0" prefWidth="200.0">
-                  <items>
-                      <Button id="buttonOpen" fx:id="buttonOpen" mnemonicParsing="false" onAction="#buttonOpen_onAction">
-                          <tooltip>
-                              <Tooltip text="Open" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/open.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button id="buttonSave" fx:id="buttonSave" mnemonicParsing="false" onAction="#buttonSave_onAction">
-                          <tooltip>
-                              <Tooltip text="Save As" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/save.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button id="buttonCopy" fx:id="buttonCopy" mnemonicParsing="false" onAction="#buttonCopy_onAction">
-                          <tooltip>
-                              <Tooltip text="Copy" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/copy.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Separator />
-                  <ToggleButton fx:id="tButtonSelectionMode" mnemonicParsing="false" selected="true">
-                      <tooltip>
-                          <Tooltip text="Selection Mode (S)" />
-                      </tooltip>
-                     <graphic>
-                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/selection-mode.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </ToggleButton>
-                  <ToggleButton fx:id="tButtonPanMode" mnemonicParsing="false">
-                      <tooltip>
-                          <Tooltip text="Pan Mode (P)" />
-                      </tooltip>
-                     <graphic>
-                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/pan-mode.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </ToggleButton>
-                  <Separator orientation="VERTICAL" />
-                      <Button fx:id="buttonFirst" mnemonicParsing="false" onAction="#buttonFirst_onAction" prefHeight="32.0">
-                          <tooltip>
-                              <Tooltip text="First" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/first.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button fx:id="buttonPrevious" mnemonicParsing="false" onAction="#buttonPrevious_onAction" prefHeight="32.0">
-                          <tooltip>
-                              <Tooltip text="Previous" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/prev.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button fx:id="buttonNext" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonNext_onAction" prefHeight="32.0">
-                          <tooltip>
-                              <Tooltip text="Next" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/next.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button fx:id="buttonLast" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#buttonLast_onAction" prefHeight="32.0">
-                          <tooltip>
-                              <Tooltip text="Last" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/last.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Separator />
-                      <Button id="buttonZoomIn" fx:id="buttonZoomIn" mnemonicParsing="false" onAction="#buttonZoomIn_onAction">
-                          <tooltip>
-                              <Tooltip text="Zoom In" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/zoomin.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button id="buttonZoomOut" fx:id="buttonZoomOut" mnemonicParsing="false" onAction="#buttonZoomOut_onAction">
-                          <tooltip>
-                              <Tooltip text="Zoom Out" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/zoomout.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button id="buttonResetZoom" fx:id="buttonResetZoom" mnemonicParsing="false" onAction="#buttonResetZoom_onAction">
-                          <tooltip>
-                              <Tooltip text="Best Fit" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/reset.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Separator orientation="VERTICAL" />
-                      <Button fx:id="buttonRotateLeft" mnemonicParsing="false" onAction="#buttonRotateLeft_onAction">
-                          <tooltip>
-                              <Tooltip text="Rotate Left" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/rotate-left.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button fx:id="buttonRotateRight" mnemonicParsing="false" onAction="#buttonRotateRight_onAction">
-                          <tooltip>
-                              <Tooltip text="Rotate Right" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/rotate-right.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                  <Separator orientation="VERTICAL" />
-                      <Button fx:id="buttonEdit" mnemonicParsing="false" onAction="#buttonEdit_onAction">
-                          <tooltip>
-                              <Tooltip text="Edit" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/edit.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button fx:id="buttonImageInfo" mnemonicParsing="false" onAction="#buttonImageInfo_onAction">
-                          <tooltip>
-                              <Tooltip text="Properties" />
-                          </tooltip>
-                          <graphic>
-                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icons/imageinfo.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                  <ToggleButton fx:id="tButtonFavorite" mnemonicParsing="false" onAction="#tButtonFavorite_onAction">
-                      <tooltip>
-                          <Tooltip text="Add To Favorites" />
-                      </tooltip>
-                     <graphic>
-                        <ImageView fx:id="tButtonFavoriteImageView" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/favorite.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </ToggleButton>
-                  </items>
-              </ToolBar>
-         </children>
-      </VBox>
-   </top>
-   <center>
-      <AnchorPane styleClass="no-border" BorderPane.alignment="CENTER">
-         <children>
-            <AnchorPane fx:id="anchorPaneQuickInfo" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <children>
-                  <Label fx:id="labelQuickInfo" blendMode="DIFFERENCE" styleClass="quick-info-label" text="Path" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="labelQuickInfo2" alignment="CENTER_RIGHT" contentDisplay="RIGHT" styleClass="quick-info-label" text="Count" textAlignment="RIGHT" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-               <padding>
-                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-               </padding>
-            </AnchorPane>
-              <ScrollPane id="scrollPaneMain" fx:id="scrollPaneMain" fitToHeight="true" fitToWidth="true" onKeyPressed="#scrollPaneMain_onKeyPress" onKeyReleased="#scrollPaneMain_onKeyRelease" onMouseClicked="#scrollPaneMain_onClick" onScroll="#scrollPaneMain_onScroll" styleClass="no-border" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <content>
-                  <AnchorPane fx:id="anchorPaneMain" onMouseDragged="#anchorPaneMain_onMouseDrag" onMousePressed="#anchorPaneMain_onMousePress" onMouseReleased="#anchorPaneMain_onMouseRelease" styleClass="no-border">
-                     <children>
-                            <StackPane styleClass="no-border" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <children>
-                                    <ImageView fx:id="imageViewMain" focusTraversable="true" onMouseExited="#imageViewMain_onMouseExit" onMouseMoved="#imageViewMain_onMouseMove" pickOnBounds="true" preserveRatio="true" />
-                                </children>
-                            </StackPane>
-                     </children>
-                  </AnchorPane>
-               </content>
-              </ScrollPane>
-         </children>
-      </AnchorPane>
-   </center>
-   <bottom>
-      <GridPane fx:id="gridPaneStatusBar" hgap="16.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
-            <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
+                </ToolBar>
+            </children>
+        </VBox>
+    </top>
+    <center>
+        <AnchorPane styleClass="no-border" BorderPane.alignment="CENTER">
+            <children>
+                <GridPane fx:id="gridPaneQuickInfo" hgap="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints vgrow="NEVER" />
+                    </rowConstraints>
+                    <children>
+                        <Label fx:id="labelQuickInfo" blendMode="DIFFERENCE" styleClass="quick-info-label" text="Path">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="labelQuickInfo2" styleClass="quick-info-label" text="Zoom" GridPane.columnIndex="1" />
+                        <Label fx:id="labelQuickInfo3" alignment="CENTER_RIGHT" contentDisplay="RIGHT" styleClass="quick-info-label" text="Count" textAlignment="RIGHT" GridPane.columnIndex="2">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </GridPane>
+                <ScrollPane id="scrollPaneMain" fx:id="scrollPaneMain" fitToHeight="true" fitToWidth="true" onKeyPressed="#scrollPaneMain_onKeyPress" onKeyReleased="#scrollPaneMain_onKeyRelease" onMouseClicked="#scrollPaneMain_onClick" onScroll="#scrollPaneMain_onScroll" styleClass="no-border" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <content>
+                        <AnchorPane fx:id="anchorPaneMain" onMouseDragged="#anchorPaneMain_onMouseDrag" onMousePressed="#anchorPaneMain_onMousePress" onMouseReleased="#anchorPaneMain_onMouseRelease" styleClass="no-border">
+                            <children>
+                                <StackPane styleClass="no-border" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                        <ImageView fx:id="imageViewMain" focusTraversable="true" onMouseExited="#imageViewMain_onMouseExit" onMouseMoved="#imageViewMain_onMouseMove" pickOnBounds="true" preserveRatio="true" />
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </ScrollPane>
+            </children>
+        </AnchorPane>
+    </center>
+    <bottom>
+        <GridPane fx:id="gridPaneStatusBar" hgap="16.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
+                <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
                 <Label fx:id="labelStatus" text="Status" GridPane.hgrow="ALWAYS" />
-            <Label fx:id="labelPoints" text="Coordinates" GridPane.columnIndex="1" />
-            <Label fx:id="labelResolution" text="Resolution" textAlignment="RIGHT" GridPane.columnIndex="2" />
-         </children>
-         <padding>
-            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-         </padding>
-      </GridPane>
-   </bottom>
+                <Label fx:id="labelPoints" text="Coordinates" GridPane.columnIndex="1" />
+                <Label fx:id="labelResolution" text="Resolution" textAlignment="RIGHT" GridPane.columnIndex="2" />
+            </children>
+            <padding>
+                <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+            </padding>
+        </GridPane>
+    </bottom>
 </BorderPane>

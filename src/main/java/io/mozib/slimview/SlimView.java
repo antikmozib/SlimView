@@ -15,9 +15,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.prefs.Preferences;
-
 
 public class SlimView extends Application {
     private static String[] cmdLineArgs;

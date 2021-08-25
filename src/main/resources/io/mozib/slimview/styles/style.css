@@ -33,13 +33,14 @@
 }
 
 .quick-info-label {
-    -fx-text-fill: white;
+    -fx-text-fill: #fff;
     -fx-font-family: monospace;
+    -fx-font-size: 16px;
 }
 
 .selection-rect {
     -fx-fill: transparent;
-    -fx-stroke: white;
+    -fx-stroke: #fff;
     -fx-stroke-type: inside;
     -fx-stroke-width: 1;
     -fx-blend-mode: exclusion;
