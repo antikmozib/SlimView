@@ -87,7 +87,7 @@ public class ResizeViewModel {
     }
 
     public Scalr.Method stringToMethod(String value) {
-        return Scalr.Method.valueOf(value.toUpperCase().replace("_", " "));
+        return Scalr.Method.valueOf(value.toUpperCase().replace(" ", "_"));
     }
 
     public String methodToString(Scalr.Method method) {

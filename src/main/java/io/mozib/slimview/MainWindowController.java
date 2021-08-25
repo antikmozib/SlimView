@@ -150,7 +150,11 @@ public class MainWindowController implements Initializable {
     @FXML
     public ImageView tButtonFavoriteImageView;
     @FXML
+    public AnchorPane anchorPaneQuickInfo;
+    @FXML
     public Label labelQuickInfo;
+    @FXML
+    public Label labelQuickInfo2;
 
     @FXML
     @Override
@@ -166,7 +170,8 @@ public class MainWindowController implements Initializable {
         labelResolution.setText("");
         labelPoints.setText("");
         labelQuickInfo.setText("");
-        labelQuickInfo.toFront();
+        labelQuickInfo2.setText("");
+        anchorPaneQuickInfo.toFront();
         imageViewMain.setFitHeight(0);
         imageViewMain.setFitWidth(0);
         labelStatus.textProperty().bind(mainViewModel.statusProperty());
@@ -201,7 +206,7 @@ public class MainWindowController implements Initializable {
         toolBar.managedProperty().bind(toolBar.visibleProperty());
         gridPaneStatusBar.managedProperty().bind(gridPaneStatusBar.visibleProperty());
         menuBar.managedProperty().bind(menuBar.visibleProperty());
-        labelQuickInfo.visibleProperty().bind(isViewingFullScreen);
+        anchorPaneQuickInfo.visibleProperty().bind(isViewingFullScreen);
 
         // bind ImageView and FavoriteButton to SelectedImage
         tButtonFavorite.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -943,6 +948,10 @@ public class MainWindowController implements Initializable {
     private void updateFullScreenInfo() {
         labelQuickInfo.setText(
                 mainViewModel.getSelectedImageModel().getBestPath() + " [" + getCurrentViewingZoom() + "%]");
+        labelQuickInfo2.setText(
+                (mainViewModel.getIndex(mainViewModel.getSelectedImageModel()) + 1) + "/"
+                        + mainViewModel.getFileCount()
+        );
     }
 
     /**

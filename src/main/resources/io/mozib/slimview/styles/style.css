@@ -32,7 +32,7 @@
     -fx-padding: 0;
 }
 
-#labelQuickInfo {
+.quick-info-label {
     -fx-text-fill: white;
     -fx-font-family: monospace;
 }

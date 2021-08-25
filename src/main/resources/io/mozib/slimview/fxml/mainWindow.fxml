@@ -408,14 +408,23 @@
    <center>
       <AnchorPane styleClass="no-border" BorderPane.alignment="CENTER">
          <children>
-            <Label id="labelQuickInfo" fx:id="labelQuickInfo" blendMode="DIFFERENCE" text="Path" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <font>
-                  <Font size="14.0" />
-               </font>
+            <AnchorPane fx:id="anchorPaneQuickInfo" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label fx:id="labelQuickInfo" blendMode="DIFFERENCE" styleClass="quick-info-label" text="Path" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="labelQuickInfo2" alignment="CENTER_RIGHT" contentDisplay="RIGHT" styleClass="quick-info-label" text="Count" textAlignment="RIGHT" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
                <padding>
                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                </padding>
-            </Label>
+            </AnchorPane>
               <ScrollPane id="scrollPaneMain" fx:id="scrollPaneMain" fitToHeight="true" fitToWidth="true" onKeyPressed="#scrollPaneMain_onKeyPress" onKeyReleased="#scrollPaneMain_onKeyRelease" onMouseClicked="#scrollPaneMain_onClick" onScroll="#scrollPaneMain_onScroll" styleClass="no-border" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <content>
                   <AnchorPane fx:id="anchorPaneMain" onMouseDragged="#anchorPaneMain_onMouseDrag" onMousePressed="#anchorPaneMain_onMousePress" onMouseReleased="#anchorPaneMain_onMouseRelease" styleClass="no-border">

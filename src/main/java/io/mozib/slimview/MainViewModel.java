@@ -361,7 +361,7 @@ public class MainViewModel {
             selectedImageModelWrapper.set(imageModel);
 
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(getCurrentIndex() + 1).append("/").append(imageModels.size());
+            stringBuilder.append(getCurrentIndex() + 1).append("/").append(getFileCount());
             if (imageModel.getImage() != null) {
                 stringBuilder
                         .append("  |  ").append(imageModel.getFormat())
@@ -459,12 +459,26 @@ public class MainViewModel {
      * @return The index of the currently displayed image from the list of images
      */
     private int getCurrentIndex() {
-        if (imageModels != null && getSelectedImageModel() != null) {
+        if (getSelectedImageModel() != null)
+            return getIndex(getSelectedImageModel());
 
+        return 0;
+    }
+
+    public int getIndex(ImageModel imageModel) {
+        if (imageModel != null && imageModels != null) {
             return imageModels.indexOf(
-                    imageModels.stream().filter(item -> getSelectedImageModel().getBestPath().equals(item.getPath()))
+                    imageModels.stream().filter(item -> imageModel.getBestPath().equals(item.getBestPath()))
                             .findAny().orElse(null));
         }
+        return 0;
+    }
+
+    public int getFileCount() {
+        if (imageModels != null) {
+            return imageModels.size();
+        }
+
         return 0;
     }
 
