@@ -280,7 +280,8 @@ public class MainWindowController implements Initializable {
             fixedHeight = titleBarHeight + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight();
         } else {
             fixedWidth = 12;
-            fixedHeight = 12 + titleBarHeight + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight();
+            fixedHeight
+                    = 12 + titleBarHeight + menuBar.getHeight() + toolBar.getHeight() + gridPaneStatusBar.getHeight();
         }
 
         // bind ChangeListeners
@@ -494,11 +495,13 @@ public class MainWindowController implements Initializable {
         resizeWindow.showAndWait();
 
         if (resizeViewModel.useNewValues.get()) {
+            System.out.println(resizeViewModel.getSelectedQuality());
             viewStyleProperty.set(ViewStyle.ORIGINAL);
             mainViewModel.resizeImage(
                     mainViewModel.getSelectedImageModel(),
                     Integer.parseInt(resizeViewModel.newWidthProperty.get()),
-                    Integer.parseInt(resizeViewModel.newHeightProperty.get()));
+                    Integer.parseInt(resizeViewModel.newHeightProperty.get()),
+                    resizeViewModel.stringToMethod(resizeViewModel.getSelectedQuality()));
         }
 
     }

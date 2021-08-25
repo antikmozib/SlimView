@@ -380,7 +380,7 @@ public class MainViewModel {
         }
     }
 
-    public void resizeImage(ImageModel imageModel, int newWidth, int newHeight) {
+    public void resizeImage(ImageModel imageModel, int newWidth, int newHeight, Scalr.Method method) {
 
         // resample image to ensure best resizing quality
         BufferedImage image;
@@ -392,7 +392,7 @@ public class MainViewModel {
             image = imageModel.getOriginal().getBufferedImage();
         }
 
-        var resized = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
+        var resized = Scalr.resize(image, method, Scalr.Mode.FIT_EXACT, newWidth, newHeight);
         var file = new File(Paths.get(getDataFile(DataFileLocation.CACHE_DIR), imageModel.getName()).toString());
         setSelectedImage(createTempImage(resized, file, imageModel.getBestPath()));
     }

@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -27,11 +28,17 @@ public class ResizeWindowController implements Initializable {
     public TextField textHeight;
     @FXML
     public CheckBox checkBoxPreserveAspectRatio;
+    @FXML
+    public ComboBox<String> comboBoxQuality;
 
     public void setViewModel(ResizeViewModel resizeViewModel) {
         this.resizeViewModel = resizeViewModel;
         textWidth.textProperty().bindBidirectional(resizeViewModel.newWidthProperty);
         textHeight.textProperty().bindBidirectional(resizeViewModel.newHeightProperty);
+        comboBoxQuality.setItems(resizeViewModel.resizeQualities);
+        comboBoxQuality.setOnAction(event ->
+                resizeViewModel.setSelectedQuality(comboBoxQuality.getSelectionModel().getSelectedItem()));
+        comboBoxQuality.getSelectionModel().select(resizeViewModel.getSelectedQuality());
         checkBoxPreserveAspectRatio.selectedProperty().bindBidirectional(resizeViewModel.preserveAspectRatioProperty);
     }
 
