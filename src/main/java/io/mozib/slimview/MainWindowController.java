@@ -1200,7 +1200,8 @@ public class MainWindowController implements Initializable {
         // separate item for each extension
         for (String ext : extensions) {
             ext = ext.replace("*", "").replace(".", "");
-            filters.add(new FileChooser.ExtensionFilter(ext.toUpperCase() + " Image", "*." + ext.toLowerCase()));
+            filters.add(new FileChooser.ExtensionFilter(
+                    ext.toUpperCase() + " Image", "*." + ext.toLowerCase()));
         }
 
         return filters.toArray(FileChooser.ExtensionFilter[]::new);

@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 
 import java.text.DecimalFormat;
@@ -86,10 +87,10 @@ public class ResizeViewModel {
     }
 
     public Scalr.Method stringToMethod(String value) {
-        return Scalr.Method.valueOf(value.toUpperCase().replace(" ", "_"));
+        return Scalr.Method.valueOf(value.toUpperCase().replace("_", " "));
     }
 
     public String methodToString(Scalr.Method method) {
-        return method.name().replace("_", " ");
+        return StringUtils.capitalize(method.name().replace("_", " ").toLowerCase());
     }
 }
