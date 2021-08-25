@@ -3,7 +3,8 @@
  */
 
 #labelFilename {
-    -fx-text-fill: #00ff00;
+    -fx-text-fill: #fff;
+    -fx-blend-mode: exclusion;
 }
 
 #anchorPanePreview {

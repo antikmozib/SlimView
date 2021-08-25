@@ -42,4 +42,5 @@
     -fx-stroke: white;
     -fx-stroke-type: inside;
     -fx-stroke-width: 1;
+    -fx-blend-mode: exclusion;
 }

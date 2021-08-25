@@ -25,7 +25,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.*;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -359,7 +358,7 @@ public class MainWindowController implements Initializable {
 
                 selectionRectangle = new javafx.scene.shape.Rectangle();
                 selectionRectangle.getStyleClass().add("selection-rect");
-                selectionRectangle.setBlendMode(BlendMode.EXCLUSION);
+                /*selectionRectangle.setBlendMode(BlendMode.EXCLUSION);*/
                 selectionRectangle.setOnMouseMoved(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -402,6 +401,8 @@ public class MainWindowController implements Initializable {
                         double targetTop = ((selectedTop + selectedHeight / 2) * scaleFactor) / targetHeight;
                         scrollPaneMain.setHvalue(targetLeft);
                         scrollPaneMain.setVvalue(targetTop);
+
+                        clearSelectionRectangle();
                     }
                 });
                 selectionRectangle.setOnMouseEntered(new EventHandler<MouseEvent>() {
