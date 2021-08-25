@@ -41,8 +41,7 @@ public class TestUtil {
 
         assertFalse(file.exists());
         Util.writeStringToFile(file.getPath(), content);
-        assertTrue(file.exists());
-        assertTrue(file.length() >= content.length());
+        assertEquals(file.length(), content.length());
 
         file.delete();
     }
