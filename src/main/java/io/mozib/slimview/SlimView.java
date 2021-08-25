@@ -15,9 +15,9 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.prefs.Preferences;
 
-import static io.mozib.slimview.Util.getTempDirectory;
 
 public class SlimView extends Application {
     private static String[] cmdLineArgs;
@@ -67,7 +67,7 @@ public class SlimView extends Application {
     @Override
     public void stop() {
         // clear caches...
-        var files = new File(getTempDirectory());
+        var files = new File(Util.getDataFile(Util.DataFileLocation.CACHE_DIR));
         for (File file : files.listFiles()) {
             file.delete();
         }

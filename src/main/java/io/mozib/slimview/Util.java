@@ -19,6 +19,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,32 +52,47 @@ public class Util {
     }
 
     public enum DataFileLocation {
-        RECENT_FILES, COPY_TO_DESTINATIONS, FAVORITES
+        RECENT_FILES, COPY_TO_DESTINATIONS, FAVORITES, CACHE_DIR, SETTINGS_DIR
     }
 
     /**
-     * @param dataFileLocation Path to the data file
-     * @return Path to the XML settings file
+     * @param dataFileLocation Type of data file or folder being requested
+     * @return Path to the data file or folder
      */
     public static String getDataFile(DataFileLocation dataFileLocation) {
-        createSettingsDir();
-        Path path = Paths.get(System.getProperty("user.home"), ".slimview");
+        Path path = null;
 
         switch (dataFileLocation) {
+            case SETTINGS_DIR:
+                path = Paths.get(System.getProperty("user.home"), ".slimview");
+                break;
+
+            case CACHE_DIR:
+                path = Paths.get(getDataFile(DataFileLocation.SETTINGS_DIR), "cache");
+                break;
+
             case RECENT_FILES:
-                path = Paths.get(path.toString(), "recent.xml");
+                path = Paths.get(getDataFile(DataFileLocation.SETTINGS_DIR), "recent.xml");
                 break;
+
             case COPY_TO_DESTINATIONS:
-                path = Paths.get(path.toString(), "copy-to-destinations.xml");
+                path = Paths.get(getDataFile(DataFileLocation.SETTINGS_DIR), "copy-to-destinations.xml");
                 break;
+
             case FAVORITES:
-                path = Paths.get(path.toString(), "favorites.xml");
+                path = Paths.get(getDataFile(DataFileLocation.SETTINGS_DIR), "favorites.xml");
                 break;
         }
 
         // create file if not exists
         try {
-            new File(path.toString()).createNewFile();
+            if (dataFileLocation == DataFileLocation.SETTINGS_DIR || dataFileLocation == DataFileLocation.CACHE_DIR) {
+                Files.createDirectory(path);
+            } else {
+                Files.createFile(path);
+            }
+        } catch (FileAlreadyExistsException ignored) {
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -84,36 +100,9 @@ public class Util {
         return path.toString();
     }
 
-    /**
-     * @return Path to the directory where to save temporary, edited images
-     */
-    public static String getTempDirectory() {
-        createSettingsDir(); // ensure settings directory exists
-        Path path = Paths.get(System.getProperty("user.home"), ".slimview", "cache");
-        if (!Files.exists(path)) {
-            try {
-                Files.createDirectory(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return Paths.get(System.getProperty("user.home"), ".slimview", "cache").toString();
-    }
-
-    private static void createSettingsDir() {
-        Path path = Paths.get(System.getProperty("user.home"), ".slimview");
-        if (!Files.exists(path)) {
-            try {
-                Files.createDirectory(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public static String inputStreamToString(InputStream inputStream) {
         StringBuilder stringBuilder = new StringBuilder();
-        String line = null;
+        String line;
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         try {
             while ((line = bufferedReader.readLine()) != null) {
