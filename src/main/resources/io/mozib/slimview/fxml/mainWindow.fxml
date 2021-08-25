@@ -408,7 +408,7 @@
     <center>
         <AnchorPane styleClass="no-border" BorderPane.alignment="CENTER">
             <children>
-                <GridPane fx:id="gridPaneQuickInfo" hgap="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <GridPane fx:id="gridPaneQuickInfo" hgap="16.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columnConstraints>
                         <ColumnConstraints hgrow="ALWAYS" />
                         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
