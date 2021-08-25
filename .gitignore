@@ -10,3 +10,4 @@ nb-configuration.xml
 !build.sh
 !run.sh
 target/
+nbactions-uninst.xml
