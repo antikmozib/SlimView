@@ -1008,8 +1008,8 @@ public class MainWindowController implements Initializable {
         imageViewMain.setFitHeight(targetHeight);
 
         // center new zoomed image
-        /*scrollPaneMain.setVvalue(0.5);
-        scrollPaneMain.setHvalue(0.5);*/
+        scrollPaneMain.setVvalue(0.5);
+        scrollPaneMain.setHvalue(0.5);
     }
 
     private void zoomIn() {
