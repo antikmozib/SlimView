@@ -948,12 +948,13 @@ public class MainWindowController implements Initializable {
     }
 
     private void updateFullScreenInfo() {
-        labelQuickInfo.setText(mainViewModel.getSelectedImageModel().getBestPath());
+        labelQuickInfo.setText(mainViewModel.getSelectedImageModel().getBestPath() + " ["
+                + (mainViewModel.getIndex(mainViewModel.getSelectedImageModel()) + 1) + "/"
+                + mainViewModel.getFileCount() + "]");
         labelQuickInfo2.setText(getCurrentViewingZoom() + "%");
-        labelQuickInfo3.setText(
-                (mainViewModel.getIndex(mainViewModel.getSelectedImageModel()) + 1) + "/"
-                        + mainViewModel.getFileCount()
-        );
+        labelQuickInfo3.setText(mainViewModel.getSelectedImageModel().hasOriginal()
+                ? mainViewModel.getSelectedImageModel().getOriginal().getResolution()
+                : mainViewModel.getSelectedImageModel().getResolution());
     }
 
     /**
@@ -1268,7 +1269,6 @@ public class MainWindowController implements Initializable {
 
             tButtonFavorite.setSelected(newValue.getIsFavorite());
             imageViewMain.setImage(newValue.getImage());
-            labelQuickInfo.setText("");
 
             // reset the ViewStyle if we've zoomed image
             ViewStyle currentViewStyle = viewStyleProperty.get();
