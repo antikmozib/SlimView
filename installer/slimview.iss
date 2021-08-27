@@ -3,6 +3,8 @@
 #define MyAppPublisher "Antik Mozib"
 #define MyAppURL "https://mozib.io/slimview"
 #define MyAppExeName "slimview.exe"
+#dim MyAppExtensions[7] {'bmp', 'png', 'gif', 'jpeg', 'jpg', 'tiff', 'ico', 'cur', 'psd', 'psb'}
+#define I
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -46,41 +48,14 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Registry]
-; jpg
-Root: HKCR; Subkey: ".jpg"; ValueData: "{#MyAppName}.jpg"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.jpg"; ValueData: "{#MyAppName} JPG Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.jpg\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.jpg\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+#sub RegisterAssociation
+  Root: HKCR; Subkey: ".{#MyAppExtensions[I]}"; ValueData: "{#MyAppName}.{#MyAppExtensions[I]}"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+  Root: HKCR; Subkey: "{#MyAppName}.{#MyAppExtensions[I]}"; ValueData: "{#MyAppName} {#Uppercase(MyAppExtensions[I])} Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+  Root: HKCR; Subkey: "{#MyAppName}.{#MyAppExtensions[I]}\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
+  Root: HKCR; Subkey: "{#MyAppName}.{#MyAppExtensions[I]}\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+#endsub
 
-; jpeg
-Root: HKCR; Subkey: ".jpeg"; ValueData: "{#MyAppName}.jpeg"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.jpeg"; ValueData: "{#MyAppName} JPEG Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.jpeg\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.jpeg\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
-
-; gif
-Root: HKCR; Subkey: ".gif"; ValueData: "{#MyAppName}.gif"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.gif"; ValueData: "{#MyAppName} GIF Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.gif\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.gif\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
-
-; png
-Root: HKCR; Subkey: ".png"; ValueData: "{#MyAppName}.png"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.png"; ValueData: "{#MyAppName} PNG Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.png\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.png\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
-
-; bmp
-Root: HKCR; Subkey: ".bmp"; ValueData: "{#MyAppName}.bmp"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.bmp"; ValueData: "{#MyAppName} Bitmap Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.bmp\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.bmp\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
-
-; tiff
-Root: HKCR; Subkey: ".tiff"; ValueData: "{#MyAppName}.tiff"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.tiff"; ValueData: "{#MyAppName} TIFF Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.tiff\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}.tiff\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+#for {I = 0; I < DimOf(MyAppExtensions); I++} RegisterAssociation
 
 ; Delete Java preferences
 Root: HKCU; Subkey: "SOFTWARE\JavaSoft\Prefs\io\mozib\slimview"; Flags: dontcreatekey uninsdeletekey
@@ -90,3 +65,5 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{%USERPROFILE}\.slimview"
+
+#expr SaveToFile(AddBackslash(SourcePath) + "Preprocessed.iss")
