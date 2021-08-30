@@ -484,9 +484,8 @@ public class MainViewModel {
 
     private ImageModel findByPath(String path) {
         for (ImageModel imageModel : imageModels) {
-            if (imageModel.getPath().equals(path)) {
+            if (imageModel.getPath().equals(path))
                 return imageModel;
-            }
         }
 
         return null;

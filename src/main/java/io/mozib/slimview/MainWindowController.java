@@ -654,19 +654,17 @@ public class MainWindowController implements Initializable {
                 isCtrlDown = true;
                 break;
 
-            case S:
+            case S: // toggle selection mode
                 selectionModeActive.set(true);
                 break;
 
-            case P:
+            case P: // toggle pan mode
                 selectionModeActive.set(false);
                 break;
 
-            /*case F:
-                mainViewModel.setAsFavorite(mainViewModel.getSelectedImageModel(),
-                        !mainViewModel.getSelectedImageModel().getIsFavorite());
-                tButtonFavorite.setSelected(mainViewModel.getSelectedImageModel().getIsFavorite());
-                break;*/
+            case F: // toggle favorite
+                toggleFavorite();
+                break;
 
             default:
                 break;
@@ -856,7 +854,8 @@ public class MainWindowController implements Initializable {
     @FXML
     public void tButtonFavorite_onAction(ActionEvent actionEvent) {
         mainViewModel.setAsFavorite(mainViewModel.getSelectedImageModel(),
-                ((ToggleButton) actionEvent.getSource()).isSelected());
+                tButtonFavorite.isSelected());
+        actionEvent.consume();
     }
 
     @FXML
@@ -897,6 +896,18 @@ public class MainWindowController implements Initializable {
         gridPaneStatusBar.setVisible(!setFullScreen);
         isViewingFullScreen.set(setFullScreen);
         menuFullScreen.setSelected(setFullScreen);
+    }
+
+    /**
+     * Sets/unsets the current image as a favorite
+     */
+    private void toggleFavorite() {
+        if (mainViewModel.getSelectedImageModel() == null)
+            return;
+
+        tButtonFavorite.setSelected(!tButtonFavorite.isSelected());
+        mainViewModel.setAsFavorite(mainViewModel.getSelectedImageModel(),
+                tButtonFavorite.isSelected());
     }
 
     /**
