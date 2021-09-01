@@ -1376,12 +1376,19 @@ public class MainWindowController implements Initializable {
                         }
 
                         Window window = imageViewMain.getScene().getWindow();
+
                         ((Stage) window).setMaximized(false);
-                        window.setX(0);
-                        window.setY(0);
                         window.setWidth(finalWidth + fixedWidth);
                         window.setHeight(finalHeight + fixedHeight);
+
+                        if (window.getX() + window.getWidth() > screenWidth)
+                            window.setX(screenWidth - window.getWidth());
+
+                        if (window.getY() + window.getHeight() > screenHeight)
+                            window.setY(screenHeight - window.getHeight());
+
                     } else {
+
                         finalWidth = screenWidth;
                         finalHeight = finalWidth / aspectRatio;
                         if (finalHeight > screenHeight) {
