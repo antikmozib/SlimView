@@ -131,8 +131,7 @@ public class ImageModel {
         if (getImage() == null)
             return "";
 
-        ColorModel colorModel = getBufferedImage().getColorModel();
-        return String.valueOf(colorModel.getPixelSize());
+        return String.valueOf(getBufferedImage().getColorModel().getPixelSize());
     }
 
     public boolean hasOriginal() {

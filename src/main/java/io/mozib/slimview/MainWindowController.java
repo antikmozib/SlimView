@@ -1356,7 +1356,7 @@ public class MainWindowController implements Initializable {
                     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                     double screenWidth = screenSize.getWidth();
                     double screenHeight = screenSize.getHeight();
-                    double desktopViewportWidth
+                    double desktopViewportWidth /* Takes screen insets into account */
                             = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getWidth();
                     double desktopViewportHeight
                             = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getHeight();
@@ -1381,11 +1381,11 @@ public class MainWindowController implements Initializable {
                         window.setWidth(finalWidth + fixedWidth);
                         window.setHeight(finalHeight + fixedHeight);
 
-                        if (window.getX() + window.getWidth() > screenWidth)
-                            window.setX(screenWidth - window.getWidth());
-
-                        if (window.getY() + window.getHeight() > screenHeight)
-                            window.setY(screenHeight - window.getHeight());
+                        // ensure window remains within view
+                        if (window.getX() + window.getWidth() > desktopViewportWidth)
+                            window.setX(desktopViewportWidth - window.getWidth());
+                        if (window.getY() + window.getHeight() > desktopViewportHeight)
+                            window.setY(desktopViewportHeight - window.getHeight());
 
                     } else {
 
