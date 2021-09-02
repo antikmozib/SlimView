@@ -49,14 +49,13 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 
 [Registry]
 #sub RegisterAssociation
-  Root: HKCR; Subkey: ".{#MyAppExtensions[I]}"; ValueData: "{#MyAppName}.{#MyAppExtensions[I]}"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-  Root: HKCR; Subkey: "{#MyAppName}.{#MyAppExtensions[I]}"; ValueData: "{#MyAppName} {#Uppercase(MyAppExtensions[I])} Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-  Root: HKCR; Subkey: "{#MyAppName}.{#MyAppExtensions[I]}\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
-  Root: HKCR; Subkey: "{#MyAppName}.{#MyAppExtensions[I]}\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: ".{#MyAppExtensions[I]}"; ValueData: "{#MyAppName}.{#MyAppExtensions[I]}"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}.{#MyAppExtensions[I]}"; ValueData: "{#MyAppName} {#Uppercase(MyAppExtensions[I])} Image"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}.{#MyAppExtensions[I]}\DefaultIcon"; ValueData: "{app}\{#MyAppExeName},0"; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}.{#MyAppExtensions[I]}\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+
 #endsub
-
 #for {I = 0; I < DimOf(MyAppExtensions); I++} RegisterAssociation
-
 ; Delete Java preferences
 Root: HKCU; Subkey: "SOFTWARE\JavaSoft\Prefs\io\mozib\slimview"; Flags: dontcreatekey uninsdeletekey
 
