@@ -84,7 +84,7 @@ public class Util {
                 break;
         }
 
-        // create file if not exists
+        // create the file if it doesn't exist
         try {
             if (dataFileLocation == DataFileLocation.SETTINGS_DIR || dataFileLocation == DataFileLocation.CACHE_DIR) {
                 Files.createDirectory(path);
@@ -140,20 +140,13 @@ public class Util {
             alreadyExists.refresh();
         } else {
             if (recentFiles.getRecentFiles().size() >= maxRecent) {
-                long oldestSeen = System.currentTimeMillis();
-                for (RecentFiles.RecentFile rf : recentFiles.getRecentFiles()) {
-                    if (rf.getLastSeen() < oldestSeen) {
-                        oldestSeen = rf.getLastSeen();
-                    }
-                }
-                RecentFiles.RecentFile remove = null;
-                for (RecentFiles.RecentFile rf : recentFiles.getRecentFiles()) {
-                    if (rf.getLastSeen() == oldestSeen) {
-                        remove = rf;
-                        break;
-                    }
-                }
-                recentFiles.getRecentFiles().remove(remove);
+
+                RecentFiles.RecentFile removeThis = null;
+                for (RecentFiles.RecentFile r : recentFiles.getRecentFiles())
+                    if (removeThis == null || removeThis.getLastSeen() > r.getLastSeen())
+                        removeThis = r;
+
+                if (removeThis != null) recentFiles.getRecentFiles().remove(removeThis);
             }
             RecentFiles.RecentFile newRecent = new RecentFiles.RecentFile();
             newRecent.setPath(path);
@@ -196,7 +189,7 @@ public class Util {
     /**
      * @param classType        The type of object the XML mapper will map to
      * @param dataFileLocation The location of the setting file, determined through its enum
-     * @param <T>              Generic type
+     * @param <T>              Generic type definition
      * @return Data read from XML file and mapped to a JavaBean
      */
     public static <T> T readDataFile(Class<T> classType, DataFileLocation dataFileLocation) {
@@ -367,10 +360,10 @@ public class Util {
         File file = new File(out);
 
         if (file.exists() && !file.isDirectory()) {
-            if (!file.delete()) throw new IOException();
+            if (!file.delete()) throw new IOException("The existing file couldn't be deleted");
         }
 
-        if (!file.createNewFile()) throw new IOException();
+        if (!file.createNewFile()) throw new IOException("The requested file couldn't be created");
 
         try (PrintWriter printWriter = new PrintWriter(out)) {
             printWriter.print(content);

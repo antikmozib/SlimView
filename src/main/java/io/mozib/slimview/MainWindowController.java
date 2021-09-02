@@ -188,7 +188,7 @@ public class MainWindowController implements Initializable {
         menuSortByCreated.setToggleGroup(toggleGroupSortStyle);
         menuSortByModified.setToggleGroup(toggleGroupSortStyle);
 
-        // Button ToggleGroup
+        // Button ToggleGroup for selection and pan modes
         tButtonPanMode.setToggleGroup(toggleGroupSelectPan);
         tButtonSelectionMode.setToggleGroup(toggleGroupSelectPan);
         tButtonPanMode.selectedProperty().bindBidirectional(scrollPaneMain.pannableProperty());
@@ -197,15 +197,19 @@ public class MainWindowController implements Initializable {
         // bind SelectionRectangle properties
         selectionModeActive.set(preferences.getBoolean("CurrentSelectionMode", true));
         selectionModeActive.addListener(((observable, oldValue, newValue) -> {
-            preferences.putBoolean("CurrentSelectionMode", newValue);
             scrollPaneMain.setPannable(!newValue);
             if (!newValue) clearSelectionRectangle();
+            preferences.putBoolean("CurrentSelectionMode", newValue);
         }));
+        scrollPaneMain.pannableProperty().addListener(((observable, oldValue, newValue) ->
+                selectionModeActive.set(!newValue)));
+
+        // trigger change listener
         var currentSelectionMode = selectionModeActive.get();
         selectionModeActive.set(!currentSelectionMode);
         selectionModeActive.set(currentSelectionMode);
 
-        // bindings for fullscreen viewing
+        // bindings for full screen viewing
         toolBar.managedProperty().bind(toolBar.visibleProperty());
         gridPaneStatusBar.managedProperty().bind(gridPaneStatusBar.visibleProperty());
         menuBar.managedProperty().bind(menuBar.visibleProperty());
@@ -303,7 +307,7 @@ public class MainWindowController implements Initializable {
         mainViewModel.sortImages(MainViewModel.SortStyle.valueOf( /* Default sort style */
                 preferences.get("LastSortStyle", MainViewModel.SortStyle.DATE_MODIFIED.toString())));
 
-        // refresh ViewStyle if we're switching to fullscreen mode
+        // refresh ViewStyle if we're switching to full screen mode
         isViewingFullScreen.addListener(((observable, oldValue, newValue) -> {
             ViewStyle old = viewStyleProperty.get();
             viewStyleProperty.set(null);
@@ -1368,6 +1372,7 @@ public class MainWindowController implements Initializable {
                     double finalWidth, finalHeight;
 
                     if (!isViewingFullScreen.get()) {
+
                         finalWidth = viewportWidth;
                         finalHeight = finalWidth / aspectRatio;
                         if (finalHeight > viewportHeight) {
@@ -1384,8 +1389,13 @@ public class MainWindowController implements Initializable {
                         // ensure window remains within view
                         if (window.getX() + window.getWidth() > desktopViewportWidth)
                             window.setX(desktopViewportWidth - window.getWidth());
+                        else if (window.getX() < 0)
+                            window.setX(0);
+
                         if (window.getY() + window.getHeight() > desktopViewportHeight)
                             window.setY(desktopViewportHeight - window.getHeight());
+                        else if (window.getY() < 0)
+                            window.setY(0);
 
                     } else {
 

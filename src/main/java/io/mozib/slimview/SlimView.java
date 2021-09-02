@@ -65,8 +65,8 @@ public class SlimView extends Application {
     @Override
     public void stop() {
         // clear caches...
-        var files = new File(Util.getDataFile(Util.DataFileLocation.CACHE_DIR));
-        for (File file : files.listFiles()) {
+        var cacheDir = new File(Util.getDataFile(Util.DataFileLocation.CACHE_DIR));
+        for (File file : cacheDir.listFiles()) {
             file.delete();
         }
     }

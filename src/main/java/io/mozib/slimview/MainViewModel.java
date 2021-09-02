@@ -71,7 +71,7 @@ public class MainViewModel {
 
         // ensure the file exists and is a valid image file
         if (!file.exists() || !Files.isReadable(file.toPath()) || imageModel.getImage() == null) {
-            throw new IOException();
+            throw new IOException("The requested file either doesn't exist or isn't a valid image file");
         }
 
         // first, show the image requested while the directory is being scanned
@@ -175,10 +175,9 @@ public class MainViewModel {
             case LINUX:
                 // in linux we've to manually trash the file by creating a .trashinfo file first
 
-                String trashInfo =
-                        "[Trash Info]\n" +
-                                "Path=" + path + "\n" +
-                                "DeletionDate=" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
+                String trashInfo = "[Trash Info]\n"
+                        + "Path=" + path + "\n"
+                        + "DeletionDate=" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
 
                 String pathToTrash =
                         Paths.get(System.getProperty("user.home"), ".local", "share", "Trash").toString();
