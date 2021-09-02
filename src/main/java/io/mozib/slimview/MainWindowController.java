@@ -163,11 +163,6 @@ public class MainWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // initialize only UI control listeners in this method
 
-        // common EventHandler for all toolbar elements; focus on the ImageView whenever any element is actioned
-        EventHandler<ActionEvent> defaultToolbarEventHandler = event -> {
-            imageViewMain.requestFocus();
-        };
-
         // reset control properties
         labelResolution.setText("");
         labelPoints.setText("");
@@ -198,7 +193,8 @@ public class MainWindowController implements Initializable {
         selectionModeActive.set(preferences.getBoolean("CurrentSelectionMode", true));
         selectionModeActive.addListener(((observable, oldValue, newValue) -> {
             scrollPaneMain.setPannable(!newValue);
-            if (!newValue) clearSelectionRectangle();
+            if (!newValue)
+                clearSelectionRectangle();
             preferences.putBoolean("CurrentSelectionMode", newValue);
         }));
         scrollPaneMain.pannableProperty().addListener(((observable, oldValue, newValue) ->
@@ -224,6 +220,10 @@ public class MainWindowController implements Initializable {
             }
         });
 
+        // common EventHandler for all toolbar elements; focus on the ImageView whenever any element is actioned
+        EventHandler<ActionEvent> defaultToolbarEventHandler = event -> {
+            imageViewMain.requestFocus();
+        };
         // set focus on the ImageView whenever any Button on the Toolbar is actioned
         toolBar.getItems().forEach(node -> {
             if (node instanceof Button) {
@@ -241,21 +241,20 @@ public class MainWindowController implements Initializable {
 
         // load recent files
         RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileLocation.RECENT_FILES);
-        if (recentFiles == null) {
+        if (recentFiles == null)
             recentFiles = new RecentFiles();
-        }
-        if (recentFiles.getRecentFiles() == null) {
+
+        if (recentFiles.getRecentFiles() == null)
             recentFiles.setRecentFiles(new ArrayList<>());
-        } else {
+        else
             recentFiles.getRecentFiles().sort(((o1, o2) -> Long.compare(o2.getLastSeen(), o1.getLastSeen())));
-        }
+
         for (RecentFiles.RecentFile recentFile : recentFiles.getRecentFiles()) {
             MenuItem menuItem = new MenuItem(recentFile.getPath());
-            menuItem.setOnAction(event -> {
-                openImage(menuItem.getText());
-            });
+            menuItem.setOnAction(event -> openImage(menuItem.getText()));
             menuRecent.getItems().add(menuItem);
         }
+
         // add a clear option
         if (recentFiles.getRecentFiles().size() > 0) {
             menuRecent.getItems().add(new SeparatorMenuItem());
@@ -263,9 +262,8 @@ public class MainWindowController implements Initializable {
             MenuItem menuClearRecent = new MenuItem("Clear History");
             menuClearRecent.setOnAction(event -> {
                 File file = new File(getDataFile(Util.DataFileLocation.RECENT_FILES));
-                if (file.exists()) {
+                if (file.exists())
                     file.delete();
-                }
                 menuRecent.getItems().clear();
             });
             menuRecent.getItems().add(menuClearRecent);
@@ -341,9 +339,8 @@ public class MainWindowController implements Initializable {
             selectionStartedProperty.set(true);
         }
 
-        if (!cursorInsideSelRect && !selectionStartedProperty.get()) {
+        if (!cursorInsideSelRect && !selectionStartedProperty.get())
             clearSelectionRectangle();
-        }
     }
 
     @FXML
@@ -356,11 +353,10 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void anchorPaneMain_onMouseDrag(MouseEvent mouseEvent) {
-        if (!selectionModeActive.get()) {
+        if (!selectionModeActive.get())
             imageViewMain.setCursor(Cursor.MOVE);
-        } else {
+        else
             imageViewMain.setCursor(Cursor.CROSSHAIR);
-        }
 
         if (selectionStartedProperty.get()) {
             if (selectionRectangle == null) {
@@ -371,6 +367,18 @@ public class MainWindowController implements Initializable {
 
                 selectionRectangle = new javafx.scene.shape.Rectangle();
                 selectionRectangle.getStyleClass().add("selection-rect");
+                selectionRectangle.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        cursorInsideSelRect = true;
+                    }
+                });
+                selectionRectangle.setOnMouseExited(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        cursorInsideSelRect = false;
+                    }
+                });
                 selectionRectangle.setOnMouseMoved(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -417,18 +425,6 @@ public class MainWindowController implements Initializable {
                         clearSelectionRectangle();
                     }
                 });
-                selectionRectangle.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        cursorInsideSelRect = true;
-                    }
-                });
-                selectionRectangle.setOnMouseExited(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        cursorInsideSelRect = false;
-                    }
-                });
 
                 anchorPaneMain.getChildren().add(selectionRectangle);
             } else {
@@ -473,6 +469,115 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
+    public void scrollPaneMain_onClick(MouseEvent mouseEvent) {
+        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+            scrollPaneMain.requestFocus();
+            if (mouseEvent.getClickCount() == 2)
+                toggleFullScreen();
+        } else if (mouseEvent.getButton().equals(MouseButton.MIDDLE)) {
+            toggleFullScreen();
+        }
+    }
+
+    @FXML
+    public void scrollPaneMain_onKeyPress(KeyEvent keyEvent) {
+
+        switch (keyEvent.getCode()) {
+
+            case LEFT:
+            case DOWN:
+            case PAGE_DOWN:
+                // don't switch images if the scrollbar is visible
+                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth())
+                    showPrevious();
+                break;
+
+            case RIGHT:
+            case UP:
+            case PAGE_UP:
+                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth())
+                    showNext();
+                break;
+
+            case HOME:
+                showFirst();
+                break;
+
+            case END:
+                showLast();
+                break;
+
+            case ENTER:
+                toggleFullScreen();
+                break;
+
+            case ESCAPE:
+                if (isViewingFullScreen.get()) {
+                    toggleFullScreen();
+                } else {
+                    Platform.exit();
+                }
+                break;
+
+            case CONTROL:
+                isCtrlDown = true;
+                break;
+
+            case SHIFT:
+            case ALT:
+                // prevent conflict on menu shortcuts
+                isCtrlDown = false;
+                break;
+
+            case S: // toggle selection mode
+                selectionModeActive.set(true);
+                break;
+
+            case P: // toggle pan mode
+                selectionModeActive.set(false);
+                break;
+
+            case F: // toggle favorite
+                toggleFavorite();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    @FXML
+    public void scrollPaneMain_onKeyRelease(KeyEvent keyEvent) {
+        isCtrlDown = false;
+    }
+
+    @FXML
+    public void scrollPaneMain_onScroll(ScrollEvent scrollEvent) {
+        scrollEvent.consume();
+
+        if (isCtrlDown) {
+
+            // ctrl is down; zoom image instead of switching
+            if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0)
+                zoomIn();
+            else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0)
+                zoomOut();
+
+        } else {
+
+            // don't switch images if scrollbar is visible
+            if (getViewingWidth() > scrollPaneMain.getViewportBounds().getWidth()
+                    || getViewingHeight() > scrollPaneMain.getViewportBounds().getHeight())
+                return;
+
+            if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0)
+                showPrevious();
+            else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0)
+                showNext();
+        }
+    }
+
+    @FXML
     public void imageViewMain_onMouseExit(MouseEvent mouseEvent) {
         labelPoints.setText("");
     }
@@ -484,9 +589,8 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuResize_onAction(ActionEvent actionEvent) throws IOException {
-        if (mainViewModel.getSelectedImageModel() == null) {
+        if (mainViewModel.getSelectedImageModel() == null)
             return;
-        }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/resizeWindow.fxml"));
         Parent root = fxmlLoader.load();
@@ -591,118 +695,14 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuOpenContainingFolder_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null) {
+        if (mainViewModel.getSelectedImageModel() != null)
             mainViewModel.openContainingFolder(mainViewModel.getSelectedImageModel());
-        }
     }
 
     @FXML
     public void menuOpenInExternalEditor_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null) {
+        if (mainViewModel.getSelectedImageModel() != null)
             mainViewModel.openInEditor(mainViewModel.getSelectedImageModel());
-        }
-    }
-
-    @FXML
-    public void scrollPaneMain_onClick(MouseEvent mouseEvent) {
-        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-            scrollPaneMain.requestFocus();
-            if (mouseEvent.getClickCount() == 2) {
-                toggleFullScreen();
-            }
-        } else if (mouseEvent.getButton().equals(MouseButton.MIDDLE)) {
-            toggleFullScreen();
-        }
-    }
-
-    @FXML
-    public void scrollPaneMain_onKeyPress(KeyEvent keyEvent) {
-
-        switch (keyEvent.getCode()) {
-            // don't switch images if the scrollbar is visible
-            case LEFT:
-            case DOWN:
-            case PAGE_DOWN:
-                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth())
-                    showPrevious();
-                break;
-
-            case RIGHT:
-            case UP:
-            case PAGE_UP:
-                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth())
-                    showNext();
-                break;
-
-            case HOME:
-                showFirst();
-                break;
-
-            case END:
-                showLast();
-                break;
-
-            case ENTER:
-                toggleFullScreen();
-                break;
-
-            case ESCAPE:
-                if (isViewingFullScreen.get()) {
-                    toggleFullScreen();
-                } else {
-                    Platform.exit();
-                }
-                break;
-
-            case CONTROL:
-                isCtrlDown = true;
-                break;
-
-            case S: // toggle selection mode
-                selectionModeActive.set(true);
-                break;
-
-            case P: // toggle pan mode
-                selectionModeActive.set(false);
-                break;
-
-            case F: // toggle favorite
-                toggleFavorite();
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    @FXML
-    public void scrollPaneMain_onKeyRelease(KeyEvent keyEvent) {
-        isCtrlDown = false;
-    }
-
-    @FXML
-    public void scrollPaneMain_onScroll(ScrollEvent scrollEvent) {
-        if (!isCtrlDown) {
-            // don't switch images if scrollbar is visible
-            if (getViewingWidth() > scrollPaneMain.getViewportBounds().getWidth()
-                    || getViewingHeight() > scrollPaneMain.getViewportBounds().getHeight())
-                return;
-
-            if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
-                showPrevious();
-            } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
-                showNext();
-            }
-        } else {
-            // ctrl is down; zoom image instead of switching
-            if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
-                zoomIn();
-            } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
-                zoomOut();
-            }
-        }
-
-        scrollEvent.consume();
     }
 
     @FXML
@@ -727,9 +727,8 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void buttonEdit_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null) {
+        if (mainViewModel.getSelectedImageModel() != null)
             mainViewModel.openInEditor(mainViewModel.getSelectedImageModel());
-        }
     }
 
     @FXML
@@ -879,9 +878,8 @@ public class MainWindowController implements Initializable {
         childWindowInCentre(imageViewMain.getScene().getWindow(), favoritesWindow);
         favoritesWindow.showAndWait();
 
-        if (controller.getSelectedFavorite().get() != null) {
+        if (controller.getSelectedFavorite().get() != null)
             openImage(controller.getSelectedFavorite().get().toString());
-        }
     }
 
     @FXML
@@ -1002,9 +1000,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void deleteFile() {
-        if (mainViewModel.getSelectedImageModel() == null) {
+        if (mainViewModel.getSelectedImageModel() == null)
             return;
-        }
+
         try {
             mainViewModel.trashImage(mainViewModel.getSelectedImageModel());
         } catch (Exception e) {
@@ -1090,9 +1088,8 @@ public class MainWindowController implements Initializable {
         }
 
         File initialDirectory = new File(preferences.get("OpenLocation", System.getProperty("user.home")));
-        if (!initialDirectory.exists() || !initialDirectory.isDirectory()) {
+        if (!initialDirectory.exists() || !initialDirectory.isDirectory())
             initialDirectory = new File(System.getProperty("user.home"));
-        }
         fileChooser.setInitialDirectory(initialDirectory);
 
         File file = fileChooser.showOpenDialog(imageViewMain.getScene().getWindow());
@@ -1103,9 +1100,8 @@ public class MainWindowController implements Initializable {
     }
 
     private void saveAs() {
-        if (mainViewModel.getSelectedImageModel() == null) {
+        if (mainViewModel.getSelectedImageModel() == null)
             return;
-        }
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(getExtensionFilters(mainViewModel.getSupportedWriteExtensions()));
@@ -1113,9 +1109,8 @@ public class MainWindowController implements Initializable {
         fileChooser.setInitialFileName(mainViewModel.getSelectedImageModel().getName());
 
         File initialDirectory = new File(preferences.get("SaveAsLocation", System.getProperty("user.home")));
-        if (!initialDirectory.exists() || !initialDirectory.isDirectory()) {
+        if (!initialDirectory.exists() || !initialDirectory.isDirectory())
             initialDirectory = new File(System.getProperty("user.home"));
-        }
         fileChooser.setInitialDirectory(initialDirectory);
 
         File file = fileChooser.showSaveDialog(imageViewMain.getScene().getWindow());
@@ -1145,9 +1140,8 @@ public class MainWindowController implements Initializable {
      * Copies to clipboard the part of the image bounded by the SelectionRectangle
      */
     private void copySelection() {
-        if (mainViewModel.getSelectedImageModel() == null || selectionRectangle == null) {
+        if (mainViewModel.getSelectedImageModel() == null || selectionRectangle == null)
             return;
-        }
 
         double x = selectionRectangle.getBoundsInParent().getMinX() - imageViewMain.getBoundsInParent().getMinX();
         double y = selectionRectangle.getBoundsInParent().getMinY() - imageViewMain.getBoundsInParent().getMinY();
@@ -1182,9 +1176,8 @@ public class MainWindowController implements Initializable {
     }
 
     private void viewImageInfo() throws IOException {
-        if (mainViewModel.getSelectedImageModel() == null) {
+        if (mainViewModel.getSelectedImageModel() == null)
             return;
-        }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/imageInfoWindow.fxml"));
         Parent root = fxmlLoader.load();
@@ -1202,9 +1195,8 @@ public class MainWindowController implements Initializable {
     }
 
     private void copyFileTo() throws IOException {
-        if (mainViewModel.getSelectedImageModel() == null) {
+        if (mainViewModel.getSelectedImageModel() == null)
             return;
-        }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/copyFileToWindow.fxml"));
         Parent root = fxmlLoader.load();
@@ -1278,9 +1270,8 @@ public class MainWindowController implements Initializable {
                             ImageModel newValue) {
 
             // check if image is corrupted
-            if (newValue != null && newValue.getImage() == null) {
+            if (newValue != null && newValue.getImage() == null)
                 showLoadingFailedError(null);
-            }
 
             tButtonFavorite.setSelected(newValue.getIsFavorite());
             imageViewMain.setImage(newValue.getImage());
