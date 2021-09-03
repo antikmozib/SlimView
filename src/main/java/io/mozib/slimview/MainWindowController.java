@@ -639,36 +639,6 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    public void menuSaveAs_onAction(ActionEvent actionEvent) {
-        saveAs();
-    }
-
-    @FXML
-    public void menuRotateLeft_onAction(ActionEvent actionEvent) {
-        rotateLeft();
-    }
-
-    @FXML
-    public void menuRotateRight_onAction(ActionEvent actionEvent) {
-        rotateRight();
-    }
-
-    @FXML
-    public void menuFlipVertically_onAction(ActionEvent actionEvent) {
-        mainViewModel.flipVertically();
-    }
-
-    @FXML
-    public void menuFlipHorizontally_onAction(ActionEvent actionEvent) {
-        mainViewModel.flipHorizontally();
-    }
-
-    @FXML
-    public void menuClose_onAction(ActionEvent actionEvent) {
-        Platform.exit();
-    }
-
-    @FXML
     public void menuAbout_onAction(ActionEvent actionEvent) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("fxml/aboutWindow.fxml"));
         Parent root = fxmlLoader.load();
@@ -683,167 +653,6 @@ public class MainWindowController implements Initializable {
         childWindowInCentre(imageViewMain.getScene().getWindow(), aboutWindow);
         aboutWindow.show();
         controller.buttonOK.requestFocus();
-    }
-
-    @FXML
-    public void menuFullScreen_onAction(ActionEvent actionEvent) {
-        toggleFullScreen();
-    }
-
-    @FXML
-    public void menuOriginalSize_onAction(ActionEvent actionEvent) {
-        viewStyleProperty.set(ViewStyle.ORIGINAL);
-    }
-
-    @FXML
-    public void menuFitToWindow_onAction(ActionEvent actionEvent) {
-        bestFit();
-    }
-
-    @FXML
-    public void menuStretched_onAction(ActionEvent actionEvent) {
-        viewStyleProperty.set(ViewStyle.STRETCHED);
-    }
-
-    @FXML
-    public void menuOpen_onAction(ActionEvent actionEvent) {
-        open();
-    }
-
-    @FXML
-    public void menuOpenContainingFolder_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null) {
-            mainViewModel.openContainingFolder(mainViewModel.getSelectedImageModel());
-        }
-    }
-
-    @FXML
-    public void menuOpenInExternalEditor_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null) {
-            mainViewModel.openInEditor(mainViewModel.getSelectedImageModel());
-        }
-    }
-
-    @FXML
-    public void buttonNext_onAction(ActionEvent actionEvent) {
-        showNext();
-    }
-
-    @FXML
-    public void buttonPrevious_onAction(ActionEvent actionEvent) {
-        showPrevious();
-    }
-
-    @FXML
-    public void buttonFirst_onAction(ActionEvent actionEvent) {
-        showFirst();
-    }
-
-    @FXML
-    public void buttonLast_onAction(ActionEvent actionEvent) {
-        showLast();
-    }
-
-    @FXML
-    public void buttonEdit_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null) {
-            mainViewModel.openInEditor(mainViewModel.getSelectedImageModel());
-        }
-    }
-
-    @FXML
-    public void menuDelete_onAction(ActionEvent actionEvent) {
-        deleteFile();
-    }
-
-    @FXML
-    public void menuCopy_onAction(ActionEvent actionEvent) {
-        copy();
-    }
-
-    @FXML
-    public void menuZoomIn_onAction(ActionEvent actionEvent) {
-        zoomIn();
-    }
-
-    @FXML
-    public void menuZoomOut_onAction(ActionEvent actionEvent) {
-        zoomOut();
-    }
-
-    @FXML
-    public void menuResetZoom_onAction(ActionEvent actionEvent) {
-        resetZoom();
-    }
-
-    @FXML
-    public void buttonResetZoom_onAction(ActionEvent actionEvent) {
-        bestFit();
-    }
-
-    @FXML
-    public void buttonZoomOut_onAction(ActionEvent actionEvent) {
-        zoomOut();
-    }
-
-    @FXML
-    public void buttonZoomIn_onAction(ActionEvent actionEvent) {
-        zoomIn();
-    }
-
-    @FXML
-    public void buttonSave_onAction(ActionEvent actionEvent) {
-        saveAs();
-    }
-
-    @FXML
-    public void buttonOpen_onAction(ActionEvent actionEvent) {
-        open();
-    }
-
-    @FXML
-    public void buttonCopy_onAction(ActionEvent actionEvent) {
-        copy();
-    }
-
-    @FXML
-    public void buttonRotateRight_onAction(ActionEvent actionEvent) {
-        rotateRight();
-    }
-
-    @FXML
-    public void buttonRotateLeft_onAction(ActionEvent actionEvent) {
-        rotateLeft();
-    }
-
-    @FXML
-    public void menuSortByName_onAction(ActionEvent actionEvent) {
-        sortByName();
-    }
-
-    @FXML
-    public void menuSortByCreated_onAction(ActionEvent actionEvent) {
-        sortByDateCreated();
-    }
-
-    @FXML
-    public void menuSortByModified_onAction(ActionEvent actionEvent) {
-        sortByDateModified();
-    }
-
-    @FXML
-    public void menuImageInfo_onAction(ActionEvent actionEvent) throws IOException {
-        viewImageInfo();
-    }
-
-    @FXML
-    public void buttonImageInfo_onAction(ActionEvent actionEvent) throws IOException {
-        viewImageInfo();
-    }
-
-    @FXML
-    public void menuCopyFileTo_onAction(ActionEvent actionEvent) throws IOException {
-        copyFileTo();
     }
 
     @FXML
@@ -901,11 +710,6 @@ public class MainWindowController implements Initializable {
         if (controller.getSelectedFavorite().get() != null) {
             openImage(controller.getSelectedFavorite().get().toString());
         }
-    }
-
-    @FXML
-    public void menuFitToDesktop_onAction(ActionEvent actionEvent) {
-        viewStyleProperty.set(ViewStyle.FIT_TO_DESKTOP);
     }
 
     private void toggleFullScreen() {
@@ -1511,5 +1315,201 @@ public class MainWindowController implements Initializable {
                                 + " (" + getCurrentViewingZoom() + "%)");
             }
         }
+    }
+
+    @FXML
+    public void menuSaveAs_onAction(ActionEvent actionEvent) {
+        saveAs();
+    }
+
+    @FXML
+    public void menuRotateLeft_onAction(ActionEvent actionEvent) {
+        rotateLeft();
+    }
+
+    @FXML
+    public void menuRotateRight_onAction(ActionEvent actionEvent) {
+        rotateRight();
+    }
+
+    @FXML
+    public void menuFlipVertically_onAction(ActionEvent actionEvent) {
+        mainViewModel.flipVertically();
+    }
+
+    @FXML
+    public void menuFlipHorizontally_onAction(ActionEvent actionEvent) {
+        mainViewModel.flipHorizontally();
+    }
+
+    @FXML
+    public void menuClose_onAction(ActionEvent actionEvent) {
+        Platform.exit();
+    }
+
+    @FXML
+    public void menuFullScreen_onAction(ActionEvent actionEvent) {
+        toggleFullScreen();
+    }
+
+    @FXML
+    public void menuOriginalSize_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.ORIGINAL);
+    }
+
+    @FXML
+    public void menuFitToWindow_onAction(ActionEvent actionEvent) {
+        bestFit();
+    }
+
+    @FXML
+    public void menuStretched_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.STRETCHED);
+    }
+
+    @FXML
+    public void menuOpen_onAction(ActionEvent actionEvent) {
+        open();
+    }
+
+    @FXML
+    public void menuOpenContainingFolder_onAction(ActionEvent actionEvent) {
+        if (mainViewModel.getSelectedImageModel() != null) {
+            mainViewModel.openContainingFolder(mainViewModel.getSelectedImageModel());
+        }
+    }
+
+    @FXML
+    public void menuOpenInExternalEditor_onAction(ActionEvent actionEvent) {
+        if (mainViewModel.getSelectedImageModel() != null) {
+            mainViewModel.openInEditor(mainViewModel.getSelectedImageModel());
+        }
+    }
+
+    @FXML
+    public void buttonNext_onAction(ActionEvent actionEvent) {
+        showNext();
+    }
+
+    @FXML
+    public void buttonPrevious_onAction(ActionEvent actionEvent) {
+        showPrevious();
+    }
+
+    @FXML
+    public void buttonFirst_onAction(ActionEvent actionEvent) {
+        showFirst();
+    }
+
+    @FXML
+    public void buttonLast_onAction(ActionEvent actionEvent) {
+        showLast();
+    }
+
+    @FXML
+    public void buttonEdit_onAction(ActionEvent actionEvent) {
+        if (mainViewModel.getSelectedImageModel() != null) {
+            mainViewModel.openInEditor(mainViewModel.getSelectedImageModel());
+        }
+    }
+
+    @FXML
+    public void menuDelete_onAction(ActionEvent actionEvent) {
+        deleteFile();
+    }
+
+    @FXML
+    public void menuCopy_onAction(ActionEvent actionEvent) {
+        copy();
+    }
+
+    @FXML
+    public void menuZoomIn_onAction(ActionEvent actionEvent) {
+        zoomIn();
+    }
+
+    @FXML
+    public void menuZoomOut_onAction(ActionEvent actionEvent) {
+        zoomOut();
+    }
+
+    @FXML
+    public void menuResetZoom_onAction(ActionEvent actionEvent) {
+        resetZoom();
+    }
+
+    @FXML
+    public void buttonResetZoom_onAction(ActionEvent actionEvent) {
+        bestFit();
+    }
+
+    @FXML
+    public void buttonZoomOut_onAction(ActionEvent actionEvent) {
+        zoomOut();
+    }
+
+    @FXML
+    public void buttonZoomIn_onAction(ActionEvent actionEvent) {
+        zoomIn();
+    }
+
+    @FXML
+    public void buttonSave_onAction(ActionEvent actionEvent) {
+        saveAs();
+    }
+
+    @FXML
+    public void buttonOpen_onAction(ActionEvent actionEvent) {
+        open();
+    }
+
+    @FXML
+    public void buttonCopy_onAction(ActionEvent actionEvent) {
+        copy();
+    }
+
+    @FXML
+    public void buttonRotateRight_onAction(ActionEvent actionEvent) {
+        rotateRight();
+    }
+
+    @FXML
+    public void buttonRotateLeft_onAction(ActionEvent actionEvent) {
+        rotateLeft();
+    }
+
+    @FXML
+    public void menuSortByName_onAction(ActionEvent actionEvent) {
+        sortByName();
+    }
+
+    @FXML
+    public void menuSortByCreated_onAction(ActionEvent actionEvent) {
+        sortByDateCreated();
+    }
+
+    @FXML
+    public void menuSortByModified_onAction(ActionEvent actionEvent) {
+        sortByDateModified();
+    }
+
+    @FXML
+    public void menuImageInfo_onAction(ActionEvent actionEvent) throws IOException {
+        viewImageInfo();
+    }
+
+    @FXML
+    public void buttonImageInfo_onAction(ActionEvent actionEvent) throws IOException {
+        viewImageInfo();
+    }
+
+    @FXML
+    public void menuCopyFileTo_onAction(ActionEvent actionEvent) throws IOException {
+        copyFileTo();
+    }
+
+    @FXML
+    public void menuFitToDesktop_onAction(ActionEvent actionEvent) {
+        viewStyleProperty.set(ViewStyle.FIT_TO_DESKTOP);
     }
 }
