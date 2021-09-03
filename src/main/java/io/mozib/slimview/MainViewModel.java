@@ -179,8 +179,8 @@ public class MainViewModel {
                         + "Path=" + path + "\n"
                         + "DeletionDate=" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
 
-                String pathToTrash =
-                        Paths.get(System.getProperty("user.home"), ".local", "share", "Trash").toString();
+                String pathToTrash
+                        = Paths.get(System.getProperty("user.home"), ".local", "share", "Trash").toString();
 
                 // write .trashinfo file
                 Util.writeStringToFile(
@@ -253,7 +253,9 @@ public class MainViewModel {
     }
 
     public void sortImages(SortStyle sortStyle) {
-        if (sortStyle == null) return;
+        if (sortStyle == null) {
+            return;
+        }
 
         if (imageModels.size() > 0) {
             switch (sortStyle) {
@@ -294,8 +296,12 @@ public class MainViewModel {
         long fileSize = bytes;
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
-        if (fileSize > 1e3 && fileSize < 1e6) return Math.round(fileSize / 1e3) + " KB";
-        if (fileSize >= 1e6) return decimalFormat.format(fileSize / 1e6) + " MB";
+        if (fileSize > 1e3 && fileSize < 1e6) {
+            return Math.round(fileSize / 1e3) + " KB";
+        }
+        if (fileSize >= 1e6) {
+            return decimalFormat.format(fileSize / 1e6) + " MB";
+        }
         return fileSize + " B";
     }
 
@@ -329,7 +335,9 @@ public class MainViewModel {
                     if (files != null) {
 
                         for (File file : files) {
-                            if (file.isDirectory()) continue;
+                            if (file.isDirectory()) {
+                                continue;
+                            }
 
                             String ext = Util.getFileExt(file.getName());
                             if (Arrays.stream(supportedExtensions).anyMatch(s -> s.equalsIgnoreCase(ext))) {
@@ -428,18 +436,18 @@ public class MainViewModel {
     }
 
     /**
-     * @param imageModel  The image to crop
-     * @param x           Starting x position
-     * @param y           Starting y position
-     * @param width       Width of the crop
-     * @param height      Height of the crop
+     * @param imageModel The image to crop
+     * @param x Starting x position
+     * @param y Starting y position
+     * @param width Width of the crop
+     * @param height Height of the crop
      * @param scaleFactor The width of the original image as a ratio of the displayed width
      * @return A cropped BufferedImage
      */
     public BufferedImage cropImage(ImageModel imageModel,
-                                   double x, double y,
-                                   double width, double height,
-                                   double scaleFactor) {
+            double x, double y,
+            double width, double height,
+            double scaleFactor) {
 
         double targetX = x * (1 / scaleFactor);
         double targetY = y * (1 / scaleFactor);
@@ -458,8 +466,9 @@ public class MainViewModel {
      * @return The index of the currently displayed image from the list of images
      */
     private int getCurrentIndex() {
-        if (getSelectedImageModel() != null)
+        if (getSelectedImageModel() != null) {
             return getIndex(getSelectedImageModel());
+        }
 
         return 0;
     }
@@ -483,8 +492,9 @@ public class MainViewModel {
 
     private ImageModel findByPath(String path) {
         for (ImageModel imageModel : imageModels) {
-            if (imageModel.getPath().equals(path))
+            if (imageModel.getPath().equals(path)) {
                 return imageModel;
+            }
         }
 
         return null;

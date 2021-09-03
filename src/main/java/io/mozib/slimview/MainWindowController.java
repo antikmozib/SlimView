@@ -96,7 +96,6 @@ public class MainWindowController implements Initializable {
     private double selectionPivotY = 0.0;
 
     // Structure: AnchorPane > Label + [ScrollPane > AnchorPane > Rectangle + [StackPane > ImageView]]
-
     @FXML
     public BorderPane borderPaneWindow;
     @FXML
@@ -193,12 +192,13 @@ public class MainWindowController implements Initializable {
         selectionModeActive.set(preferences.getBoolean("CurrentSelectionMode", true));
         selectionModeActive.addListener(((observable, oldValue, newValue) -> {
             scrollPaneMain.setPannable(!newValue);
-            if (!newValue)
+            if (!newValue) {
                 clearSelectionRectangle();
+            }
             preferences.putBoolean("CurrentSelectionMode", newValue);
         }));
-        scrollPaneMain.pannableProperty().addListener(((observable, oldValue, newValue) ->
-                selectionModeActive.set(!newValue)));
+        scrollPaneMain.pannableProperty().addListener(((observable, oldValue, newValue)
+                -> selectionModeActive.set(!newValue)));
 
         // trigger change listener
         var currentSelectionMode = selectionModeActive.get();
@@ -241,13 +241,15 @@ public class MainWindowController implements Initializable {
 
         // load recent files
         RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileLocation.RECENT_FILES);
-        if (recentFiles == null)
+        if (recentFiles == null) {
             recentFiles = new RecentFiles();
+        }
 
-        if (recentFiles.getRecentFiles() == null)
+        if (recentFiles.getRecentFiles() == null) {
             recentFiles.setRecentFiles(new ArrayList<>());
-        else
+        } else {
             recentFiles.getRecentFiles().sort(((o1, o2) -> Long.compare(o2.getLastSeen(), o1.getLastSeen())));
+        }
 
         for (RecentFiles.RecentFile recentFile : recentFiles.getRecentFiles()) {
             MenuItem menuItem = new MenuItem(recentFile.getPath());
@@ -262,8 +264,9 @@ public class MainWindowController implements Initializable {
             MenuItem menuClearRecent = new MenuItem("Clear History");
             menuClearRecent.setOnAction(event -> {
                 File file = new File(getDataFile(Util.DataFileLocation.RECENT_FILES));
-                if (file.exists())
+                if (file.exists()) {
                     file.delete();
+                }
                 menuRecent.getItems().clear();
             });
             menuRecent.getItems().add(menuClearRecent);
@@ -333,14 +336,16 @@ public class MainWindowController implements Initializable {
             if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX()
                     || mouseEvent.getY() < imageViewMain.getBoundsInParent().getMinY()
                     || mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX()
-                    || mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY())
+                    || mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
                 return;
+            }
 
             selectionStartedProperty.set(true);
         }
 
-        if (!cursorInsideSelRect && !selectionStartedProperty.get())
+        if (!cursorInsideSelRect && !selectionStartedProperty.get()) {
             clearSelectionRectangle();
+        }
     }
 
     @FXML
@@ -353,10 +358,11 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void anchorPaneMain_onMouseDrag(MouseEvent mouseEvent) {
-        if (!selectionModeActive.get())
+        if (!selectionModeActive.get()) {
             imageViewMain.setCursor(Cursor.MOVE);
-        else
+        } else {
             imageViewMain.setCursor(Cursor.CROSSHAIR);
+        }
 
         if (selectionStartedProperty.get()) {
             if (selectionRectangle == null) {
@@ -438,17 +444,21 @@ public class MainWindowController implements Initializable {
                 double bottomBoundary = imageViewMain.getBoundsInParent().getMaxY();
 
                 // we can only be outside a maximum of two boundaries at the same time, e.g. top-right
-                if (endX < leftBoundary)
+                if (endX < leftBoundary) {
                     endX = leftBoundary;
+                }
 
-                if (endX > rightBoundary)
+                if (endX > rightBoundary) {
                     endX = rightBoundary;
+                }
 
-                if (endY < topBoundary)
+                if (endY < topBoundary) {
                     endY = topBoundary;
+                }
 
-                if (endY > bottomBoundary)
+                if (endY > bottomBoundary) {
                     endY = bottomBoundary;
+                }
 
                 double width = Math.max(startX, endX) - Math.min(startX, endX);
                 double height = Math.max(startY, endY) - Math.min(startY, endY);
@@ -459,11 +469,11 @@ public class MainWindowController implements Initializable {
                 selectionRectangle.setHeight(height);
 
                 // show the coordinates of the SelectionRectangle
-                labelPoints.setText("(" +
-                        (int) (selectionRectangle.getX() - imageViewMain.getBoundsInParent().getMinX()) + ", " +
-                        (int) (selectionRectangle.getY() - imageViewMain.getBoundsInParent().getMinY()) + "), (" +
-                        (int) (width + selectionRectangle.getX() - imageViewMain.getBoundsInParent().getMinX()) + ", " +
-                        (int) (height + selectionRectangle.getY() - imageViewMain.getBoundsInParent().getMinY()) + ")");
+                labelPoints.setText("("
+                        + (int) (selectionRectangle.getX() - imageViewMain.getBoundsInParent().getMinX()) + ", "
+                        + (int) (selectionRectangle.getY() - imageViewMain.getBoundsInParent().getMinY()) + "), ("
+                        + (int) (width + selectionRectangle.getX() - imageViewMain.getBoundsInParent().getMinX()) + ", "
+                        + (int) (height + selectionRectangle.getY() - imageViewMain.getBoundsInParent().getMinY()) + ")");
             }
         }
     }
@@ -472,8 +482,9 @@ public class MainWindowController implements Initializable {
     public void scrollPaneMain_onClick(MouseEvent mouseEvent) {
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
             scrollPaneMain.requestFocus();
-            if (mouseEvent.getClickCount() == 2)
+            if (mouseEvent.getClickCount() == 2) {
                 toggleFullScreen();
+            }
         } else if (mouseEvent.getButton().equals(MouseButton.MIDDLE)) {
             toggleFullScreen();
         }
@@ -488,15 +499,17 @@ public class MainWindowController implements Initializable {
             case DOWN:
             case PAGE_DOWN:
                 // don't switch images if the scrollbar is visible
-                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth())
+                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth()) {
                     showPrevious();
+                }
                 break;
 
             case RIGHT:
             case UP:
             case PAGE_UP:
-                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth())
+                if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth()) {
                     showNext();
+                }
                 break;
 
             case HOME:
@@ -558,22 +571,25 @@ public class MainWindowController implements Initializable {
         if (isCtrlDown) {
 
             // ctrl is down; zoom image instead of switching
-            if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0)
+            if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
                 zoomIn();
-            else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0)
+            } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
                 zoomOut();
+            }
 
         } else {
 
             // don't switch images if scrollbar is visible
             if (getViewingWidth() > scrollPaneMain.getViewportBounds().getWidth()
-                    || getViewingHeight() > scrollPaneMain.getViewportBounds().getHeight())
+                    || getViewingHeight() > scrollPaneMain.getViewportBounds().getHeight()) {
                 return;
+            }
 
-            if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0)
+            if (scrollEvent.getDeltaY() > 0 || scrollEvent.getDeltaX() > 0) {
                 showPrevious();
-            else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0)
+            } else if (scrollEvent.getDeltaY() < 0 || scrollEvent.getDeltaX() < 0) {
                 showNext();
+            }
         }
     }
 
@@ -589,8 +605,9 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuResize_onAction(ActionEvent actionEvent) throws IOException {
-        if (mainViewModel.getSelectedImageModel() == null)
+        if (mainViewModel.getSelectedImageModel() == null) {
             return;
+        }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/resizeWindow.fxml"));
         Parent root = fxmlLoader.load();
@@ -695,14 +712,16 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void menuOpenContainingFolder_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null)
+        if (mainViewModel.getSelectedImageModel() != null) {
             mainViewModel.openContainingFolder(mainViewModel.getSelectedImageModel());
+        }
     }
 
     @FXML
     public void menuOpenInExternalEditor_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null)
+        if (mainViewModel.getSelectedImageModel() != null) {
             mainViewModel.openInEditor(mainViewModel.getSelectedImageModel());
+        }
     }
 
     @FXML
@@ -727,8 +746,9 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void buttonEdit_onAction(ActionEvent actionEvent) {
-        if (mainViewModel.getSelectedImageModel() != null)
+        if (mainViewModel.getSelectedImageModel() != null) {
             mainViewModel.openInEditor(mainViewModel.getSelectedImageModel());
+        }
     }
 
     @FXML
@@ -878,8 +898,9 @@ public class MainWindowController implements Initializable {
         childWindowInCentre(imageViewMain.getScene().getWindow(), favoritesWindow);
         favoritesWindow.showAndWait();
 
-        if (controller.getSelectedFavorite().get() != null)
+        if (controller.getSelectedFavorite().get() != null) {
             openImage(controller.getSelectedFavorite().get().toString());
+        }
     }
 
     @FXML
@@ -888,8 +909,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void toggleFullScreen() {
-        if (mainViewModel.getSelectedImageModel() == null)
+        if (mainViewModel.getSelectedImageModel() == null) {
             return;
+        }
 
         boolean setFullScreen = !isViewingFullScreen.get();
         ((Stage) scrollPaneMain.getScene().getWindow()).setFullScreen(setFullScreen);
@@ -904,8 +926,9 @@ public class MainWindowController implements Initializable {
      * Sets/unsets the current image as a favorite
      */
     private void toggleFavorite() {
-        if (mainViewModel.getSelectedImageModel() == null)
+        if (mainViewModel.getSelectedImageModel() == null) {
             return;
+        }
 
         tButtonFavorite.setSelected(!tButtonFavorite.isSelected());
         mainViewModel.setAsFavorite(mainViewModel.getSelectedImageModel(),
@@ -917,8 +940,9 @@ public class MainWindowController implements Initializable {
      */
     private double getViewingWidth() {
         double width = imageViewMain.getFitHeight() * mainViewModel.getSelectedImageModel().getAspectRatio();
-        if (width > imageViewMain.getFitWidth())
+        if (width > imageViewMain.getFitWidth()) {
             width = imageViewMain.getFitWidth();
+        }
 
         return width;
     }
@@ -928,8 +952,9 @@ public class MainWindowController implements Initializable {
      */
     private double getViewingHeight() {
         double height = imageViewMain.getFitWidth() / mainViewModel.getSelectedImageModel().getAspectRatio();
-        if (height > imageViewMain.getFitHeight())
+        if (height > imageViewMain.getFitHeight()) {
             height = imageViewMain.getFitHeight();
+        }
 
         return height;
     }
@@ -939,9 +964,9 @@ public class MainWindowController implements Initializable {
      */
     private double getCurrentViewingZoom() {
         return BigDecimal.valueOf(100 * getViewingWidth()
-                        / (mainViewModel.getSelectedImageModel().hasOriginal()
-                        ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
-                        : mainViewModel.getSelectedImageModel().getWidth()))
+                / (mainViewModel.getSelectedImageModel().hasOriginal()
+                ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
+                : mainViewModel.getSelectedImageModel().getWidth()))
                 .setScale(1, RoundingMode.HALF_UP).doubleValue();
     }
 
@@ -1000,8 +1025,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void deleteFile() {
-        if (mainViewModel.getSelectedImageModel() == null)
+        if (mainViewModel.getSelectedImageModel() == null) {
             return;
+        }
 
         try {
             mainViewModel.trashImage(mainViewModel.getSelectedImageModel());
@@ -1025,10 +1051,18 @@ public class MainWindowController implements Initializable {
         double minAllowedWidth = Math.max(1, maxAllowedWidth / 5 * 0.1);
         double minAllowedHeight = Math.max(1, maxAllowedHeight / 5 * 0.1);
 
-        if (targetWidth > maxAllowedWidth) targetWidth = maxAllowedWidth;
-        if (targetWidth < minAllowedWidth) targetWidth = minAllowedWidth;
-        if (targetHeight > maxAllowedHeight) targetHeight = maxAllowedHeight;
-        if (targetHeight < minAllowedHeight) targetHeight = minAllowedHeight;
+        if (targetWidth > maxAllowedWidth) {
+            targetWidth = maxAllowedWidth;
+        }
+        if (targetWidth < minAllowedWidth) {
+            targetWidth = minAllowedWidth;
+        }
+        if (targetHeight > maxAllowedHeight) {
+            targetHeight = maxAllowedHeight;
+        }
+        if (targetHeight < minAllowedHeight) {
+            targetHeight = minAllowedHeight;
+        }
 
         imageViewMain.fitHeightProperty().unbind();
         imageViewMain.fitWidthProperty().unbind();
@@ -1088,8 +1122,9 @@ public class MainWindowController implements Initializable {
         }
 
         File initialDirectory = new File(preferences.get("OpenLocation", System.getProperty("user.home")));
-        if (!initialDirectory.exists() || !initialDirectory.isDirectory())
+        if (!initialDirectory.exists() || !initialDirectory.isDirectory()) {
             initialDirectory = new File(System.getProperty("user.home"));
+        }
         fileChooser.setInitialDirectory(initialDirectory);
 
         File file = fileChooser.showOpenDialog(imageViewMain.getScene().getWindow());
@@ -1100,8 +1135,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void saveAs() {
-        if (mainViewModel.getSelectedImageModel() == null)
+        if (mainViewModel.getSelectedImageModel() == null) {
             return;
+        }
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(getExtensionFilters(mainViewModel.getSupportedWriteExtensions()));
@@ -1109,8 +1145,9 @@ public class MainWindowController implements Initializable {
         fileChooser.setInitialFileName(mainViewModel.getSelectedImageModel().getName());
 
         File initialDirectory = new File(preferences.get("SaveAsLocation", System.getProperty("user.home")));
-        if (!initialDirectory.exists() || !initialDirectory.isDirectory())
+        if (!initialDirectory.exists() || !initialDirectory.isDirectory()) {
             initialDirectory = new File(System.getProperty("user.home"));
+        }
         fileChooser.setInitialDirectory(initialDirectory);
 
         File file = fileChooser.showSaveDialog(imageViewMain.getScene().getWindow());
@@ -1140,8 +1177,9 @@ public class MainWindowController implements Initializable {
      * Copies to clipboard the part of the image bounded by the SelectionRectangle
      */
     private void copySelection() {
-        if (mainViewModel.getSelectedImageModel() == null || selectionRectangle == null)
+        if (mainViewModel.getSelectedImageModel() == null || selectionRectangle == null) {
             return;
+        }
 
         double x = selectionRectangle.getBoundsInParent().getMinX() - imageViewMain.getBoundsInParent().getMinX();
         double y = selectionRectangle.getBoundsInParent().getMinY() - imageViewMain.getBoundsInParent().getMinY();
@@ -1176,8 +1214,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void viewImageInfo() throws IOException {
-        if (mainViewModel.getSelectedImageModel() == null)
+        if (mainViewModel.getSelectedImageModel() == null) {
             return;
+        }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/imageInfoWindow.fxml"));
         Parent root = fxmlLoader.load();
@@ -1195,8 +1234,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void copyFileTo() throws IOException {
-        if (mainViewModel.getSelectedImageModel() == null)
+        if (mainViewModel.getSelectedImageModel() == null) {
             return;
+        }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/copyFileToWindow.fxml"));
         Parent root = fxmlLoader.load();
@@ -1240,9 +1280,9 @@ public class MainWindowController implements Initializable {
     private void showLoadingFailedError(Exception e) {
 
         Util.showCustomErrorDialog(
-                        "Loading failed",
-                        "The requested file doesn't exist or is unreadable.",
-                        imageViewMain.getScene().getWindow(), e)
+                "Loading failed",
+                "The requested file doesn't exist or is unreadable.",
+                imageViewMain.getScene().getWindow(), e)
                 .show();
     }
 
@@ -1266,12 +1306,13 @@ public class MainWindowController implements Initializable {
 
         @Override
         public void changed(ObservableValue<? extends ImageModel> observable,
-                            ImageModel oldValue,
-                            ImageModel newValue) {
+                ImageModel oldValue,
+                ImageModel newValue) {
 
             // check if image is corrupted
-            if (newValue != null && newValue.getImage() == null)
+            if (newValue != null && newValue.getImage() == null) {
                 showLoadingFailedError(null);
+            }
 
             tButtonFavorite.setSelected(newValue.getIsFavorite());
             imageViewMain.setImage(newValue.getImage());
@@ -1302,7 +1343,7 @@ public class MainWindowController implements Initializable {
         private final double fixedHeight;
 
         /**
-         * @param fixedWidth  Width of the fixed UI elements such as window borders
+         * @param fixedWidth Width of the fixed UI elements such as window borders
          * @param fixedHeight Height of the fixed UI elements such as title bar and menu bar
          */
         public ViewStyleChangeListener(double fixedWidth, double fixedHeight) {
@@ -1312,14 +1353,16 @@ public class MainWindowController implements Initializable {
 
         @Override
         public void changed(ObservableValue<? extends ViewStyle> observable,
-                            ViewStyle oldValue,
-                            ViewStyle newValue) {
+                ViewStyle oldValue,
+                ViewStyle newValue) {
 
-            if (mainViewModel.getSelectedImageModel() == null)
+            if (mainViewModel.getSelectedImageModel() == null) {
                 return;
+            }
 
-            if (newValue == null)
+            if (newValue == null) {
                 newValue = Objects.requireNonNullElse(oldValue, ViewStyle.FIT_TO_WINDOW);
+            }
 
             imageViewMain.setPreserveRatio(true);
             imageViewMain.fitWidthProperty().unbind();
@@ -1360,7 +1403,8 @@ public class MainWindowController implements Initializable {
                     double viewportWidth = desktopViewportWidth - fixedWidth;
                     double viewportHeight = desktopViewportHeight - fixedHeight;
 
-                    double finalWidth, finalHeight;
+                    double finalWidth,
+                     finalHeight;
 
                     if (!isViewingFullScreen.get()) {
 
@@ -1378,15 +1422,17 @@ public class MainWindowController implements Initializable {
                         window.setHeight(finalHeight + fixedHeight);
 
                         // ensure window remains within view
-                        if (window.getX() + window.getWidth() > desktopViewportWidth)
+                        if (window.getX() + window.getWidth() > desktopViewportWidth) {
                             window.setX(desktopViewportWidth - window.getWidth());
-                        else if (window.getX() < 0)
+                        } else if (window.getX() < 0) {
                             window.setX(0);
+                        }
 
-                        if (window.getY() + window.getHeight() > desktopViewportHeight)
+                        if (window.getY() + window.getHeight() > desktopViewportHeight) {
                             window.setY(desktopViewportHeight - window.getHeight());
-                        else if (window.getY() < 0)
+                        } else if (window.getY() < 0) {
                             window.setY(0);
+                        }
 
                     } else {
 
@@ -1426,8 +1472,8 @@ public class MainWindowController implements Initializable {
 
         @Override
         public void changed(ObservableValue<? extends MainViewModel.SortStyle> observable,
-                            MainViewModel.SortStyle oldValue,
-                            MainViewModel.SortStyle newValue) {
+                MainViewModel.SortStyle oldValue,
+                MainViewModel.SortStyle newValue) {
 
             switch (newValue) {
                 case NAME:
@@ -1460,9 +1506,9 @@ public class MainWindowController implements Initializable {
             if (mainViewModel.getSelectedImageModel() != null) {
                 labelResolution.setText(
                         (mainViewModel.getSelectedImageModel().hasOriginal()
-                                ? mainViewModel.getSelectedImageModel().getOriginal().getResolution()
-                                : mainViewModel.getSelectedImageModel().getResolution())
-                                + " (" + getCurrentViewingZoom() + "%)");
+                        ? mainViewModel.getSelectedImageModel().getOriginal().getResolution()
+                        : mainViewModel.getSelectedImageModel().getResolution())
+                        + " (" + getCurrentViewingZoom() + "%)");
             }
         }
     }

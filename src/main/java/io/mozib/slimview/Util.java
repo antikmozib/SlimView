@@ -142,11 +142,15 @@ public class Util {
             if (recentFiles.getRecentFiles().size() >= maxRecent) {
 
                 RecentFiles.RecentFile removeThis = null;
-                for (RecentFiles.RecentFile r : recentFiles.getRecentFiles())
-                    if (removeThis == null || removeThis.getLastSeen() > r.getLastSeen())
+                for (RecentFiles.RecentFile r : recentFiles.getRecentFiles()) {
+                    if (removeThis == null || removeThis.getLastSeen() > r.getLastSeen()) {
                         removeThis = r;
+                    }
+                }
 
-                if (removeThis != null) recentFiles.getRecentFiles().remove(removeThis);
+                if (removeThis != null) {
+                    recentFiles.getRecentFiles().remove(removeThis);
+                }
             }
             RecentFiles.RecentFile newRecent = new RecentFiles.RecentFile();
             newRecent.setPath(path);
@@ -187,9 +191,9 @@ public class Util {
     }
 
     /**
-     * @param classType        The type of object the XML mapper will map to
+     * @param classType The type of object the XML mapper will map to
      * @param dataFileLocation The location of the setting file, determined through its enum
-     * @param <T>              Generic type definition
+     * @param <T> Generic type definition
      * @return Data read from XML file and mapped to a JavaBean
      */
     public static <T> T readDataFile(Class<T> classType, DataFileLocation dataFileLocation) {
@@ -207,10 +211,8 @@ public class Util {
         if (data == null) {
             try {
                 data = classType.getDeclaredConstructor().newInstance();
-            } catch (InstantiationException |
-                    IllegalAccessException |
-                    InvocationTargetException |
-                    NoSuchMethodException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException
+                    | NoSuchMethodException e) {
                 e.printStackTrace();
             }
         }
@@ -221,7 +223,7 @@ public class Util {
     /**
      * Serializes an object to a XML file
      *
-     * @param data             Object to write to a XML file
+     * @param data Object to write to a XML file
      * @param dataFileLocation Location of the XML file
      */
     public static void writeDataFile(Object data, DataFileLocation dataFileLocation) {
@@ -241,22 +243,21 @@ public class Util {
             case WINDOWS:
             case MAC:
                 if (Desktop.isDesktopSupported()) {
-                    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
                         try {
-                            Desktop.getDesktop().browse(new URL(url).toURI());
-                        } catch (IOException | URISyntaxException e) {
-                            e.printStackTrace();
-                        }
+                        Desktop.getDesktop().browse(new URL(url).toURI());
+                    } catch (IOException | URISyntaxException e) {
+                        e.printStackTrace();
                     }
                 }
                 break;
             case LINUX:
                 try {
-                    Runtime.getRuntime().exec(new String[]{"xdg-open", url});
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
+                Runtime.getRuntime().exec(new String[]{"xdg-open", url});
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            break;
             default:
                 break;
         }
@@ -297,14 +298,18 @@ public class Util {
         if (root.isDirectory()) {
             for (File file : root.listFiles()) {
                 if (!file.isDirectory()) {
-                    if (!file.delete()) throw new IOException();
+                    if (!file.delete()) {
+                        throw new IOException();
+                    }
                 } else {
                     deleteDirectoryRecursively(file.getPath());
                 }
             }
         }
 
-        if (!root.delete()) throw new IOException();
+        if (!root.delete()) {
+            throw new IOException();
+        }
     }
 
     public static String replaceFileExt(String filename, String newExt) {
@@ -352,7 +357,7 @@ public class Util {
     /**
      * Writes a given string to a specified file. A new file will be created, replacing any existing one.
      *
-     * @param out     The full path to the output file
+     * @param out The full path to the output file
      * @param content The content to write to the file
      * @throws IOException if a new file cannot be created, or it cannot be written to
      */
@@ -360,10 +365,14 @@ public class Util {
         File file = new File(out);
 
         if (file.exists() && !file.isDirectory()) {
-            if (!file.delete()) throw new IOException("The existing file couldn't be deleted");
+            if (!file.delete()) {
+                throw new IOException("The existing file couldn't be deleted");
+            }
         }
 
-        if (!file.createNewFile()) throw new IOException("The requested file couldn't be created");
+        if (!file.createNewFile()) {
+            throw new IOException("The requested file couldn't be created");
+        }
 
         try (PrintWriter printWriter = new PrintWriter(out)) {
             printWriter.print(content);
