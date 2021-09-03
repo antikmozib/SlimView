@@ -191,9 +191,9 @@ public class Util {
     }
 
     /**
-     * @param classType The type of object the XML mapper will map to
+     * @param classType        The type of object the XML mapper will map to
      * @param dataFileLocation The location of the setting file, determined through its enum
-     * @param <T> Generic type definition
+     * @param <T>              Generic type definition
      * @return Data read from XML file and mapped to a JavaBean
      */
     public static <T> T readDataFile(Class<T> classType, DataFileLocation dataFileLocation) {
@@ -223,7 +223,7 @@ public class Util {
     /**
      * Serializes an object to a XML file
      *
-     * @param data Object to write to a XML file
+     * @param data             Object to write to a XML file
      * @param dataFileLocation Location of the XML file
      */
     public static void writeDataFile(Object data, DataFileLocation dataFileLocation) {
@@ -245,19 +245,19 @@ public class Util {
                 if (Desktop.isDesktopSupported()) {
                     if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
                         try {
-                        Desktop.getDesktop().browse(new URL(url).toURI());
-                    } catch (IOException | URISyntaxException e) {
-                        e.printStackTrace();
-                    }
+                            Desktop.getDesktop().browse(new URL(url).toURI());
+                        } catch (IOException | URISyntaxException e) {
+                            e.printStackTrace();
+                        }
                 }
                 break;
             case LINUX:
                 try {
-                Runtime.getRuntime().exec(new String[]{"xdg-open", url});
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            break;
+                    Runtime.getRuntime().exec(new String[]{"xdg-open", url});
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             default:
                 break;
         }
@@ -357,7 +357,7 @@ public class Util {
     /**
      * Writes a given string to a specified file. A new file will be created, replacing any existing one.
      *
-     * @param out The full path to the output file
+     * @param out     The full path to the output file
      * @param content The content to write to the file
      * @throws IOException if a new file cannot be created, or it cannot be written to
      */

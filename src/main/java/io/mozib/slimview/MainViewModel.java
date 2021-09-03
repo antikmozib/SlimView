@@ -436,18 +436,18 @@ public class MainViewModel {
     }
 
     /**
-     * @param imageModel The image to crop
-     * @param x Starting x position
-     * @param y Starting y position
-     * @param width Width of the crop
-     * @param height Height of the crop
+     * @param imageModel  The image to crop
+     * @param x           Starting x position
+     * @param y           Starting y position
+     * @param width       Width of the crop
+     * @param height      Height of the crop
      * @param scaleFactor The width of the original image as a ratio of the displayed width
      * @return A cropped BufferedImage
      */
     public BufferedImage cropImage(ImageModel imageModel,
-            double x, double y,
-            double width, double height,
-            double scaleFactor) {
+                                   double x, double y,
+                                   double width, double height,
+                                   double scaleFactor) {
 
         double targetX = x * (1 / scaleFactor);
         double targetY = y * (1 / scaleFactor);

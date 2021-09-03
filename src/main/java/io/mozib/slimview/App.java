@@ -22,7 +22,7 @@ public class App {
                 // clear Java prefs
                 Preferences.userNodeForPackage(App.class).clear();
                 // delete settings files
-                
+
                 Util.deleteDirectoryRecursively(new File(getDataFile(Util.DataFileLocation.SETTINGS_DIR)).getPath());
             } catch (BackingStoreException | IOException e) {
                 e.printStackTrace();

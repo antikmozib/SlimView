@@ -964,9 +964,9 @@ public class MainWindowController implements Initializable {
      */
     private double getCurrentViewingZoom() {
         return BigDecimal.valueOf(100 * getViewingWidth()
-                / (mainViewModel.getSelectedImageModel().hasOriginal()
-                ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
-                : mainViewModel.getSelectedImageModel().getWidth()))
+                        / (mainViewModel.getSelectedImageModel().hasOriginal()
+                        ? mainViewModel.getSelectedImageModel().getOriginal().getWidth()
+                        : mainViewModel.getSelectedImageModel().getWidth()))
                 .setScale(1, RoundingMode.HALF_UP).doubleValue();
     }
 
@@ -1280,9 +1280,9 @@ public class MainWindowController implements Initializable {
     private void showLoadingFailedError(Exception e) {
 
         Util.showCustomErrorDialog(
-                "Loading failed",
-                "The requested file doesn't exist or is unreadable.",
-                imageViewMain.getScene().getWindow(), e)
+                        "Loading failed",
+                        "The requested file doesn't exist or is unreadable.",
+                        imageViewMain.getScene().getWindow(), e)
                 .show();
     }
 
@@ -1306,8 +1306,8 @@ public class MainWindowController implements Initializable {
 
         @Override
         public void changed(ObservableValue<? extends ImageModel> observable,
-                ImageModel oldValue,
-                ImageModel newValue) {
+                            ImageModel oldValue,
+                            ImageModel newValue) {
 
             // check if image is corrupted
             if (newValue != null && newValue.getImage() == null) {
@@ -1343,7 +1343,7 @@ public class MainWindowController implements Initializable {
         private final double fixedHeight;
 
         /**
-         * @param fixedWidth Width of the fixed UI elements such as window borders
+         * @param fixedWidth  Width of the fixed UI elements such as window borders
          * @param fixedHeight Height of the fixed UI elements such as title bar and menu bar
          */
         public ViewStyleChangeListener(double fixedWidth, double fixedHeight) {
@@ -1353,8 +1353,8 @@ public class MainWindowController implements Initializable {
 
         @Override
         public void changed(ObservableValue<? extends ViewStyle> observable,
-                ViewStyle oldValue,
-                ViewStyle newValue) {
+                            ViewStyle oldValue,
+                            ViewStyle newValue) {
 
             if (mainViewModel.getSelectedImageModel() == null) {
                 return;
@@ -1404,7 +1404,7 @@ public class MainWindowController implements Initializable {
                     double viewportHeight = desktopViewportHeight - fixedHeight;
 
                     double finalWidth,
-                     finalHeight;
+                            finalHeight;
 
                     if (!isViewingFullScreen.get()) {
 
@@ -1472,8 +1472,8 @@ public class MainWindowController implements Initializable {
 
         @Override
         public void changed(ObservableValue<? extends MainViewModel.SortStyle> observable,
-                MainViewModel.SortStyle oldValue,
-                MainViewModel.SortStyle newValue) {
+                            MainViewModel.SortStyle oldValue,
+                            MainViewModel.SortStyle newValue) {
 
             switch (newValue) {
                 case NAME:
@@ -1506,9 +1506,9 @@ public class MainWindowController implements Initializable {
             if (mainViewModel.getSelectedImageModel() != null) {
                 labelResolution.setText(
                         (mainViewModel.getSelectedImageModel().hasOriginal()
-                        ? mainViewModel.getSelectedImageModel().getOriginal().getResolution()
-                        : mainViewModel.getSelectedImageModel().getResolution())
-                        + " (" + getCurrentViewingZoom() + "%)");
+                                ? mainViewModel.getSelectedImageModel().getOriginal().getResolution()
+                                : mainViewModel.getSelectedImageModel().getResolution())
+                                + " (" + getCurrentViewingZoom() + "%)");
             }
         }
     }
