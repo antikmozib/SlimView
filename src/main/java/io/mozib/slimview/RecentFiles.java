@@ -42,6 +42,9 @@ public class RecentFiles implements Serializable {
             this.lastSeen = System.currentTimeMillis();
         }
 
+        /**
+         * @return The last time this file was seen. Value will be bigger for newer files and smaller for older files.
+         */
         public long getLastSeen() {
             return lastSeen;
         }
