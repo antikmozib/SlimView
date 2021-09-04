@@ -15,6 +15,7 @@ import static io.mozib.slimview.Util.getDataFile;
  * Fake main() for JavaFX support. True main() is in SlimView.java
  */
 public class App {
+
     public static void main(String[] args) {
         // check if we're in uninstallation mode
         if (args.length > 0 && args[0].equalsIgnoreCase("--uninst")) {

@@ -47,7 +47,9 @@ public class ImageInfoWindowController implements Initializable {
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(new File(path));
             for (Directory directory : metadata.getDirectories()) {
-                if (directory.getTags().size() < 1) continue;
+                if (directory.getTags().size() < 1) {
+                    continue;
+                }
 
                 imageInfo.append(directory.getName().toUpperCase()).append("\n");
 
@@ -113,7 +115,9 @@ public class ImageInfoWindowController implements Initializable {
 
     @FXML
     public void buttonCopyToClipboard_onAction(ActionEvent actionEvent) {
-        if (imageInfo == null) return;
+        if (imageInfo == null) {
+            return;
+        }
 
         clipboardContent.clear();
         clipboardContent.putString(imageInfo.toString());

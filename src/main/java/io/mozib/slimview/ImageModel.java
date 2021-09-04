@@ -69,8 +69,9 @@ public class ImageModel {
     }
 
     public Image getImage() {
-        if (image == null && getBufferedImage() != null)
+        if (image == null && getBufferedImage() != null) {
             image = SwingFXUtils.toFXImage(getBufferedImage(), null);
+        }
 
         return image;
     }
@@ -94,8 +95,9 @@ public class ImageModel {
         image = null;
         bufferedImage = null;
 
-        if (hasOriginal())
+        if (hasOriginal()) {
             original = null;
+        }
     }
 
     public File getContainingFolder() {
@@ -127,8 +129,9 @@ public class ImageModel {
     }
 
     public String getColorDepth() {
-        if (getImage() == null)
+        if (getImage() == null) {
             return "";
+        }
 
         return String.valueOf(getBufferedImage().getColorModel().getPixelSize());
     }
@@ -157,8 +160,7 @@ public class ImageModel {
     }
 
     /**
-     * @return If the image has an original, then returns the path to the original.
-     * Otherwise, returns the current path.
+     * @return If the image has an original, then returns the path to the original. Otherwise, returns the current path.
      */
     public String getBestPath() {
         return hasOriginal() ? original.getPath() : getPath();

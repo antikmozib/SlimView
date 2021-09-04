@@ -31,6 +31,7 @@ import java.util.prefs.Preferences;
 import static io.mozib.slimview.CopyFileToViewModel.OnConflict;
 
 public class CopyFileToWindowController implements Initializable {
+
     private CopyFileToViewModel copyFileToViewModel = null;
     private final Preferences preferences = Preferences.userNodeForPackage(this.getClass());
 
@@ -105,8 +106,8 @@ public class CopyFileToWindowController implements Initializable {
         File selectedDirectory = directoryChooser.showDialog(listViewMain.getScene().getWindow());
 
         if (selectedDirectory != null) {
-            CopyToDestinations.CopyToDestination newItem =
-                    new CopyToDestinations.CopyToDestination((selectedDirectory.getPath()));
+            CopyToDestinations.CopyToDestination newItem
+                    = new CopyToDestinations.CopyToDestination((selectedDirectory.getPath()));
             listViewMain.getItems().add(newItem);
             copyFileToViewModel.saveDestinations();
             listViewMain.getSelectionModel().clearAndSelect(listViewMain.getItems().indexOf(newItem));

@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class FavoritesWindowController implements Initializable {
+
     @FXML
     public ListView<FavoritesModel.FavoriteModel> listViewFavorites;
     @FXML
@@ -46,8 +47,8 @@ public class FavoritesWindowController implements Initializable {
 
     private FilteredList<FavoritesModel.FavoriteModel> filteredList;
     private FavoritesController favoritesController;
-    private final ReadOnlyObjectWrapper<FavoritesModel.FavoriteModel> selectedFavorite =
-            new ReadOnlyObjectWrapper<>(null);
+    private final ReadOnlyObjectWrapper<FavoritesModel.FavoriteModel> selectedFavorite
+            = new ReadOnlyObjectWrapper<>(null);
 
     public void setFavoritesController(FavoritesController favoritesController) {
         this.favoritesController = favoritesController;
@@ -82,7 +83,9 @@ public class FavoritesWindowController implements Initializable {
             imageViewPreview.fitHeightProperty().unbind();
             imageViewPreview.fitWidthProperty().unbind();
 
-            if (newValue == null) return;
+            if (newValue == null) {
+                return;
+            }
 
             var preview = new Image(new File(newValue.toString()).toURI().toString());
             imageViewPreview.setImage(preview);
@@ -104,6 +107,7 @@ public class FavoritesWindowController implements Initializable {
     }
 
     private static class ImagePreviewCell extends ListCell<FavoritesModel.FavoriteModel> {
+
         @Override
         protected void updateItem(FavoritesModel.FavoriteModel item, boolean empty) {
             super.updateItem(item, empty);

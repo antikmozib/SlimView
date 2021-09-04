@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppUpdateService extends Service<Boolean> {
+
     private final ReadOnlyStringWrapper updateUrlWrapper = new ReadOnlyStringWrapper("");
     private final String apiUrl = "https://mozib.io/downloads/update.php";
     private final int connectionTimeout = 5000;

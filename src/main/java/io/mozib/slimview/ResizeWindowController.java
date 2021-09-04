@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ResizeWindowController implements Initializable {
+
     private ResizeViewModel resizeViewModel;
 
     @FXML
@@ -36,8 +37,8 @@ public class ResizeWindowController implements Initializable {
         textWidth.textProperty().bindBidirectional(resizeViewModel.newWidthProperty);
         textHeight.textProperty().bindBidirectional(resizeViewModel.newHeightProperty);
         comboBoxQuality.setItems(resizeViewModel.resizeQualities);
-        comboBoxQuality.setOnAction(event ->
-                resizeViewModel.setSelectedQuality(comboBoxQuality.getSelectionModel().getSelectedItem()));
+        comboBoxQuality.setOnAction(event
+                -> resizeViewModel.setSelectedQuality(comboBoxQuality.getSelectionModel().getSelectedItem()));
         comboBoxQuality.getSelectionModel().select(resizeViewModel.getSelectedQuality());
         checkBoxPreserveAspectRatio.selectedProperty().bindBidirectional(resizeViewModel.preserveAspectRatioProperty);
     }

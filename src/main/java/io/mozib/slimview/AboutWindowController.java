@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 public class AboutWindowController implements Initializable {
+
     @FXML
     public Hyperlink hyperlinkWebsite;
     @FXML

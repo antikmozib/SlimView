@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.prefs.Preferences;
 
 public class SlimView extends Application {
+
     private static String[] cmdLineArgs;
     private final Preferences preferences = Preferences.userNodeForPackage(this.getClass());
 

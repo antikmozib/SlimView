@@ -18,6 +18,7 @@ import java.util.List;
 import static io.mozib.slimview.Util.DataFileLocation;
 
 public class CopyFileToViewModel {
+
     public ObservableList<CopyToDestinations.CopyToDestination> destinations;
     private final ImageModel source;
 
@@ -86,7 +87,9 @@ public class CopyFileToViewModel {
                         copied = new File(getNewFilePath(copied.getPath()));
                         break;
                     case OVERWRITE:
-                        if (!copied.delete()) continue;
+                        if (!copied.delete()) {
+                            continue;
+                        }
                         break;
                 }
             }

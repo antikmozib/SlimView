@@ -12,6 +12,7 @@ import java.util.List;
  * Holds the list of locations/destinations the user has chosen in the Copy File To window
  */
 public class CopyToDestinations implements Serializable {
+
     private List<CopyToDestination> destinations = new ArrayList<>();
 
     public CopyToDestinations() {
@@ -29,6 +30,7 @@ public class CopyToDestinations implements Serializable {
      * Represents a single location/destination
      */
     public static class CopyToDestination implements Serializable {
+
         private String destination;
 
         // required for serialization

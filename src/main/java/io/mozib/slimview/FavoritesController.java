@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class FavoritesController {
+
     private final ObservableList<FavoritesModel.FavoriteModel> favorites = FXCollections.observableArrayList();
 
     public void add(String path) {

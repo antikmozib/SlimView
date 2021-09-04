@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 public class ResizeViewModel {
+
     private final Preferences preferences = Preferences.userNodeForPackage(this.getClass());
     private final double originalAspectRatio;
     private final List<String> qualities = new ArrayList<>();

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecentFiles implements Serializable {
+
     private List<RecentFile> recentFiles = new ArrayList<>();
 
     // required for serialization
@@ -24,6 +25,7 @@ public class RecentFiles implements Serializable {
     }
 
     public static class RecentFile implements Serializable {
+
         private String path;
         private long lastSeen;
 
