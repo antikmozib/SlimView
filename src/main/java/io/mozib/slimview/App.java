@@ -23,6 +23,7 @@ public class App {
                 Preferences.userNodeForPackage(App.class).clear();
                 // delete settings files
                 Util.deleteDirectoryRecursively(new File(getDataFile(Util.DataFileLocation.SETTINGS_DIR)).getPath());
+                System.out.println("Uninstallation mode complete.");
             } catch (BackingStoreException | IOException e) {
                 e.printStackTrace();
             }
