@@ -313,6 +313,15 @@ public class MainWindowController implements Initializable {
             ViewStyle old = viewStyleProperty.get();
             viewStyleProperty.set(null);
             viewStyleProperty.set(old);
+
+            // don't show scroll bars if we're in full screen mode
+            if (newValue) {
+                scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+                scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            } else {
+                scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            }
         }));
     }
 
@@ -496,8 +505,6 @@ public class MainWindowController implements Initializable {
         switch (keyEvent.getCode()) {
 
             case LEFT:
-            case DOWN:
-            case PAGE_DOWN:
                 // don't switch images if the scrollbar is visible
                 if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth()) {
                     showPrevious();
@@ -505,10 +512,22 @@ public class MainWindowController implements Initializable {
                 break;
 
             case RIGHT:
-            case UP:
-            case PAGE_UP:
                 if (getViewingWidth() <= scrollPaneMain.getViewportBounds().getWidth()) {
                     showNext();
+                }
+                break;
+
+            case UP:
+            case PAGE_UP:
+                if (getViewingHeight() <= scrollPaneMain.getViewportBounds().getHeight()) {
+                    showNext();
+                }
+                break;
+
+            case DOWN:
+            case PAGE_DOWN:
+                if (getViewingHeight() <= scrollPaneMain.getViewportBounds().getHeight()) {
+                    showPrevious();
                 }
                 break;
 
@@ -538,7 +557,7 @@ public class MainWindowController implements Initializable {
 
             case SHIFT:
             case ALT:
-                // prevent conflict on menu shortcuts
+                // prevent conflict with menu shortcuts
                 isCtrlDown = false;
                 break;
 
@@ -1171,8 +1190,6 @@ public class MainWindowController implements Initializable {
             imageViewMain.setPreserveRatio(true);
             imageViewMain.fitWidthProperty().unbind();
             imageViewMain.fitHeightProperty().unbind();
-            scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-            scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
             // reset image size first
             if (imageViewMain.getImage() != null) {
