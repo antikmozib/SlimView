@@ -56,13 +56,21 @@ Root: HKCR; Subkey: "{#MyAppName}.{#MyAppExtensions[I]}\shell\open\command"; Val
 
 #endsub
 #for {I = 0; I < DimOf(MyAppExtensions); I++} RegisterAssociation
-; Delete Java preferences
-Root: HKCU; Subkey: "SOFTWARE\JavaSoft\Prefs\io\mozib\slimview"; Flags: dontcreatekey uninsdeletekey
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
-[UninstallDelete]
-Type: filesandordirs; Name: "{%USERPROFILE}\.slimview"
+[Code]
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  if CurUninstallStep = usUninstall then
+  begin    
+    if MsgBox('Do you want to remove all saved preferences as well?', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then
+    begin
+      DelTree('{%USERPROFILE}\.slimview', True, True, True);
+      RegDeleteKeyIncludingSubkeys(HKCU, 'SOFTWARE\JavaSoft\Prefs\io\mozib\slimview');
+    end;
+  end;
+end;
 
 #expr SaveToFile(AddBackslash(SourcePath) + "Preprocessed.iss")
