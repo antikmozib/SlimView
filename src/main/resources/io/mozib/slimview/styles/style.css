@@ -35,7 +35,7 @@
 .quick-info-label {
     -fx-text-fill: #fff;
     -fx-font-family: monospace;
-    -fx-font-size: 16px;
+    -fx-font-size: 14px;
 }
 
 .selection-rect {
