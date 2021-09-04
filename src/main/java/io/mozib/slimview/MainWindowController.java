@@ -95,7 +95,8 @@ public class MainWindowController implements Initializable {
     private double selectionPivotX = 0.0;
     private double selectionPivotY = 0.0;
 
-    // Structure: AnchorPane > Label + [ScrollPane > AnchorPane > Rectangle + [StackPane > ImageView]]
+    // Structure: AnchorPane (+FullScreenGrid) > ScrollPane > AnchorPane (+SelRect) > StackPane > ImageView
+
     @FXML
     public BorderPane borderPaneWindow;
     @FXML
@@ -334,7 +335,57 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void anchorPaneMain_onMousePress(MouseEvent mouseEvent) {
-        if (selectionModeActive.get()
+        switch (mouseEvent.getButton()) {
+            case PRIMARY:
+                if (selectionModeActive.get()
+                        && !selectionStartedProperty.get()
+                        && !cursorInsideSelRect
+                        && mainViewModel.getSelectedImageModel() != null) {
+
+                    clearSelectionRectangle();
+
+                    // don't start selecting if initial point is outside the ImageView
+                    if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX()
+                            || mouseEvent.getY() < imageViewMain.getBoundsInParent().getMinY()
+                            || mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX()
+                            || mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
+                        return;
+                    }
+
+                    selectionStartedProperty.set(true);
+                }
+                break;
+
+            case SECONDARY:
+                // if secondary mouse button is down, force into a temporary pan mode
+                if (selectionModeActive.get()) {
+                    selectionModeActive.set(false);
+                }
+                break;
+
+            case BACK:
+                showPrevious();
+                break;
+
+            case FORWARD:
+                showNext();
+                break;
+
+            default:
+                break;
+        }
+
+        // attempt to clear the selection rectangle on any mouse button press
+        if (!cursorInsideSelRect && !selectionStartedProperty.get()) {
+            clearSelectionRectangle();
+        }
+
+        /*if (mouseEvent.isSecondaryButtonDown() && selectionModeActive.get()) {
+
+            // if secondary mouse button is down, force into a temporary pan mode
+            selectionModeActive.set(false);
+
+        } else if (selectionModeActive.get()
                 && !selectionStartedProperty.get()
                 && !cursorInsideSelRect
                 && mainViewModel.getSelectedImageModel() != null) {
@@ -350,19 +401,33 @@ public class MainWindowController implements Initializable {
             }
 
             selectionStartedProperty.set(true);
-        }
-
-        if (!cursorInsideSelRect && !selectionStartedProperty.get()) {
-            clearSelectionRectangle();
-        }
+        }*/
     }
 
     @FXML
     public void anchorPaneMain_onMouseRelease(MouseEvent mouseEvent) {
         imageViewMain.setCursor(Cursor.DEFAULT);
 
-        // stop selecting but don't clear the rectangle yet as we need it for copying, zooming etc.
-        selectionStartedProperty.set(false);
+        switch (mouseEvent.getButton()) {
+            case PRIMARY:
+                // stop selecting but don't clear the rectangle yet as we need it for copying, zooming etc.
+                selectionStartedProperty.set(false);
+                break;
+
+            case SECONDARY:
+                selectionModeActive.set(true);
+                break;
+
+            default:
+                break;
+        }
+
+        /*if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+            selectionModeActive.set(true);
+        } else {
+            // stop selecting but don't clear the rectangle yet as we need it for copying, zooming etc.
+            selectionStartedProperty.set(false);
+        }*/
     }
 
     @FXML
