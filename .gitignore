@@ -8,7 +8,7 @@ installer/*
 nb-configuration.xml
 target/
 nbactions-uninst.xml
+*.sh
 !build.sh
 !run.sh
 !make-executable.sh
-*.sh
