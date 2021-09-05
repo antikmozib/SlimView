@@ -6,8 +6,5 @@ installer/*
 !installer/slimview.iss
 !installer/slimview.ico
 nb-configuration.xml
-*.sh
-!build.sh
-!run.sh
 target/
 nbactions-uninst.xml
