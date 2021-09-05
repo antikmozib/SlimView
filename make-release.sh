@@ -1,4 +1,5 @@
-./make-exeutable.sh
+#!/bin/bash
+./make-executable.sh
 
 if [ "$OSTYPE" == "cygwin" ]; then
 

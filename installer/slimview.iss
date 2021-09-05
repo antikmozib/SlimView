@@ -28,6 +28,7 @@ SolidCompression=yes
 UninstallDisplayName={#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 ChangesAssociations=yes
+WizardStyle=modern
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -64,10 +65,10 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
   if CurUninstallStep = usUninstall then
-  begin    
-    if MsgBox('Do you want to remove all saved preferences as well?', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then
+  begin
+    if MsgBox('Do you want to remove all user-related preferences as well?', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then
     begin
-      DelTree('{%USERPROFILE}\.slimview', True, True, True);
+      DelTree(ExpandConstant('{%USERPROFILE}\.slimview'), True, True, True);
       RegDeleteKeyIncludingSubkeys(HKCU, 'SOFTWARE\JavaSoft\Prefs\io\mozib\slimview');
     end;
   end;

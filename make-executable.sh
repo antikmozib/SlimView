@@ -1,0 +1,19 @@
+#!/bin/bash
+MODULES=$(cat all-mods.txt | perl -p -e 's/\\\s//') 
+
+./build.sh
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+	
+	printf "\nMaking *nix executable\n"
+	cp target/slimview-1.0.7.jar target/bin/
+	echo "#!/bin/bash" > target/bin/slimview.sh
+	echo "runtime/bin/java --module-path lib --add-modules $MODULES -jar slimview-1.0.7.jar $1" >> target/bin/slimview.sh
+	chmod +x target/bin/slimview.sh
+	
+elif [[ "$OSTYPE" == "cygwin" ]]; then
+
+	printf "\nMaking Windows executable\n"
+	launch4jc launch4j-config.xml
+	
+fi
