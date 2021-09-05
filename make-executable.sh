@@ -5,6 +5,8 @@ MODULES=$(cat all-mods.txt | perl -p -e 's/\n/,/g/s/\s//g')
 
 if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
 	
+	# macOS and Linux
+	
 	printf "\nMaking *nix executable\n"
 	cp target/slimview-1.0.7.jar target/bin/
 	echo "#!/bin/bash" > target/bin/slimview.sh
@@ -12,6 +14,8 @@ if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
 	chmod +x target/bin/slimview.sh
 	
 elif [[ "$OSTYPE" == "cygwin"* ]]; then
+
+	# Windows
 
 	printf "\nMaking Windows executable\n"
 	launch4jc launch4j-config.xml
