@@ -1,5 +1,5 @@
 #!/bin/bash
-MODULES=$(cat all-mods.txt | perl -p -e 's/\n/,/')
+MODULES=$(cat all-mods.txt | perl -p -e 's/\n/,/g/s/\s//g')
 
 # Excluded: com.twelvemonkeys.imageio.batik,xmlgraphics.commons
 

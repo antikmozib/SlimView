@@ -1,5 +1,5 @@
 #!/bin/bash
-MODULES=$(cat jlink-mods.txt | perl -p -e 's/\n/,/')
+MODULES=$(cat jlink-mods.txt | perl -p -e 's/\n/,/g/s/\s//g')
 
 printf "\nExecuting Maven goals\n"
 mvn -B clean package
