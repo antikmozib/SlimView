@@ -8,13 +8,14 @@ imgscalr.lib,metadata.extractor
 
 ./build.sh
 
-if [ "$OSTYPE" == "linux-gnu"* ] || [ "$OSTYPE" == "darwin"* ]; then
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 	
 	printf "\nMaking *nix executable\n";
-	echo "bin/runtime/bin/java --module-path target/bin/lib -add-modules $MODULES -jar target/slimview-1.0.7.jar $1" > target/bin/slimview;
-	chmod +x target/bin/slimview;
+	echo "#!/bin/bash" > target/bin/slimview.sh
+	echo "bin/runtime/bin/java --module-path target/bin/lib -add-modules $MODULES -jar target/slimview-1.0.7.jar $1" >> target/bin/slimview.sh;
+	chmod +x target/bin/slimview.sh;
 	
-elif [ "$OSTYPE" == "cygwin" ]; then
+elif [[ "$OSTYPE" == "cygwin" ]]; then
 
 	printf "\nMaking Windows executable\n";
 	launch4jc launch4j-config.xml;
