@@ -3,7 +3,7 @@ MODULES=$(cat all-mods.txt | perl -p -e 's/\n/,/g/s/\s//g')
 
 ./build.sh
 
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
 	
 	printf "\nMaking *nix executable\n"
 	cp target/slimview-1.0.7.jar target/bin/
