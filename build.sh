@@ -1,5 +1,9 @@
 #!/bin/bash
-MODULES=$(cat jlink-mods.txt | perl -p -e 's/\n/,/g/s/\s//g')
+
+MODULES=javafx.controls,javafx.graphics,javafx.fxml,javafx.base,javafx.swing,\
+java.base,java.security.jgss,\
+jdk.net,jdk.crypto.cryptoki,jdk.crypto.ec,\
+com.fasterxml.jackson.core,com.fasterxml.jackson.dataformat.xml
 
 printf "\nExecuting Maven goals\n"
 mvn -B clean package

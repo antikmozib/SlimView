@@ -11,4 +11,3 @@ nbactions-uninst.xml
 *.sh
 !build.sh
 !run.sh
-!make-executable.sh
