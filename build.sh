@@ -1,7 +1,7 @@
 #!/bin/bash
 
-MODULES=javafx.controls,javafx.graphics,javafx.fxml,javafx.base,javafx.swing,\
-java.base,java.security.jgss,\
+MODULES=java.base,java.security.jgss,\
+javafx.controls,javafx.graphics,javafx.fxml,javafx.base,javafx.swing,\
 jdk.net,jdk.crypto.cryptoki,jdk.crypto.ec,\
 com.fasterxml.jackson.core,com.fasterxml.jackson.dataformat.xml
 
