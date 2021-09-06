@@ -5,7 +5,8 @@ org.apache.commons.io,org.apache.commons.lang3,\
 org.apache.httpcomponents.httpcore,org.apache.httpcomponents.httpclient,\
 com.fasterxml.jackson.core,com.fasterxml.jackson.dataformat.xml,\
 com.twelvemonkeys.imageio.core,com.twelvemonkeys.imageio.metadata,\
-com.twelvemonkeys.imageio.jpeg,com.twelvemonkeys.imageio.bmp,com.twelvemonkeys.imageio.tiff,com.twelvemonkeys.imageio.psd,\
+com.twelvemonkeys.imageio.jpeg,com.twelvemonkeys.imageio.bmp,\
+com.twelvemonkeys.imageio.tiff,com.twelvemonkeys.imageio.psd,\
 imgscalr.lib,metadata.extractor
 
 # Excluded: com.twelvemonkeys.imageio.batik,xmlgraphics.commons
