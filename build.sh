@@ -94,17 +94,17 @@ if [[ $MAKE_EXE == true ]] || [[ $MAKE_RELEASE == true ]]; then
 		printf "\nMaking Windows executable\n"
 		launch4jc launch4j-config.xml
 
-	fi
-fi
+	fi	
 
-if [[ $MAKE_RELEASE == true ]]; then
+    if [[ $MAKE_RELEASE == true ]]; then
 
-	# invoke InnoSetup
+	    # invoke InnoSetup
 
-	if [[ "$OSTYPE" == "cygwin"* ]]; then
-		printf "\nBuilding installer\n"
-		iscc "installer/slimview.iss"	
-	fi
+	    if [[ "$OSTYPE" == "cygwin"* ]]; then
+		    printf "\nBuilding installer\n"
+		    iscc "installer/slimview.iss"	
+	    fi
+    fi
 fi
 
 if [[ $LAUNCH == true ]]; then
