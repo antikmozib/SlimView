@@ -46,45 +46,70 @@ cp target/modules/imgscalr-lib-4.2.jar 			target/bin/lib
 cp target/modules/metadata-extractor-2.16.0.jar	target/bin/lib
 cp target/modules/xmpcore-6.1.11.jar 			target/bin/lib
 
-while getopts "erl" opt; do
+MAKE_EXE=false
+MAKE_RELEASE=false
+LAUNCH=false
+LAUNCH_ARGS=''
+
+while getopts "erls:" opt; do
 	case $opt in
 		e) # make executable
-
-			if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
-
-				# macOS and Linux
-
-				printf "\nMaking *nix executable\n"
-				cp target/slimview-1.0.7.jar target/bin/
-				echo "#!/bin/bash" > target/bin/slimview.sh
-				echo "./runtime/bin/java --module-path lib --add-modules $ALL_MODULES -jar slimview-1.0.7.jar" '$1' >> target/bin/slimview.sh
-				chmod +x target/bin/slimview.sh
-
-			elif [[ "$OSTYPE" == "cygwin"* ]]; then
-
-				# Windows
-
-				printf "\nMaking Windows executable\n"
-				launch4jc launch4j-config.xml
-
-			fi
+		
+	        MAKE_EXE=true
 			;;
 
 		r) # make release
 
-			if [[ "$OSTYPE" == "cygwin"* ]]; then
-				printf "\nBuilding installer\n"
-				iscc "installer/slimview.iss"	
-			fi
+			MAKE_RELEASE=true
 			;;
 
-		l) # launch
+		l) # LAUNCH
 
-			./target/bin/runtime/bin/java --module-path target/bin/lib \
-				--add-modules $ALL_MODULES \
-				-jar target/slimview-1.0.7.jar
+			LAUNCH=true
 			;;
+		
+		s) # LAUNCH arg
+		
+		    LAUNCH_ARGS=$OPTARG
+		    ;;
 	esac
 done
+
+if [[ $MAKE_EXE == true ]] || [[ $MAKE_RELEASE == true ]]; then
+
+	if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
+
+		# macOS and Linux
+
+		printf "\nMaking *nix executable\n"
+		cp target/slimview-1.0.7.jar target/bin/
+		echo "#!/bin/bash" > target/bin/slimview.sh
+		echo "./runtime/bin/java --module-path lib --add-modules $ALL_MODULES -jar slimview-1.0.7.jar" '$1' >> target/bin/slimview.sh
+		chmod +x target/bin/slimview.sh
+
+	elif [[ "$OSTYPE" == "cygwin"* ]]; then
+
+		# Windows
+
+		printf "\nMaking Windows executable\n"
+		launch4jc launch4j-config.xml
+
+	fi
+fi
+
+if [[ $MAKE_RELEASE == true ]]; then
+
+	if [[ "$OSTYPE" == "cygwin"* ]]; then
+		printf "\nBuilding installer\n"
+		iscc "installer/slimview.iss"	
+	fi
+fi
+
+if [[ $LAUNCH == true ]]; then
+
+	./target/bin/runtime/bin/java --module-path target/bin/lib \
+				--add-modules $ALL_MODULES \
+				-jar target/slimview-1.0.7.jar $LAUNCH_ARGS
+fi
 
 printf "\nDone.\n"
