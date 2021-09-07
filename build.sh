@@ -63,12 +63,12 @@ while getopts "erls:" opt; do
 			MAKE_RELEASE=true
 			;;
 
-		l) # LAUNCH
+		l) # launch
 
 			LAUNCH=true
 			;;
 		
-		s) # LAUNCH arg
+		s) # supply launch arg
 		
 		    LAUNCH_ARGS=$OPTARG
 		    ;;
@@ -98,6 +98,8 @@ if [[ $MAKE_EXE == true ]] || [[ $MAKE_RELEASE == true ]]; then
 fi
 
 if [[ $MAKE_RELEASE == true ]]; then
+
+	# invoke InnoSetup
 
 	if [[ "$OSTYPE" == "cygwin"* ]]; then
 		printf "\nBuilding installer\n"
