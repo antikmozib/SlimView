@@ -379,29 +379,6 @@ public class MainWindowController implements Initializable {
         if (!cursorInsideSelRect && !selectionStartedProperty.get()) {
             clearSelectionRectangle();
         }
-
-        /*if (mouseEvent.isSecondaryButtonDown() && selectionModeActive.get()) {
-
-            // if secondary mouse button is down, force into a temporary pan mode
-            selectionModeActive.set(false);
-
-        } else if (selectionModeActive.get()
-                && !selectionStartedProperty.get()
-                && !cursorInsideSelRect
-                && mainViewModel.getSelectedImageModel() != null) {
-
-            clearSelectionRectangle();
-
-            // don't start selecting if initial point is outside the ImageView
-            if (mouseEvent.getX() < imageViewMain.getBoundsInParent().getMinX()
-                    || mouseEvent.getY() < imageViewMain.getBoundsInParent().getMinY()
-                    || mouseEvent.getX() > imageViewMain.getBoundsInParent().getMaxX()
-                    || mouseEvent.getY() > imageViewMain.getBoundsInParent().getMaxY()) {
-                return;
-            }
-
-            selectionStartedProperty.set(true);
-        }*/
     }
 
     @FXML
@@ -421,13 +398,6 @@ public class MainWindowController implements Initializable {
             default:
                 break;
         }
-
-        /*if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-            selectionModeActive.set(true);
-        } else {
-            // stop selecting but don't clear the rectangle yet as we need it for copying, zooming etc.
-            selectionStartedProperty.set(false);
-        }*/
     }
 
     @FXML
