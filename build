@@ -115,8 +115,8 @@ fi
 if [[ $LAUNCH == true ]]; then
 
     ./target/bin/runtime/bin/java --module-path target/bin/lib \
-                --add-modules $ALL_MODULES \
-                -jar target/slimview-1.0.7.jar $LAUNCH_ARGS
+        --add-modules $ALL_MODULES \
+        -jar target/slimview-1.0.7.jar $LAUNCH_ARGS
 fi
 
 printf "\nDone.\n"
