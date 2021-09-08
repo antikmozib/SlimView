@@ -83,9 +83,14 @@ if [[ $MAKE_EXE == true ]] || [[ $MAKE_RELEASE == true ]]; then
 
         printf "\nMaking *nix executable\n"
         cp target/slimview-1.0.7.jar target/bin/
-        echo "#!/bin/bash" > target/bin/slimview.sh
-        echo "./runtime/bin/java --module-path lib --add-modules $ALL_MODULES -jar slimview-1.0.7.jar" '$1' >> target/bin/slimview.sh
-        chmod +x target/bin/slimview.sh
+        
+        echo "#!/bin/bash" > target/bin/slimview
+        echo "./runtime/bin/java \
+            --module-path lib \
+            --add-modules $ALL_MODULES \
+            -jar slimview-1.0.7.jar" '$1' \
+            >> target/bin/slimview
+        chmod +x target/bin/slimview
 
     elif [[ "$OSTYPE" == "cygwin"* ]]; then
 
