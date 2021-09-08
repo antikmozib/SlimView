@@ -32,7 +32,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>17-ea+11</version>
+            <version>${javafx.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
         <dependency>
@@ -80,17 +80,6 @@
             <artifactId>metadata-extractor</artifactId>
             <version>2.16.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-transcoder -->
-        <!--<dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-transcoder</artifactId>
-            <version>1.14</version>
-        </dependency>
-        <dependency>
-            <groupId>com.twelvemonkeys.imageio</groupId>
-            <artifactId>imageio-batik</artifactId>
-            <version>3.7.0</version>
-        </dependency>-->
         <!-- https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-bmp -->
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
