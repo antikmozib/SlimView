@@ -12,10 +12,8 @@ module io.mozib.slimview {
     requires org.apache.httpcomponents.httpclient;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.dataformat.xml;
-    /*requires xmlgraphics.commons;*/
     requires com.twelvemonkeys.imageio.core;
     requires com.twelvemonkeys.imageio.metadata;
-    /*requires com.twelvemonkeys.imageio.batik;*/
     requires com.twelvemonkeys.imageio.bmp;
     requires com.twelvemonkeys.imageio.jpeg;
     requires com.twelvemonkeys.imageio.tiff;
