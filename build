@@ -28,17 +28,24 @@ LAUNCH_ARGS=''
 
 while getopts "erls:" opt; do
     case $opt in
-        e) # make executable        
+        e) # make executable
             MAKE_EXE=true;;
 
-        r) # make release
-            MAKE_RELEASE=true;;
+        r) # make setup
+            MAKE_EXE=true
+            MAKE_RELEASE=true
+            ;;
 
         l) # launch
-            LAUNCH=true;;
+            MAKE_EXE=true
+            LAUNCH=true
+            ;;
         
-        s) # supply launch arg        
-            LAUNCH_ARGS=$OPTARG;;
+        s) # supply launch arg
+            MAKE_EXE=true
+            LAUNCH=true
+            LAUNCH_ARGS=$OPTARG
+            ;;
 
         *) # invalid
             exit;;
@@ -74,7 +81,7 @@ cp target/modules/imgscalr-lib-4.2.jar          target/bin/lib
 cp target/modules/metadata-extractor-2.16.0.jar target/bin/lib
 cp target/modules/xmpcore-6.1.11.jar            target/bin/lib
 
-if [[ $MAKE_EXE == true ]] || [[ $MAKE_RELEASE == true ]]; then
+if [[ $MAKE_EXE == true ]]; then
 
     if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
 
@@ -98,16 +105,16 @@ if [[ $MAKE_EXE == true ]] || [[ $MAKE_RELEASE == true ]]; then
         print_heading "Making Windows executable"
         launch4jc launch4j-config.xml
 
-    fi  
+    fi
+fi
 
-    if [[ $MAKE_RELEASE == true ]]; then
+if [[ $MAKE_RELEASE == true ]]; then
 
-        # invoke InnoSetup
+    # invoke InnoSetup
 
-        if [[ "$OSTYPE" == "cygwin"* ]]; then
-            print_heading "Building installer"
-            iscc "installer/slimview.iss"   
-        fi
+    if [[ "$OSTYPE" == "cygwin"* ]]; then
+        print_heading "Building installer"
+        iscc "installer/slimview.iss"   
     fi
 fi
 
