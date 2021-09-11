@@ -9,6 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <jdk.versopn>11</jdk.versopn>
         <javafx.version>16</javafx.version>
         <mainClass>io.mozib.slimview.App</mainClass>
     </properties>
@@ -111,7 +112,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <release>11</release>
+                    <release>${jdk.version}</release>
                 </configuration>
             </plugin>
             <plugin>
