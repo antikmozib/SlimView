@@ -91,9 +91,7 @@ if [[ $MAKE_EXE == true ]]; then
         cp target/slimview-1.0.7.jar target/bin/
         
         echo "#!/bin/bash" > target/bin/slimview
-        echo "./runtime/bin/java \
-            -jar slimview-1.0.7.jar" '$1' \
-            >> target/bin/slimview
+        echo "./runtime/bin/java -jar slimview-1.0.7.jar" '$1' >> target/bin/slimview
         chmod +x target/bin/slimview
 
     elif [[ "$OSTYPE" == "cygwin"* ]]; then
