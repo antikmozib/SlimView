@@ -57,7 +57,7 @@ mvn -B clean package
 
 print_heading "Making directories"
 mkdir target/bin
-mkdir target/bin/lib
+mkdir target/bin/modules
 
 print_heading "Copying files"
 cp notice.txt target/bin
@@ -72,14 +72,14 @@ jlink --module-path target/modules \
     --output target/bin/runtime
 
 print_heading "Copying dependencies"
-for file in target/modules/common-*;            do cp "$file" target/bin/lib; done
-for file in target/modules/commons-*;           do cp "$file" target/bin/lib; done
-for file in target/modules/imageio-*;           do cp "$file" target/bin/lib; done
-cp target/modules/httpclient-4.5.13.jar         target/bin/lib
-cp target/modules/httpcore-4.4.13.jar           target/bin/lib
-cp target/modules/imgscalr-lib-4.2.jar          target/bin/lib
-cp target/modules/metadata-extractor-2.16.0.jar target/bin/lib
-cp target/modules/xmpcore-6.1.11.jar            target/bin/lib
+for file in target/modules/common-*;            do cp "$file" target/bin/modules; done
+for file in target/modules/commons-*;           do cp "$file" target/bin/modules; done
+for file in target/modules/imageio-*;           do cp "$file" target/bin/modules; done
+cp target/modules/httpclient-4.5.13.jar         target/bin/modules
+cp target/modules/httpcore-4.4.13.jar           target/bin/modules
+cp target/modules/imgscalr-lib-4.2.jar          target/bin/modules
+cp target/modules/metadata-extractor-2.16.0.jar target/bin/modules
+cp target/modules/xmpcore-6.1.11.jar            target/bin/modules
 
 if [[ $MAKE_EXE == true ]]; then
 
@@ -92,8 +92,6 @@ if [[ $MAKE_EXE == true ]]; then
         
         echo "#!/bin/bash" > target/bin/slimview
         echo "./runtime/bin/java \
-            --module-path lib \
-            --add-modules $ALL_MODULES \
             -jar slimview-1.0.7.jar" '$1' \
             >> target/bin/slimview
         chmod +x target/bin/slimview
@@ -122,7 +120,5 @@ print_heading "Done."
 
 if [[ $LAUNCH == true ]]; then
 
-    ./target/bin/runtime/bin/java --module-path target/bin/lib \
-        --add-modules $ALL_MODULES \
-        -jar target/slimview-1.0.7.jar $LAUNCH_ARGS
+    ./target/bin/runtime/bin/java -jar target/slimview-1.0.7.jar $LAUNCH_ARGS
 fi
