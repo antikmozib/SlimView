@@ -75,9 +75,9 @@ if [[ $MAKE_EXE == true ]]; then
     print_heading "Making executable"
     cp target/slimview-1.0.7.jar target/bin/
     
-    echo "#!/bin/bash" > target/bin/slimview
-    echo "runtime/bin/java -jar slimview-1.0.7.jar" '$1' >> target/bin/slimview
-    chmod +x target/bin/slimview
+    echo "#!/bin/bash" > target/bin/slimview.sh
+    echo "runtime/bin/java -jar slimview-1.0.7.jar" '$1' >> target/bin/slimview.sh
+    chmod +x target/bin/slimview.sh
 
     if [[ "$OSTYPE" == "cygwin"* ]]; then
         # Windows only

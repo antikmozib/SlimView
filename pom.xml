@@ -9,7 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <jdk.versopn>11</jdk.versopn>
+        <jdk.version>11</jdk.version>
         <javafx.version>16</javafx.version>
         <mainClass>io.mozib.slimview.App</mainClass>
     </properties>
@@ -98,6 +98,7 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- Maven compiler plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -106,6 +107,7 @@
                     <release>${jdk.version}</release>
                 </configuration>
             </plugin>
+            <!-- JavaFX Maven plugin -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -118,7 +120,75 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>           
+            <!-- Copy all dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
+            <!-- Perform Antrun tasks -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <!-- Copy non-modularized dependencies -->
+                    <execution>
+                        <id>copy-non-modularized-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target name="Copy non-modularized dependencies">
+                                <copy todir="${project.build.directory}/dist/modules">
+                                    <fileset dir="${project.build.directory}/modules">
+                                        <include name="common-*"/>
+                                        <include name="commons-*"/>
+                                        <include name="imageio-*"/>
+                                        <include name="httpclient-*"/>
+                                        <include name="httpcore-*"/>
+                                        <include name="imgscalr-*"/>
+                                        <include name="metadata-extractorr-*"/>
+                                        <include name="xmpcore-*"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>                       
+                    </execution>
+                    <!-- Copy notice -->
+                    <execution>
+                        <id>copy-notice</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target name="Copy notice">                                
+                                <copy todir="${project.build.directory}/dist">
+                                    <fileset dir="${basedir}">
+                                        <include name="notice.*"/>                                        
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>                       
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Make normal jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -136,7 +206,7 @@
                     <outputDirectory>${project.build.directory}</outputDirectory>
                 </configuration>
             </plugin>
-            <!-- For "fat" jar -->
+            <!-- Make "fat" jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -170,25 +240,96 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Make jlink image -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.2.0</version>
+                <groupId>org.moditect</groupId>
+                <artifactId>moditect-maven-plugin</artifactId>
+                <version>1.0.0.Beta2</version>
                 <executions>
                     <execution>
-                        <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
+                        <id>create-runtime-image</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>copy-dependencies</goal>
+                            <goal>create-runtime-image</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
-                            <includeScope>runtime</includeScope>
+                            <modulePath>
+                                <path>${project.build.directory}/modules</path>
+                            </modulePath>
+                            <modules>
+                                <module>java.base</module>
+                                <module>java.security.jgss</module>
+                                <module>javafx.controls</module>
+                                <module>javafx.graphics</module>
+                                <module>javafx.fxml</module>
+                                <module>javafx.base</module>
+                                <module>javafx.swing</module>
+                                <module>jdk.net</module>
+                                <module>jdk.crypto.cryptoki</module>
+                                <module>jdk.crypto.ec</module>
+                                <module>com.fasterxml.jackson.core</module>
+                                <module>com.fasterxml.jackson.dataformat.xml</module>
+                            </modules>
+                            <outputDirectory>${project.build.directory}/dist/runtime</outputDirectory>
+                            <stripDebug>true</stripDebug>
+                            <noManPages>true</noManPages>
+                            <noHeaderFiles>true</noHeaderFiles>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <!-- For tests -->
+            <!-- Make Windows exe -->
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>l4j-clui</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <dontWrapJar>false</dontWrapJar>
+                            <headerType>gui</headerType>
+                            <jar>${project.build.directory}/slimview-${project.version}.jar</jar>
+                            <outfile>${project.build.directory}/dist/slimview.exe</outfile>                            
+                            <chdir>.</chdir>
+                            <priority>normal</priority>
+                            <downloadUrl>http://java.com/download</downloadUrl>                            
+                            <stayAlive>false</stayAlive>
+                            <restartOnCrash>false</restartOnCrash>                            
+                            <icon>installer/slimview.ico</icon>
+                            <classPath>
+                                <mainClass>${mainClass}</mainClass>
+                                <jarLocation>modules/</jarLocation>
+                            </classPath>
+                            <jre>
+                                <path>runtime/bin</path>
+                                <bundledJre64Bit>false</bundledJre64Bit>
+                                <bundledJreAsFallback>false</bundledJreAsFallback>
+                                <jdkPreference>preferJre</jdkPreference>
+                                <runtimeBits>64/32</runtimeBits>
+                            </jre>
+                            <versionInfo>
+                                <fileVersion>${project.version}.0</fileVersion>
+                                <txtFileVersion>${project.version}</txtFileVersion>
+                                <fileDescription>SlimView</fileDescription>
+                                <copyright>Copyright (C) 2021 Antik Mozib. All Rights Reserved.</copyright>
+                                <productVersion>${project.version}.0</productVersion>
+                                <txtProductVersion>${project.version}</txtProductVersion>
+                                <productName>SlimView</productName>
+                                <companyName>Antik Mozib</companyName>
+                                <internalName>io.mozib.slimview</internalName>
+                                <originalFilename>slimview.exe</originalFilename>
+                                <language>ENGLISH_US</language>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Run tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
