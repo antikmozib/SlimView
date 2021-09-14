@@ -1,5 +1,5 @@
 #define MyAppName "SlimView"
-#define MyAppVersion GetVersionNumbersString("..\target\bin\slimview.exe")
+#define MyAppVersion Copy(GetVersionNumbersString("..\target\dist\slimview.exe"), 1, Len(GetVersionNumbersString("..\target\dist\slimview.exe")) - 2)
 #define MyAppPublisher "Antik Mozib"
 #define MyAppURL "https://mozib.io/slimview"
 #define MyAppExeName "slimview.exe"
@@ -73,5 +73,4 @@ begin
     end;
   end;
 end;
-
 #expr SaveToFile(AddBackslash(SourcePath) + "Preprocessed.iss")
