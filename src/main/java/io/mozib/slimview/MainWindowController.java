@@ -553,17 +553,23 @@ public class MainWindowController implements Initializable {
                 break;
 
             case UP:
-            case PAGE_UP:
                 if (getViewingHeight() <= scrollPaneMain.getViewportBounds().getHeight()) {
                     showNext();
                 }
                 break;
 
+            case PAGE_UP:
+                showNext();
+                break;
+
             case DOWN:
-            case PAGE_DOWN:
                 if (getViewingHeight() <= scrollPaneMain.getViewportBounds().getHeight()) {
                     showPrevious();
                 }
+                break;
+
+            case PAGE_DOWN:
+                showPrevious();
                 break;
 
             case HOME:
