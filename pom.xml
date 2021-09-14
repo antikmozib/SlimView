@@ -162,7 +162,7 @@
                                         <include name="httpclient-*"/>
                                         <include name="httpcore-*"/>
                                         <include name="imgscalr-*"/>
-                                        <include name="metadata-extractorr-*"/>
+                                        <include name="metadata-extractor-*"/>
                                         <include name="xmpcore-*"/>
                                     </fileset>
                                 </copy>
