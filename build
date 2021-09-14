@@ -11,16 +11,6 @@ javafx.controls,javafx.graphics,javafx.fxml,javafx.base,javafx.swing,\
 jdk.net,jdk.crypto.cryptoki,jdk.crypto.ec,\
 com.fasterxml.jackson.core,com.fasterxml.jackson.dataformat.xml
 
-# all modules required for running the app
-ALL_MODULES=javafx.controls,javafx.graphics,javafx.fxml,javafx.base,javafx.swing,\
-org.apache.commons.io,org.apache.commons.lang3,\
-org.apache.httpcomponents.httpcore,org.apache.httpcomponents.httpclient,\
-com.fasterxml.jackson.core,com.fasterxml.jackson.dataformat.xml,\
-com.twelvemonkeys.imageio.core,com.twelvemonkeys.imageio.metadata,\
-com.twelvemonkeys.imageio.jpeg,com.twelvemonkeys.imageio.bmp,\
-com.twelvemonkeys.imageio.tiff,com.twelvemonkeys.imageio.psd,\
-imgscalr.lib,metadata.extractor
-
 MAKE_EXE=false
 MAKE_RELEASE=false
 LAUNCH=false
@@ -53,7 +43,7 @@ while getopts "erls:" opt; do
 done
 
 print_heading "Executing Maven goals"
-mvn -B clean package
+mvn -B -q clean package
 
 print_heading "Making directories"
 mkdir target/bin
@@ -81,42 +71,35 @@ cp target/modules/imgscalr-lib-4.2.jar          target/bin/modules
 cp target/modules/metadata-extractor-2.16.0.jar target/bin/modules
 cp target/modules/xmpcore-6.1.11.jar            target/bin/modules
 
-if [[ $MAKE_EXE == true ]]; then
+if [[ $MAKE_EXE == true ]]; then    
+    # all OSes
 
-    if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
+    print_heading "Making executable"
+    cp target/slimview-1.0.7.jar target/bin/
+    
+    echo "#!/bin/bash" > target/bin/slimview
+    echo "runtime/bin/java -jar slimview-1.0.7.jar" '$1' >> target/bin/slimview
+    chmod +x target/bin/slimview
 
-        # macOS and Linux
-
-        print_heading "Making *nix executable"
-        cp target/slimview-1.0.7.jar target/bin/
-        
-        echo "#!/bin/bash" > target/bin/slimview
-        echo "./runtime/bin/java -jar slimview-1.0.7.jar" '$1' >> target/bin/slimview
-        chmod +x target/bin/slimview
-
-    elif [[ "$OSTYPE" == "cygwin"* ]]; then
-
-        # Windows
-
-        print_heading "Making Windows executable"
+    if [[ "$OSTYPE" == "cygwin"* ]]; then
+        # Windows only
         launch4jc launch4j-config.xml
-
     fi
 fi
 
 if [[ $MAKE_RELEASE == true ]]; then
-
     # invoke InnoSetup
 
     if [[ "$OSTYPE" == "cygwin"* ]]; then
         print_heading "Building installer"
-        iscc "installer/slimview.iss"   
+        iscc /Qp "installer/slimview.iss"   
     fi
 fi
 
 print_heading "Done."
 
 if [[ $LAUNCH == true ]]; then
-
-    ./target/bin/runtime/bin/java -jar target/slimview-1.0.7.jar $LAUNCH_ARGS
+    # This jar will only execute when invoked using the custom jre
+    # That's because bin/modules don't contain the modularized dependencies (e.g. JavaFX)
+    target/bin/runtime/bin/java -jar target/slimview-1.0.7.jar $LAUNCH_ARGS
 fi
