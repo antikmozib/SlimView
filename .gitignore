@@ -9,5 +9,3 @@ nb-configuration.xml
 target/
 nbactions-uninst.xml
 *.sh
-!build.sh
-!run.sh
