@@ -9,6 +9,6 @@ A fast and simple directory-based image viewer and browser for Windows, macOS an
 #### Requirements
 
 * JDK 11+
-* Maven 3.8.1+
+* Maven 3.6.3+
 
 `clone` the repository, `cd` into the root directory and execute `mvn clean package`.
