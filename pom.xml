@@ -136,48 +136,30 @@
                 </executions>
             </plugin>
             <!-- Perform Ant tasks -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <!-- Copy non-modularized dependencies -->
-                    <execution>
-                        <id>copy-non-modularized-dependencies</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target name="Copy non-modularized dependencies">
-                                <copy todir="${project.build.directory}/dist/modules">
-                                    <fileset dir="${project.build.directory}/modules">
-                                        <include name="common-*"/>
-                                        <include name="imageio-*"/>
-                                    </fileset>
-                                </copy>
-                            </target>
-                        </configuration>
-                    </execution>
+            <!-- <plugin> -->
+                <!-- <groupId>org.apache.maven.plugins</groupId> -->
+                <!-- <artifactId>maven-antrun-plugin</artifactId> -->
+                <!-- <version>3.0.0</version> -->
+                <!-- <executions> -->
                     <!-- Copy notice -->
-                    <execution>
-                        <id>copy-notice</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target name="Copy notice">
-                                <copy todir="${project.build.directory}/dist">
-                                    <fileset dir="${basedir}">
-                                        <include name="notice.*"/>
-                                    </fileset>
-                                </copy>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+                    <!-- <execution> -->
+                        <!-- <id>copy-notice</id> -->
+                        <!-- <phase>package</phase> -->
+                        <!-- <goals> -->
+                            <!-- <goal>run</goal> -->
+                        <!-- </goals> -->
+                        <!-- <configuration> -->
+                            <!-- <target name="Copy notice"> -->
+                                <!-- <copy todir="${project.build.directory}/dist"> -->
+                                    <!-- <fileset dir="${basedir}"> -->
+                                        <!-- <include name="notice.*"/> -->
+                                    <!-- </fileset> -->
+                                <!-- </copy> -->
+                            <!-- </target> -->
+                        <!-- </configuration> -->
+                    <!-- </execution> -->
+                <!-- </executions> -->
+            <!-- </plugin> -->
             <!-- Make normal jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -331,6 +313,92 @@
                                         <name>xmpcore</name>
                                     </moduleInfo>
                                 </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>com.twelvemonkeys.common</groupId>
+                                        <artifactId>common-io</artifactId>
+                                        <version>3.7.0</version>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>com.twelvemonkeys.common.io</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>com.twelvemonkeys.common</groupId>
+                                        <artifactId>common-lang</artifactId>
+                                        <version>3.7.0</version>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>com.twelvemonkeys.common.lang</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>com.twelvemonkeys.common</groupId>
+                                        <artifactId>common-image</artifactId>
+                                        <version>3.7.0</version>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>com.twelvemonkeys.common.image</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>com.twelvemonkeys.imageio</groupId>
+                                        <artifactId>imageio-metadata</artifactId>
+                                        <version>3.7.0</version>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>com.twelvemonkeys.imageio.metadata</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>com.twelvemonkeys.imageio</groupId>
+                                        <artifactId>imageio-core</artifactId>
+                                        <version>3.7.0</version>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>com.twelvemonkeys.imageio.core</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>com.twelvemonkeys.imageio</groupId>
+                                        <artifactId>imageio-bmp</artifactId>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>com.twelvemonkeys.imageio.bmp</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>com.twelvemonkeys.imageio</groupId>
+                                        <artifactId>imageio-jpeg</artifactId>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>com.twelvemonkeys.imageio.jpeg</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>com.twelvemonkeys.imageio</groupId>
+                                        <artifactId>imageio-tiff</artifactId>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>com.twelvemonkeys.imageio.tiff</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>com.twelvemonkeys.imageio</groupId>
+                                        <artifactId>imageio-psd</artifactId>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>com.twelvemonkeys.imageio.psd</name>
+                                    </moduleInfo>
+                                </module>
                             </modules>
                         </configuration>
                     </execution>
@@ -345,31 +413,16 @@
                             <modulePath>
                                 <path>${project.build.directory}/modules</path>
                                 <path>${project.build.directory}/patched-modules</path>
+                                <path>${project.build.directory}/classes</path>                                
                             </modulePath>
                             <modules>
-                                <module>java.base</module>
-                                <module>java.security.jgss</module>
-                                <module>javafx.controls</module>
-                                <module>javafx.graphics</module>
-                                <module>javafx.fxml</module>
-                                <module>javafx.base</module>
-                                <module>javafx.swing</module>
-                                <module>jdk.net</module>
-                                <module>jdk.crypto.cryptoki</module>
-                                <module>jdk.crypto.ec</module>
-                                <module>com.fasterxml.jackson.core</module>
-                                <module>com.fasterxml.jackson.dataformat.xml</module>
-                                <module>org.apache.commons.lang3</module>
-                                <module>org.apache.commons.io</module>
-                                <module>org.apache.commons.codec</module>
-                                <module>commons.logging</module>
-                                <module>imgscalr.lib</module>
-                                <module>xmpcore</module>
-                                <module>metadata.extractor</module>
-                                <module>org.apache.httpcomponents.httpcore</module>
-                                <module>org.apache.httpcomponents.httpclient</module>
+                                <module>io.mozib.slimview</module>
                             </modules>
-                            <outputDirectory>${project.build.directory}/dist/runtime</outputDirectory>
+                            <launcher>
+                                <name>slimview</name>
+                                <module>io.mozib.slimview/${mainClass}</module>
+                            </launcher>
+                            <outputDirectory>${project.build.directory}/dist</outputDirectory>
                             <stripDebug>true</stripDebug>
                             <noManPages>true</noManPages>
                             <noHeaderFiles>true</noHeaderFiles>
@@ -402,10 +455,9 @@
                             <icon>installer/slimview.ico</icon>
                             <classPath>
                                 <mainClass>${mainClass}</mainClass>
-                                <jarLocation>modules/</jarLocation>
                             </classPath>
                             <jre>
-                                <path>runtime/bin</path>
+                                <path>.</path>
                                 <bundledJre64Bit>false</bundledJre64Bit>
                                 <bundledJreAsFallback>false</bundledJreAsFallback>
                                 <jdkPreference>preferJre</jdkPreference>
