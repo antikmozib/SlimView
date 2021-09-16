@@ -37,10 +37,10 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\target\dist\slimview.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\notice.txt"; DestDir: "{app}"
-Source: "..\target\dist\runtime\*"; DestDir: "{app}\runtime"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\target\dist\modules\*"; DestDir: "{app}\modules"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Source: "..\target\dist\slimview.exe"; DestDir: "{app}"; Flags: ignoreversion
+; Source: "..\notice.txt"; DestDir: "{app}"
+Source: "..\target\dist\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Source: "..\target\dist\modules\*"; DestDir: "{app}\modules"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
