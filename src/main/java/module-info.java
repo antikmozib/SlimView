@@ -1,11 +1,10 @@
 module io.mozib.slimview {
-    requires java.base;
     requires java.prefs;
-    requires transitive javafx.controls;
-    requires transitive javafx.graphics;
     requires javafx.fxml;
     requires javafx.base;
     requires javafx.swing;
+    requires transitive javafx.controls;
+    requires transitive javafx.graphics;
     requires org.apache.commons.io;
     requires org.apache.commons.lang3;
     requires org.apache.httpcomponents.httpcore;
