@@ -1,0 +1,12 @@
+.*
+!.gitattributes
+!.gitignore
+dependency-reduced-pom.xml
+*.iml
+nbactions.xml
+installer/*
+!installer/slimview.iss
+nb-configuration.xml
+target/
+nbactions-uninst.xml
+*.sh
