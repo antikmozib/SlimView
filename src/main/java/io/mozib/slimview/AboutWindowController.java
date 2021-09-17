@@ -31,7 +31,7 @@ public class AboutWindowController implements Initializable {
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        labelVersion.setText("Version: " + this.getClass().getPackage().getImplementationVersion());
+        labelVersion.setText("Version: " + Util.getAppVersion());
         buttonOK.requestFocus();
     }
 

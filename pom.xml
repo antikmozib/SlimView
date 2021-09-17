@@ -391,6 +391,10 @@
                             </modulePath>
                             <modules>
                                 <module>io.mozib.slimview</module>
+                                <module>java.security.jgss</module>
+                                <module>jdk.net</module>
+                                <module>jdk.crypto.cryptoki</module>
+                                <module>jdk.crypto.ec</module>
                             </modules>
                             <launcher>
                                 <name>slimview</name>

@@ -61,7 +61,7 @@ public class AppUpdateService extends Service<Boolean> {
                 // upload app name and version
                 List<NameValuePair> params = new ArrayList<>();
                 params.add(new BasicNameValuePair("appname", "slimview"));
-                params.add(new BasicNameValuePair("version", getAppVer()));
+                params.add(new BasicNameValuePair("version", Util.getAppVersion()));
                 httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
                 HttpResponse httpResponse = httpClient.execute(httpPost);
@@ -82,9 +82,5 @@ public class AppUpdateService extends Service<Boolean> {
                 return !response.equals("");
             }
         };
-    }
-
-    private String getAppVer() {
-        return this.getClass().getPackage().getImplementationVersion();
     }
 }
