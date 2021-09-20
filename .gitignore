@@ -6,6 +6,7 @@ dependency-reduced-pom.xml
 nbactions.xml
 installer/*
 !installer/slimview.iss
+!installer/slimview.ico
 nb-configuration.xml
 target/
 nbactions-uninst.xml
