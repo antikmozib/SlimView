@@ -10,7 +10,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <jdk.version>11</jdk.version>
-        <javafx.version>16</javafx.version>
+        <javafx.version>17.0.0.1</javafx.version>
         <mainClass>io.mozib.slimview.App</mainClass>
     </properties>
     <dependencies>
