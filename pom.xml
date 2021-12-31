@@ -177,7 +177,7 @@
                                     <excludes>
                                         <exclude>module-info.class</exclude>
                                         <exclude>META-INF/**</exclude>
-                                        <!-- <exclude>META-INF/*</exclude> -->
+                                        <exclude>license/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -372,7 +372,7 @@
                                     <moduleInfo>
                                         <name>com.twelvemonkeys.imageio.psd</name>
                                     </moduleInfo>
-                                </module>                                
+                                </module>
                             </modules>
                         </configuration>
                     </execution>
@@ -387,7 +387,7 @@
                             <modulePath>
                                 <path>${project.build.directory}/modules</path>
                                 <path>${project.build.directory}/patched-modules</path>
-                                <path>${project.build.directory}/classes</path>                                
+                                <path>${project.build.directory}/classes</path>
                             </modulePath>
                             <modules>
                                 <module>io.mozib.slimview</module>

@@ -173,4 +173,9 @@ public class ImageModel {
     public void setOriginal(ImageModel original) {
         this.original = original;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

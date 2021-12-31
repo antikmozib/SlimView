@@ -16,7 +16,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.*;
-import java.lang.module.ModuleDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -381,6 +380,11 @@ public class Util {
     }
 
     public static String getAppVersion() {
-        return Util.class.getModule().getDescriptor().version().get().toString();
+        if (Util.class.getModule().getDescriptor() != null
+                && Util.class.getModule().getDescriptor().version().isPresent()) {
+            return Util.class.getModule().getDescriptor().version().get().toString();
+        }
+
+        return Util.class.getPackage().getImplementationVersion();
     }
 }

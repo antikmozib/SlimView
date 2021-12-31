@@ -29,6 +29,13 @@ public class AppUpdateService extends Service<Boolean> {
     private final ReadOnlyStringWrapper updateUrlWrapper = new ReadOnlyStringWrapper("");
     private final String apiUrl = "https://mozib.io/downloads/update.php";
     private final int connectionTimeout = 5000;
+    private final String appName;
+    private final String appVersion;
+
+    public AppUpdateService(String appName, String appVersion) {
+        this.appName = appName;
+        this.appVersion = appVersion;
+    }
 
     public ReadOnlyStringProperty updateUrlProperty() {
         return updateUrlWrapper.getReadOnlyProperty();
@@ -60,8 +67,8 @@ public class AppUpdateService extends Service<Boolean> {
 
                 // upload app name and version
                 List<NameValuePair> params = new ArrayList<>();
-                params.add(new BasicNameValuePair("appname", "slimview"));
-                params.add(new BasicNameValuePair("version", Util.getAppVersion()));
+                params.add(new BasicNameValuePair("appname", appName));
+                params.add(new BasicNameValuePair("version", appVersion));
                 httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
                 HttpResponse httpResponse = httpClient.execute(httpPost);
