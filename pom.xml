@@ -445,7 +445,7 @@
                                 <fileVersion>${project.version}.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>SlimView</fileDescription>
-                                <copyright>Copyright (C) 2021 Antik Mozib. All Rights Reserved.</copyright>
+                                <copyright>Copyright (C) Antik Mozib. All rights reserved.</copyright>
                                 <productVersion>${project.version}.0</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>SlimView</productName>

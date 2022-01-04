@@ -13,10 +13,10 @@
 <?import javafx.scene.layout.RowConstraints?>
 
 <!--
-  ~ Copyright (C) 2021-2022 Antik Mozib. All rights reserved.
+  ~ Copyright (C) Antik Mozib. All rights reserved.
   -->
 
-<AnchorPane id="AnchorPane" prefWidth="440.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.AboutWindowController">
+<AnchorPane id="AnchorPane" prefWidth="440.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.AboutWindowController">
     <children>
       <GridPane hgap="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
          <children>
@@ -28,7 +28,7 @@
               <Label text="SlimView" GridPane.columnIndex="1" />
               <Label fx:id="labelVersion" text="Version 1.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Separator prefHeight="16.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-              <Label text="Copyright © 2021 Antik Mozib. All Rights Reserved." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+              <Label text="Copyright © Antik Mozib. All rights reserved." GridPane.columnIndex="1" GridPane.rowIndex="3" />
               <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4">
                   <children>
                       <Label text="Website:" />
