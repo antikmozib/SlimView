@@ -31,7 +31,17 @@ public class AboutWindowController implements Initializable {
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        labelVersion.setText("Version: " + (Util.getAppVersion().equals("") ? "Unknown" : Util.getAppVersion()));
+        String appVersion;
+
+        // getAppVersion() throws error when the app isn't run as a standalone executable
+        try {
+            appVersion = Util.getAppVersion().equals("") ? "Unknown" : Util.getAppVersion();
+        }
+        catch (NullPointerException e) {
+            appVersion = "Unknown";
+        }
+
+        labelVersion.setText("Version: " + appVersion);
         buttonOK.requestFocus();
     }
 
