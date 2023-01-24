@@ -28,7 +28,7 @@
               <Label text="SlimView" GridPane.columnIndex="1" />
               <Label fx:id="labelVersion" text="Version 1.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Separator prefHeight="16.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-              <Label text="Copyright © Antik Mozib. All rights reserved." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+              <Label text="Copyright © 2021-2023 Antik Mozib. All rights reserved." GridPane.columnIndex="1" GridPane.rowIndex="3" />
               <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4">
                   <children>
                       <Label text="Website:" />
