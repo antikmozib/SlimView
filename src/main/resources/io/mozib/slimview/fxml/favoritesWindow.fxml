@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <!--
-  ~ Copyright (C) Antik Mozib. All rights reserved.
+  ~ Copyright (C) 2021-2023 Antik Mozib. All rights reserved.
   -->
 
 <AnchorPane prefHeight="480.0" prefWidth="848.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.FavoritesWindowController">
