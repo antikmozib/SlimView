@@ -12,28 +12,34 @@
   ~ Copyright (C) 2021-2023 Antik Mozib. All rights reserved.
   -->
 
-<AnchorPane prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.ImageInfoWindowController">
-   <children>
-      <HBox alignment="CENTER_LEFT" spacing="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
-         <children>
-            <Label text="Location:" />
-            <TextField fx:id="textPath" editable="false" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-      <TabPane fx:id="tabPaneMain" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="40.0">
-         <tabs>
-            <Tab text="Untitled Tab">
-              <content>
-                <AnchorPane />
-              </content>
-            </Tab>
-         </tabs>
-      </TabPane>
-      <HBox alignment="CENTER_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
-         <children>
-            <Button fx:id="buttonCopyToClipboard" onAction="#buttonCopyToClipboard_onAction" text="C_opy to Clipboard" />
-            <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" onAction="#buttonOK_onAction" prefWidth="80.0" text="_Close" />
-         </children>
-      </HBox>
-   </children>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/16"
+            fx:controller="io.mozib.slimview.ImageInfoWindowController">
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0"
+              AnchorPane.topAnchor="8.0">
+            <children>
+                <Label text="Location:"/>
+                <TextField fx:id="textPath" editable="false" HBox.hgrow="ALWAYS"/>
+            </children>
+        </HBox>
+        <TabPane fx:id="tabPaneMain" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="40.0"
+                 AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="40.0">
+            <tabs>
+                <Tab text="Untitled Tab">
+                    <content>
+                        <AnchorPane/>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+        <HBox alignment="CENTER_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0"
+              AnchorPane.rightAnchor="8.0">
+            <children>
+                <Button fx:id="buttonCopyToClipboard" onAction="#buttonCopyToClipboard_onAction"
+                        text="C_opy to Clipboard"/>
+                <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" onAction="#buttonOK_onAction"
+                        prefWidth="80.0" text="_Close"/>
+            </children>
+        </HBox>
+    </children>
 </AnchorPane>

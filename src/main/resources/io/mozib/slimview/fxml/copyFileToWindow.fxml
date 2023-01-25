@@ -16,60 +16,71 @@
   ~ Copyright (C) 2021-2023 Antik Mozib. All rights reserved.
   -->
 
-<AnchorPane prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.CopyFileToWindowController">
-   <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
-         <children>
-            <ListView fx:id="listViewMain" onKeyPressed="#listViewMain_onKeyPress" onMouseClicked="#listViewMain_onClick" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <VBox spacing="8.0">
-               <children>
-                  <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#buttonAdd_onAction" prefWidth="32.0">
-                     <tooltip>
-                        <Tooltip text="Add" />
-                     </tooltip>
-                     <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/add.png" />
-                           </image>
-                        </ImageView>
-                     </graphic></Button>
-                  <Button fx:id="buttonRemove" mnemonicParsing="false" onAction="#buttonRemove_onAction" prefWidth="32.0">
-                     <tooltip>
-                        <Tooltip text="Remove" />
-                     </tooltip>
-                     <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/remove.png" />
-                           </image>
-                        </ImageView>
-                     </graphic></Button>
-               </children>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-               <padding>
-                  <Insets left="8.0" />
-               </padding>
-            </VBox>
-         </children>
-      </HBox>
-      <HBox layoutX="8.0" layoutY="267.0" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
-         <children>
-            <HBox alignment="CENTER_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Label text="On Conflict:" />
-                  <ComboBox fx:id="comboBoxOnConflict" onAction="#comboBoxOnConflict_onAction" prefWidth="120.0" />
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_RIGHT" spacing="8.0">
-               <children>
-                  <Button fx:id="buttonCopy" defaultButton="true" onAction="#buttonCopy_onAction" prefWidth="80.0" text="_Copy" />
-                  <Button fx:id="buttonClose" cancelButton="true" onAction="#buttonClose_onAction" prefWidth="80.0" text="C_ancel" />
-               </children>
-            </HBox>
-         </children>
-      </HBox>
-   </children>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/16"
+            fx:controller="io.mozib.slimview.CopyFileToWindowController">
+    <children>
+        <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="8.0"
+              AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+            <children>
+                <ListView fx:id="listViewMain" onKeyPressed="#listViewMain_onKeyPress"
+                          onMouseClicked="#listViewMain_onClick" prefHeight="200.0" prefWidth="200.0"
+                          HBox.hgrow="ALWAYS"/>
+                <VBox spacing="8.0">
+                    <children>
+                        <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#buttonAdd_onAction"
+                                prefWidth="32.0">
+                            <tooltip>
+                                <Tooltip text="Add"/>
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/add.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="buttonRemove" mnemonicParsing="false" onAction="#buttonRemove_onAction"
+                                prefWidth="32.0">
+                            <tooltip>
+                                <Tooltip text="Remove"/>
+                            </tooltip>
+                            <graphic>
+                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/remove.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                    <HBox.margin>
+                        <Insets/>
+                    </HBox.margin>
+                    <padding>
+                        <Insets left="8.0"/>
+                    </padding>
+                </VBox>
+            </children>
+        </HBox>
+        <HBox layoutX="8.0" layoutY="267.0" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0"
+              AnchorPane.rightAnchor="8.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="On Conflict:"/>
+                        <ComboBox fx:id="comboBoxOnConflict" onAction="#comboBoxOnConflict_onAction" prefWidth="120.0"/>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT" spacing="8.0">
+                    <children>
+                        <Button fx:id="buttonCopy" defaultButton="true" onAction="#buttonCopy_onAction" prefWidth="80.0"
+                                text="_Copy"/>
+                        <Button fx:id="buttonClose" cancelButton="true" onAction="#buttonClose_onAction"
+                                prefWidth="80.0" text="C_ancel"/>
+                    </children>
+                </HBox>
+            </children>
+        </HBox>
+    </children>
 </AnchorPane>

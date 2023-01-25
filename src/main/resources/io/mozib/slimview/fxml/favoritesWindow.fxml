@@ -17,55 +17,71 @@
   ~ Copyright (C) 2021-2023 Antik Mozib. All rights reserved.
   -->
 
-<AnchorPane prefHeight="480.0" prefWidth="848.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.FavoritesWindowController">
-   <children>
-      <SplitPane dividerPositions="0.6" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
-        <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-               <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <TextField fx:id="textFieldSearch" onAction="#textFieldSearch_onAction" onKeyPressed="#textFieldSearch_onKeyPress" promptText="Type to search..." />
-                        <ListView fx:id="listViewFavorites" onKeyPressed="#listViewFavorites_onKeyPress" onMouseClicked="#listViewFavorites_onClick" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                     </children>
-                  </VBox>
-               </children>
-            </AnchorPane>
-          <AnchorPane id="anchorPanePreview" fx:id="anchorPanePreview" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="289.0">
-               <children>
-                  <HBox alignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <Label id="labelFilename" fx:id="labelFilename" textAlignment="CENTER" />
-                     </children>
-                  </HBox>
-                  <StackPane id="stackPanePreview" fx:id="stackPanePreview" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <ImageView fx:id="imageViewPreview" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                     </children>
-                  </StackPane>
-               </children>
-            </AnchorPane>
-        </items>
-      </SplitPane>
-      <HBox alignment="CENTER_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
-         <children>
-            <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-               <children>
-                  <SplitMenuButton fx:id="buttonRemove" onAction="#buttonRemove_onAction" prefWidth="104.0" text="_Remove">
-                    <items>
-                      <MenuItem fx:id="menuRemoveAll" onAction="#menuRemoveAll_onAction" text="Remove _All" />
-                        <MenuItem fx:id="menuRemoveMissing" onAction="#menuRemoveMissing_onAction" text="Remove _Missing" />
-                    </items>
-                  </SplitMenuButton>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_RIGHT" spacing="8.0">
-               <children>
-                  <Button fx:id="buttonOpen" defaultButton="true" onAction="#buttonOpen_onAction" prefWidth="80.0" text="_Open" />
-                  <Button fx:id="btnCancel" cancelButton="true" onAction="#btnCancel_onAction" prefWidth="80.0" text="_Cancel" />
-               </children>
-            </HBox>
-         </children>
-      </HBox>
-   </children>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="480.0" prefWidth="848.0" xmlns="http://javafx.com/javafx/16"
+            fx:controller="io.mozib.slimview.FavoritesWindowController">
+    <children>
+        <SplitPane dividerPositions="0.6" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0"
+                   AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+            <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                    <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="8.0" AnchorPane.bottomAnchor="0.0"
+                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <children>
+                                <TextField fx:id="textFieldSearch" onAction="#textFieldSearch_onAction"
+                                           onKeyPressed="#textFieldSearch_onKeyPress" promptText="Type to search..."/>
+                                <ListView fx:id="listViewFavorites" onKeyPressed="#listViewFavorites_onKeyPress"
+                                          onMouseClicked="#listViewFavorites_onClick" prefHeight="200.0"
+                                          prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </AnchorPane>
+                <AnchorPane id="anchorPanePreview" fx:id="anchorPanePreview" minHeight="0.0" minWidth="0.0"
+                            prefHeight="160.0" prefWidth="289.0">
+                    <children>
+                        <HBox alignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                              AnchorPane.topAnchor="0.0">
+                            <children>
+                                <Label id="labelFilename" fx:id="labelFilename" textAlignment="CENTER"/>
+                            </children>
+                        </HBox>
+                        <StackPane id="stackPanePreview" fx:id="stackPanePreview" prefHeight="150.0" prefWidth="200.0"
+                                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <children>
+                                <ImageView fx:id="imageViewPreview" fitHeight="150.0" fitWidth="200.0"
+                                           pickOnBounds="true" preserveRatio="true"/>
+                            </children>
+                        </StackPane>
+                    </children>
+                </AnchorPane>
+            </items>
+        </SplitPane>
+        <HBox alignment="CENTER_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0"
+              AnchorPane.rightAnchor="8.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                    <children>
+                        <SplitMenuButton fx:id="buttonRemove" onAction="#buttonRemove_onAction" prefWidth="104.0"
+                                         text="_Remove">
+                            <items>
+                                <MenuItem fx:id="menuRemoveAll" onAction="#menuRemoveAll_onAction" text="Remove _All"/>
+                                <MenuItem fx:id="menuRemoveMissing" onAction="#menuRemoveMissing_onAction"
+                                          text="Remove _Missing"/>
+                            </items>
+                        </SplitMenuButton>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT" spacing="8.0">
+                    <children>
+                        <Button fx:id="buttonOpen" defaultButton="true" onAction="#buttonOpen_onAction" prefWidth="80.0"
+                                text="_Open"/>
+                        <Button fx:id="btnCancel" cancelButton="true" onAction="#btnCancel_onAction" prefWidth="80.0"
+                                text="_Cancel"/>
+                    </children>
+                </HBox>
+            </children>
+        </HBox>
+    </children>
 </AnchorPane>

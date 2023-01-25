@@ -16,45 +16,52 @@
   ~ Copyright (C) 2021-2023 Antik Mozib. All rights reserved.
   -->
 
-<AnchorPane id="AnchorPane" prefWidth="440.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mozib.slimview.AboutWindowController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="AnchorPane" prefWidth="440.0" xmlns="http://javafx.com/javafx/17"
+            fx:controller="io.mozib.slimview.AboutWindowController">
     <children>
-      <GridPane hgap="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
-         <children>
-              <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="LEFT" GridPane.rowSpan="6" GridPane.valignment="TOP">
-                  <image>
-                      <Image url="@../icons/slimview.png" />
-                  </image>
-              </ImageView>
-              <Label text="SlimView" GridPane.columnIndex="1" />
-              <Label fx:id="labelVersion" text="Version 1.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Separator prefHeight="16.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-              <Label text="Copyright © 2021-2023 Antik Mozib. All rights reserved." GridPane.columnIndex="1" GridPane.rowIndex="3" />
-              <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                  <children>
-                      <Label text="Website:" />
-                      <Hyperlink fx:id="hyperlinkWebsite" focusTraversable="false" onAction="#hyperlinkWebsite_onAction" text="https://mozib.io/slimview" />
-                  </children>
-              </HBox>
-            <HBox alignment="BOTTOM_RIGHT" spacing="8.0" GridPane.columnSpan="2" GridPane.rowIndex="6">
-               <children>
-                  <Button fx:id="buttonAcknowledgements" minWidth="80.0" onAction="#buttonAcknowledgements_onAction" text="_Acknowledgements" />
-                    <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#buttonOK_onAction" text="OK" />
-               </children>
-            </HBox>
-         </children>
-         <columnConstraints>
-            <ColumnConstraints hgrow="NEVER" />
-            <ColumnConstraints hgrow="ALWAYS" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints prefHeight="32.0" vgrow="ALWAYS" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-         </rowConstraints>
-      </GridPane>
+        <GridPane hgap="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0"
+                  AnchorPane.topAnchor="8.0">
+            <children>
+                <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true"
+                           GridPane.halignment="LEFT" GridPane.rowSpan="6" GridPane.valignment="TOP">
+                    <image>
+                        <Image url="@../icons/slimview.png"/>
+                    </image>
+                </ImageView>
+                <Label text="SlimView" GridPane.columnIndex="1"/>
+                <Label fx:id="labelVersion" text="Version 1.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Separator prefHeight="16.0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Label text="Copyright © 2021-2023 Antik Mozib. All rights reserved." GridPane.columnIndex="1"
+                       GridPane.rowIndex="3"/>
+                <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                    <children>
+                        <Label text="Website:"/>
+                        <Hyperlink fx:id="hyperlinkWebsite" focusTraversable="false"
+                                   onAction="#hyperlinkWebsite_onAction" text="https://mozib.io/slimview"/>
+                    </children>
+                </HBox>
+                <HBox alignment="BOTTOM_RIGHT" spacing="8.0" GridPane.columnSpan="2" GridPane.rowIndex="6">
+                    <children>
+                        <Button fx:id="buttonAcknowledgements" minWidth="80.0"
+                                onAction="#buttonAcknowledgements_onAction" text="_Acknowledgements"/>
+                        <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" minWidth="80.0"
+                                mnemonicParsing="false" onAction="#buttonOK_onAction" text="OK"/>
+                    </children>
+                </HBox>
+            </children>
+            <columnConstraints>
+                <ColumnConstraints hgrow="NEVER"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES"/>
+                <RowConstraints vgrow="SOMETIMES"/>
+                <RowConstraints vgrow="SOMETIMES"/>
+                <RowConstraints vgrow="SOMETIMES"/>
+                <RowConstraints vgrow="SOMETIMES"/>
+                <RowConstraints prefHeight="32.0" vgrow="ALWAYS"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+        </GridPane>
     </children>
 </AnchorPane>
