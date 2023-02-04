@@ -1,6 +1,4 @@
-.*
-!.gitattributes
-!.gitignore
+.idea/
 dependency-reduced-pom.xml
 *.iml
 nbactions.xml
