@@ -3,7 +3,7 @@
 #define MyAppPublisher "Antik Mozib"
 #define MyAppURL "https://mozib.io/slimview"
 #define MyAppExeName "slimview.exe"
-#dim MyAppExtensions[10] {'bmp', 'png', 'gif', 'jpeg', 'jpg', 'tiff', 'ico', 'cur', 'psd', 'psb', 'webp'}
+#dim MyAppExtensions[11] {'bmp', 'png', 'gif', 'jpeg', 'jpg', 'tiff', 'ico', 'cur', 'psd', 'psb', 'webp'}
 #define I
 
 [Setup]
@@ -29,6 +29,7 @@ UninstallDisplayName={#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 ChangesAssociations=yes
 WizardStyle=modern
+ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
