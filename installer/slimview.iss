@@ -62,14 +62,14 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 [Code]
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
-    if CurUninstallStep = usUninstall then
+  if CurUninstallStep = usUninstall then
+  begin
+    if MsgBox('Do you want to remove all user-related preferences as well?', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then
     begin
-        if MsgBox('Do you want to remove all user-related preferences as well?', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then
-        begin
-            DelTree(ExpandConstant('{%USERPROFILE}\.slimview'), True, True, True);
-            RegDeleteKeyIncludingSubkeys(HKCU, 'SOFTWARE\JavaSoft\Prefs\io\mozib\slimview');
-        end;
+      DelTree(ExpandConstant('{%USERPROFILE}\.slimview'), True, True, True);
+      RegDeleteKeyIncludingSubkeys(HKCU, 'SOFTWARE\JavaSoft\Prefs\io\mozib\slimview');
     end;
+  end;
 end;
 
 #expr SaveToFile(AddBackslash(SourcePath) + "Preprocessed.iss")
