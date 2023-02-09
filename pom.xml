@@ -196,7 +196,7 @@
                 <artifactId>moditect-maven-plugin</artifactId>
                 <version>1.0.0.RC1</version>
                 <executions>
-					<!-- Patch non-modularized dependencies -->
+                    <!-- Patch non-modularized dependencies -->
                     <execution>
                         <id>add-module-info</id>
                         <phase>generate-resources</phase>
