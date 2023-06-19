@@ -56,7 +56,7 @@ public class AboutWindowController implements Initializable {
     @FXML
     public void buttonAcknowledgements_onAction(ActionEvent actionEvent) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Acknowledgements");
+        alert.setTitle("Attributions");
         alert.setHeaderText("");
         alert.initModality(Modality.WINDOW_MODAL);
         alert.initOwner(((Button) actionEvent.getSource()).getScene().getWindow());
@@ -65,7 +65,7 @@ public class AboutWindowController implements Initializable {
         GridPane gridPane = new GridPane();
 
         try {
-            textArea.setText(Files.readString(Paths.get("notice.txt")));
+            textArea.setText(Files.readString(Paths.get("attributions.txt")));
         } catch (IOException e) {
             textArea.setText("Failed to load the acknowledgements file.");
         }

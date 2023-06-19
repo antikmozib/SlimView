@@ -43,7 +43,7 @@
                 <HBox alignment="BOTTOM_RIGHT" spacing="8.0" GridPane.columnSpan="2" GridPane.rowIndex="6">
                     <children>
                         <Button fx:id="buttonAcknowledgements" minWidth="80.0"
-                                onAction="#buttonAcknowledgements_onAction" text="_Acknowledgements"/>
+                                onAction="#buttonAcknowledgements_onAction" text="_Attributions"/>
                         <Button fx:id="buttonOK" cancelButton="true" defaultButton="true" minWidth="80.0"
                                 mnemonicParsing="false" onAction="#buttonOK_onAction" text="OK"/>
                     </children>

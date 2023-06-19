@@ -7,5 +7,5 @@ https://github.com/haraldk/TwelveMonkeys
 metadata-extractor by Drew Noakes
 https://github.com/drewnoakes/metadata-extractor
 ---
-Icon made by Smashicons from Flaticon
-https://www.flaticon.com/authors/smashicons
+Summer icons created by Smashicons - Flaticon
+https://www.flaticon.com/free-icons/summer
