@@ -2,7 +2,7 @@
 
 A fast and simple directory-based image viewer and browser for Windows, macOS and Linux.
 
-![Screenshot](https://github.com/antikmozib/SlimView/blob/master/screenshot.jpg?raw=true)
+![Screenshot](screenshot.jpg?raw=true)
 
 ## Building
 
