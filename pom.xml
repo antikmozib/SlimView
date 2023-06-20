@@ -426,7 +426,7 @@
                             <downloadUrl>https://java.com/download</downloadUrl>
                             <stayAlive>false</stayAlive>
                             <restartOnCrash>false</restartOnCrash>
-                            <icon>installer/slimview.ico</icon>
+                            <icon>installer/SlimView.ico</icon>
                             <classPath>
                                 <mainClass>${mainClass}</mainClass>
                             </classPath>
