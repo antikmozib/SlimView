@@ -6,6 +6,3 @@ https://github.com/haraldk/TwelveMonkeys
 ---
 metadata-extractor by Drew Noakes
 https://github.com/drewnoakes/metadata-extractor
----
-Summer icons created by Smashicons - Flaticon
-https://www.flaticon.com/free-icons/summer

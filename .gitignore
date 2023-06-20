@@ -9,3 +9,4 @@ nb-configuration.xml
 target/
 nbactions-uninst.xml
 *.sh
+slimview.svg
