@@ -4,6 +4,12 @@ A fast and simple directory-based image viewer and browser for Windows, macOS an
 
 ![Screenshot](screenshot.jpg?raw=true)
 
+## Features
+
+* Super-fast loading of directories with hundreds of thousands of images.
+* Quick editing features such as rotating, flipping, cropping and resizing images.
+* Integration with the system explorer.
+
 ## Building
 
 #### Requirements
