@@ -13,14 +13,15 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,15 +64,16 @@ public class AppUpdateService extends Service<Boolean> {
                         .setConnectionRequestTimeout(connectionTimeout)
                         .build();
                 HttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
-                HttpPost httpPost = new HttpPost(apiUrl);
+                HttpGet httpGet = new HttpGet(apiUrl);
 
-                // upload app name and version
+                // Add appname and version parameters to request.
                 List<NameValuePair> params = new ArrayList<>();
                 params.add(new BasicNameValuePair("appname", appName));
                 params.add(new BasicNameValuePair("version", appVersion));
-                httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+                URI uri = new URIBuilder(httpGet.getURI()).addParameters(params).build();
+                httpGet.setURI(uri);
 
-                HttpResponse httpResponse = httpClient.execute(httpPost);
+                HttpResponse httpResponse = httpClient.execute(httpGet);
                 HttpEntity httpEntity = httpResponse.getEntity();
 
                 if (httpEntity != null) {
