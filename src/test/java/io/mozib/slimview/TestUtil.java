@@ -11,9 +11,14 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TestUtil {
+
+    @Test //Sadie Forbes
+    public void testComplicatedExtension(){
+        assertEquals("zip", Util.getFileExt("t.t.t.t.t.t.t.zip"));
+    }
+
     @Test
     public void testGetFileExt() {
         assertEquals("jpg", Util.getFileExt("test.bmp.jpg"));
@@ -46,9 +51,5 @@ public class TestUtil {
         assertEquals(file.length(), content.length());
 
         file.delete();
-    }
-    @Test //pie-and-cat 
-    public void testFileNameNull(){
-        assertEquals(null , Util.getFileName("C:\\\\Test Folder\\\\test.jpg"));
     }
 }
