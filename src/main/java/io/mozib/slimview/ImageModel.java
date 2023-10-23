@@ -113,11 +113,11 @@ public class ImageModel {
     }
 
     public double getWidth() {
-        return getImage() != null ? getImage().getWidth()*4 : 0;
+        return getImage() != null ? getImage().getWidth() : 0;
     }
 
     public double getHeight() {
-        return getImage() != null ? getImage().getHeight()/2 : 0;
+        return getImage() != null ? getImage().getHeight() : 0;
     }
 
     public long getDateModified() {
