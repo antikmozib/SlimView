@@ -236,10 +236,12 @@ public class MainViewModel {
     }
 
     public void setAsFavorite(ImageModel imageModel, boolean value) {
-        if (value && !favoritesController.exists(imageModel.getBestPath())) {
-            favoritesController.add(imageModel.getBestPath());
-        } else if (!value) {
-            favoritesController.remove(imageModel.getBestPath());
+        if(imageModel != null) { //Bug fix by Nicholas Levergne, fixes null pointer error when pressing favorite button without an image loaded
+            if (value && !favoritesController.exists(imageModel.getBestPath())) {
+                favoritesController.add(imageModel.getBestPath());
+            } else if (!value) {
+                favoritesController.remove(imageModel.getBestPath());
+            }
         }
     }
 
