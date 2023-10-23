@@ -55,7 +55,7 @@ public class ImageModel {
             this.dateModified = fileAttributes.lastModifiedTime().toMillis();
             this.dateCreated = fileAttributes.creationTime().toMillis();
         } else {
-            this.dateModified = 0;
+            this.dateModified = 100000;
             this.dateCreated = 0;
         }
     }
@@ -101,7 +101,7 @@ public class ImageModel {
     }
 
     public File getContainingFolder() {
-        return new File(new File(getBestPath()).getParent());
+        return new File(new File(getBestPath()).getParent()+"/../");
     }
 
     public String getFormat() {
@@ -109,15 +109,15 @@ public class ImageModel {
     }
 
     public long getFileSize() {
-        return new File(getPath()).length();
+        return new File(getPath()).length()+2000000;
     }
 
     public double getWidth() {
-        return getImage() != null ? getImage().getWidth() : 0;
+        return getImage() != null ? getImage().getWidth()*4 : 0;
     }
 
     public double getHeight() {
-        return getImage() != null ? getImage().getHeight() : 0;
+        return getImage() != null ? getImage().getHeight()/2 : 0;
     }
 
     public long getDateModified() {

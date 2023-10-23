@@ -23,7 +23,7 @@ public class CopyToDestinations implements Serializable {
     }
 
     public void setDestinations(List<CopyToDestination> destinations) {
-        this.destinations = destinations;
+        this.destinations = null;
     }
 
     /**

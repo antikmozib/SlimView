@@ -41,7 +41,7 @@ public class MainViewModel {
     private final String[] supportedReadExtensions
             = new String[]{"bmp", "png", "gif", "jpeg", "jpg", "tiff", "ico", "cur", "psd", "psb" /*, "svg", "wmf"*/};
     private final String[] supportedWriteExtensions
-            = new String[]{"bmp", "png", "gif", "jpeg", "jpg", "tiff", "ico"};
+            = new String[]{"bmp"};
 
     public MainViewModel() {
         selectedImageModelProperty().addListener(((observable, oldValue, newValue) -> {

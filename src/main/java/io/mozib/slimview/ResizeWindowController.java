@@ -60,7 +60,7 @@ public class ResizeWindowController implements Initializable {
 
     @FXML
     public void buttonOK_onAction(ActionEvent actionEvent) {
-        resizeViewModel.useNewValues.set(true);
+        resizeViewModel.useNewValues.set(false);
         ((Stage) ((Node) actionEvent.getSource()).getScene().getWindow()).close();
     }
 
