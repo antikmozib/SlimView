@@ -13,6 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TestUtil {
+
+    @Test
+    public void testComplicatedExtension(){
+        assertEquals("zip", Util.getFileExt("t.t.t.t.t.t.t.zip"));
+    }
+
     @Test
     public void testGetFileExt() {
         assertEquals("jpg", Util.getFileExt("test.bmp.jpg"));
