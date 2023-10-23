@@ -9,10 +9,15 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUtil {
+
+    @Test //Sadie Forbes
+    public void testComplicatedExtension(){
+        assertEquals("zip", Util.getFileExt("t.t.t.t.t.t.t.zip"));
+    }
+
     @Test
     public void testGetFileExt() {
         assertEquals("jpg", Util.getFileExt("test.bmp.jpg"));
@@ -47,4 +52,21 @@ public class TestUtil {
         file.delete();
     }
 
+    @Test //Nicholas Levergne's test
+    public void testDeleteException() throws IOException {
+        File file = null;
+        assertThrows(NullPointerException.class, ()->{file.delete();});
+    }
+
+    @Test
+    public void testGetOSType() {
+        assertEquals(Util.getOSType(), Util.OSType.MAC);
+    }
+
+    @Test
+    public void CalvinsCoolTestCase()
+    {
+        ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
+        assertEquals(img.getPath(), "src/main/resources/io/mozib/slimview/icons/save.png");
+    }
 }
