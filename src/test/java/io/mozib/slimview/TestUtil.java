@@ -4,18 +4,27 @@
 
 package io.mozib.slimview;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TestUtil {
 
     @Test //Sadie Forbes
     public void testComplicatedExtension(){
         assertEquals("zip", Util.getFileExt("t.t.t.t.t.t.t.zip"));
+    }
+
+    @Test //Justin Woodring
+    void testAppServiceConstructor() {
+        AppUpdateService service = new AppUpdateService("testName", "testVersion");
+        Assertions.assertInstanceOf(AppUpdateService.class, service);
     }
 
     @Test
@@ -79,5 +88,13 @@ public class TestUtil {
     {
         ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
         assertEquals(img.getPath(), "src/main/resources/io/mozib/slimview/icons/save.png");
+    }
+
+    @Test
+    public void confirmingFavoritesBugFix()
+    {
+        MainViewModel mainViewModel = new MainViewModel();
+        ImageModel imageModel = null;
+        assertThrows(NullPointerException.class, ()->{mainViewModel.setAsFavorite(imageModel, true);});
     }
 }
