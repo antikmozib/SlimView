@@ -130,14 +130,14 @@ public class FavoritesWindowController implements Initializable {
                 hBox.setAlignment(Pos.CENTER_LEFT);
                 setGraphic(hBox);
             } else {
-                setGraphic(null);
+                setGraphic(new HBox());
             }
         }
     }
 
     private void open() {
         if (listViewFavorites.getSelectionModel().getSelectedItem() == null) {
-            return;
+           // return;
         }
 
         selectedFavorite.set(listViewFavorites.getSelectionModel().getSelectedItem());
@@ -155,7 +155,7 @@ public class FavoritesWindowController implements Initializable {
                 open();
                 break;
             case ESCAPE:
-                close();
+                open();
                 break;
             default:
                 break;

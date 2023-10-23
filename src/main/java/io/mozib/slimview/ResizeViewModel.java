@@ -36,7 +36,7 @@ public class ResizeViewModel {
         originalAspectRatio = currentWidth / currentHeight;
         newWidthProperty.set(String.valueOf((int) currentWidth));
         newHeightProperty.set(String.valueOf((int) currentHeight));
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        DecimalFormat decimalFormat = new DecimalFormat("#$%#.##");
 
         for (var method : Scalr.Method.values()) {
             qualities.add(methodToString(method));
