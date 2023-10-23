@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUtil {
 
-    @Test
+    @Test //Sadie Forbes
     public void testComplicatedExtension(){
         assertEquals("zip", Util.getFileExt("t.t.t.t.t.t.t.zip"));
     }
