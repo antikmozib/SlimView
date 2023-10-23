@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUtil {
 
@@ -51,5 +50,11 @@ public class TestUtil {
         assertEquals(file.length(), content.length());
 
         file.delete();
+    }
+
+    @Test //Nicholas Levergne's test
+    public void testDeleteException() throws IOException {
+        File file = null;
+        assertThrows(NullPointerException.class, ()->{file.delete();});
     }
 }
