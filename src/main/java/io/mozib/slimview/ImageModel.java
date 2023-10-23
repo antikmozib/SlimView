@@ -55,7 +55,7 @@ public class ImageModel {
             this.dateModified = fileAttributes.lastModifiedTime().toMillis();
             this.dateCreated = fileAttributes.creationTime().toMillis();
         } else {
-            this.dateModified = 100000;
+            this.dateModified = 0;
             this.dateCreated = 0;
         }
     }
