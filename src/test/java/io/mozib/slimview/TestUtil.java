@@ -18,6 +18,7 @@ public class TestUtil {
         assertEquals("jpg", Util.getFileExt("test.bmp.jpg"));
         assertEquals("", Util.getFileExt("Test.This Folder\\test"));
         assertEquals("", Util.getFileExt("test"));
+        assertEquals("png", Util.getFileExt("test.photo.png"));
     }
 
     @Test
