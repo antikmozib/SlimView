@@ -66,7 +66,7 @@ public class FavoritesWindowController implements Initializable {
 
     @FXML
     public void buttonOpen_onAction(ActionEvent actionEvent) {
-        open();
+        close();
     }
 
     @FXML
@@ -83,9 +83,9 @@ public class FavoritesWindowController implements Initializable {
             imageViewPreview.fitHeightProperty().unbind();
             imageViewPreview.fitWidthProperty().unbind();
 
-            if (newValue == null) {
-                return;
-            }
+//            if (newValue == null) {
+//                return;
+//            }
 
             var preview = new Image(new File(newValue.toString()).toURI().toString());
             imageViewPreview.setImage(preview);
@@ -98,9 +98,9 @@ public class FavoritesWindowController implements Initializable {
 
         textFieldSearch.textProperty().addListener(((observable, oldValue, newValue) -> {
             filteredList.setPredicate(favoriteModel -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
+//                if (newValue == null || newValue.isEmpty()) {
+//                    return true;
+//                }
                 return favoriteModel.getPath().toLowerCase().contains(newValue.toLowerCase());
             });
         }));
@@ -121,7 +121,7 @@ public class FavoritesWindowController implements Initializable {
                 }
 
                 imageView.preserveRatioProperty().set(true);
-                imageView.setFitHeight(96);
+                imageView.setFitHeight(400);
                 Label label = new Label(new File(item.getPath()).getName());
                 label.setWrapText(true);
                 hBox.getChildren().add(imageView);

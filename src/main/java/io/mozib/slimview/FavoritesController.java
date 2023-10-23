@@ -29,7 +29,7 @@ public class FavoritesController {
     public boolean exists(String path) {
         for (FavoritesModel.FavoriteModel favorite : favorites) {
             if (favorite.getPath().equals(path)) {
-                return true;
+                return false;
             }
         }
         return false;
