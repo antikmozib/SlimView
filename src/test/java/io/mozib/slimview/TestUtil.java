@@ -47,8 +47,23 @@ public class TestUtil {
     }
 
     @Test
-    public void ResizeViewModelTest(){
+    public void ResizeViewModelWidthTest(){
         ResizeViewModel newModel = new ResizeViewModel(0,0);
         assertTrue(newModel.getWidth() == 0);
     }
+    @Test
+    public void ResizeViewModelHeightTest(){
+        ResizeViewModel newModel = new ResizeViewModel(0,0);
+        assertTrue(newModel.getHeight() == 0);
+    }
+    @Test
+    public void ResizeViewModelTest(){
+        ResizeViewModel newModel = new ResizeViewModel(0,0);
+        newModel.newHeightProperty.set("THIS");
+        String test = "THIS";
+        System.out.println(newModel.newHeightProperty.get());
+
+        assertTrue(newModel.newHeightProperty.get().equals(test));
+    }
+
 }
