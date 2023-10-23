@@ -69,4 +69,12 @@ public class TestUtil {
         ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
         assertEquals(img.getPath(), "src/main/resources/io/mozib/slimview/icons/save.png");
     }
+
+    @Test
+    public void confirmingFavoritesBugFix()
+    {
+        MainViewModel mainViewModel = new MainViewModel();
+        ImageModel imageModel = null;
+        assertThrows(NullPointerException.class, ()->{mainViewModel.setAsFavorite(imageModel, true);});
+    }
 }
