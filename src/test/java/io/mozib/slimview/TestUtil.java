@@ -4,6 +4,7 @@
 
 package io.mozib.slimview;
 
+import javafx.scene.image.ImageView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUtil {
 
+    @Test
+    public void testAspectRatio(){
+        // could not write test for this yikes
+    }
+    
     @Test //Sadie Forbes
     public void testComplicatedExtension(){
         assertEquals("zip", Util.getFileExt("t.t.t.t.t.t.t.zip"));

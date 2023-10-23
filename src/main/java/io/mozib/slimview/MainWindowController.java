@@ -1309,7 +1309,7 @@ public class MainWindowController implements Initializable {
                     }
 
                     menuFitToDesktop.setSelected(true);
-                    imageViewMain.setPreserveRatio(false);
+                    imageViewMain.setPreserveRatio(true);
                     imageViewMain.setFitWidth(finalWidth);
                     imageViewMain.setFitHeight(finalHeight);
                     break;
