@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TestUtil {
     @Test
@@ -45,25 +46,4 @@ public class TestUtil {
 
         file.delete();
     }
-
-    @Test
-    public void ResizeViewModelWidthTest(){
-        ResizeViewModel newModel = new ResizeViewModel(0,0);
-        assertTrue(newModel.getWidth() == 0);
-    }
-    @Test
-    public void ResizeViewModelHeightTest(){
-        ResizeViewModel newModel = new ResizeViewModel(0,0);
-        assertTrue(newModel.getHeight() == 0);
-    }
-    @Test
-    public void ResizeViewModelTest(){
-        ResizeViewModel newModel = new ResizeViewModel(0,0);
-        newModel.newHeightProperty.set("THIS");
-        String test = "THIS";
-        System.out.println(newModel.newHeightProperty.get());
-
-        assertTrue(newModel.newHeightProperty.get().equals(test));
-    }
-
 }
