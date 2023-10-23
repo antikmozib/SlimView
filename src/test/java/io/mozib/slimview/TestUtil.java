@@ -4,6 +4,7 @@
 
 package io.mozib.slimview;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -16,6 +17,12 @@ public class TestUtil {
     @Test //Sadie Forbes
     public void testComplicatedExtension(){
         assertEquals("zip", Util.getFileExt("t.t.t.t.t.t.t.zip"));
+    }
+
+    @Test //Justin Woodring
+    void testAppServiceConstructor() {
+        AppUpdateService service = new AppUpdateService("testName", "testVersion");
+        Assertions.assertInstanceOf(AppUpdateService.class, service);
     }
 
     @Test
