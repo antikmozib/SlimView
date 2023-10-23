@@ -57,4 +57,9 @@ public class TestUtil {
         File file = null;
         assertThrows(NullPointerException.class, ()->{file.delete();});
     }
+
+    @Test
+    public void testGetOSType() {
+        assertEquals(Util.getOSType(), Util.OSType.MAC);
+    }
 }
