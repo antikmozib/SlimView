@@ -57,4 +57,11 @@ public class TestUtil {
         File file = null;
         assertThrows(NullPointerException.class, ()->{file.delete();});
     }
+
+    @Test
+    public void CalvinsCoolTestCase()
+    {
+        ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
+        assertEquals(img.getPath(), "src/main/resources/io/mozib/slimview/icons/save.png");
+    }
 }
