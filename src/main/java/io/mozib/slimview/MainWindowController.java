@@ -982,7 +982,7 @@ public class MainWindowController implements Initializable {
 
             // *nix doesn't like Windows-style extension filters
             fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("All Files", "*"));
+                    new FileChooser.ExtensionFilter("All Files", "*.*"));
             fileChooser.getExtensionFilters().addAll(
                     getExtensionFilters(mainViewModel.getSupportedReadExtensions()));
         }
