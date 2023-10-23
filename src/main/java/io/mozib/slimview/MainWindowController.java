@@ -982,7 +982,7 @@ public class MainWindowController implements Initializable {
 
             // *nix doesn't like Windows-style extension filters
             fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("All Files", "*"));
+                    new FileChooser.ExtensionFilter("All Files", "*.*"));
             fileChooser.getExtensionFilters().addAll(
                     getExtensionFilters(mainViewModel.getSupportedReadExtensions()));
         }
@@ -1309,7 +1309,7 @@ public class MainWindowController implements Initializable {
                     }
 
                     menuFitToDesktop.setSelected(true);
-                    imageViewMain.setPreserveRatio(false);
+                    imageViewMain.setPreserveRatio(true);
                     imageViewMain.setFitWidth(finalWidth);
                     imageViewMain.setFitHeight(finalHeight);
                     break;
