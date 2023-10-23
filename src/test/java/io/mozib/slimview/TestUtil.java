@@ -4,6 +4,7 @@
 
 package io.mozib.slimview;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -14,6 +15,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TestUtil {
+
+    @Test //Sadie Forbes
+    public void testComplicatedExtension(){
+        assertEquals("zip", Util.getFileExt("t.t.t.t.t.t.t.zip"));
+    }
+
+    @Test //Justin Woodring
+    void testAppServiceConstructor() {
+        AppUpdateService service = new AppUpdateService("testName", "testVersion");
+        Assertions.assertInstanceOf(AppUpdateService.class, service);
+    }
+
     @Test
     public void testGetFileExt() {
         assertEquals("jpg", Util.getFileExt("test.bmp.jpg"));
@@ -47,8 +60,41 @@ public class TestUtil {
 
         file.delete();
     }
-    @Test //pie-and-cat 
-    public void testFileNameNull(){
-        assertEquals(null , Util.getFileName("C:\\\\Test Folder\\\\test.jpg"));
+
+    @Test
+    public void overwriteStringToFile() throws IOException {
+        File file = new File("test.txt");
+        String content1 = "Some text here";
+        Util.writeStringToFile(file.getPath(), content1);
+        assertEquals(file.length(), content1.length());
+        String content2 = "New text here instead";
+        Util.writeStringToFile(file.getPath(), content2);
+        assertEquals(file.length(), content2.length());
+    }
+
+    @Test //Nicholas Levergne's test
+    public void testDeleteException() throws IOException {
+        File file = null;
+        assertThrows(NullPointerException.class, ()->{file.delete();});
+    }
+
+    @Test
+    public void testGetOSType() {
+        assertEquals(Util.getOSType(), Util.OSType.MAC);
+    }
+
+    @Test
+    public void CalvinsCoolTestCase()
+    {
+        ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
+        assertEquals(img.getPath(), "src/main/resources/io/mozib/slimview/icons/save.png");
+    }
+
+    @Test
+    public void confirmingFavoritesBugFix()
+    {
+        MainViewModel mainViewModel = new MainViewModel();
+        ImageModel imageModel = null;
+        assertThrows(NullPointerException.class, ()->{mainViewModel.setAsFavorite(imageModel, true);});
     }
 }
