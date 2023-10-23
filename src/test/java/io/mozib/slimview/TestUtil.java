@@ -52,6 +52,17 @@ public class TestUtil {
         file.delete();
     }
 
+    @Test
+    public void overwriteStringToFile() throws IOException {
+        File file = new File("test.txt");
+        String content1 = "Some text here";
+        Util.writeStringToFile(file.getPath(), content1);
+        assertEquals(file.length(), content1.length());
+        String content2 = "New text here instead";
+        Util.writeStringToFile(file.getPath(), content2);
+        assertEquals(file.length(), content2.length());
+    }
+
     @Test //Nicholas Levergne's test
     public void testDeleteException() throws IOException {
         File file = null;
