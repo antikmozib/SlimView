@@ -941,12 +941,18 @@ public class MainWindowController implements Initializable {
     }
 
     private void zoomIn() {
+        if (mainViewModel.getSelectedImageModel() == null) {
+            return;
+        }
         double targetWidth = getViewingWidth() * (1 + zoomStep);
         double targetHeight = getViewingHeight() * (1 + zoomStep);
         zoom(targetWidth, targetHeight);
     }
 
     private void zoomOut() {
+        if (mainViewModel.getSelectedImageModel() == null) {
+            return;
+        }
         double targetWidth = getViewingWidth() * (1 - zoomStep);
         double targetHeight = getViewingHeight() * (1 - zoomStep);
         zoom(targetWidth, targetHeight);

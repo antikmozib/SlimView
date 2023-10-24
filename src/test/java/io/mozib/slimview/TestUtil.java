@@ -4,16 +4,17 @@
 
 package io.mozib.slimview;
 
+import javafx.event.ActionEvent;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUtil {
 
@@ -103,5 +104,14 @@ public class TestUtil {
         MainViewModel mainViewModel = new MainViewModel();
         ImageModel imageModel = null;
         assertThrows(NullPointerException.class, ()->{mainViewModel.setAsFavorite(imageModel, true);});
+    }
+
+    @Test
+    public void zoomWithNoPictureTest() {
+        MainViewModel mainViewModel = new MainViewModel();
+        MainWindowController mainWindowController = new MainWindowController();
+
+        ActionEvent actionEvent = new ActionEvent();
+        assertDoesNotThrow(() -> mainWindowController.buttonZoomIn_onAction(actionEvent));
     }
 }
