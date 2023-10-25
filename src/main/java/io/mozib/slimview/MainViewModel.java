@@ -212,16 +212,15 @@ public class MainViewModel {
     }
 
     public void openInEditor(ImageModel imageModel) {
-        return;
-//        if (getOSType() == OSType.WINDOWS) {
-//            try {
-//                Runtime.getRuntime().exec("mspaint \"" + imageModel.getBestPath() + "\"");
-//            } catch (IOException ignored) {
-//
-//            }
-//        } else {
-//            Util.browseUrl(imageModel.getBestPath());
-//        }
+        if (getOSType() == OSType.WINDOWS) {
+            try {
+                Runtime.getRuntime().exec("mspaint \"" + imageModel.getBestPath() + "\"");
+            } catch (IOException ignored) {
+
+            }
+        } else {
+            Util.browseUrl(imageModel.getBestPath());
+        }
     }
 
     public void openContainingFolder(ImageModel imageModel) {
