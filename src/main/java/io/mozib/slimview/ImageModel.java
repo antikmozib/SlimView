@@ -101,7 +101,7 @@ public class ImageModel {
     }
 
     public File getContainingFolder() {
-        return new File(new File(getBestPath()).getName());
+        return new File(new File(getBestPath()).getParent());
     }
 
     public String getFormat() {
