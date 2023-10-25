@@ -50,6 +50,17 @@ public class TestUtil {
     }
 
     @Test
+    public void testRecentFile(){
+        RecentFiles recentFiles = new RecentFiles();
+        assert(recentFiles.getRecentFiles().size()==0);
+        recentFiles.getRecentFiles().add(new RecentFiles.RecentFile());
+        assert(recentFiles.getRecentFiles().size()==1);
+        recentFiles.getRecentFiles().add(new RecentFiles.RecentFile());
+        assert(recentFiles.getRecentFiles().size()==2);
+    }
+
+
+    @Test
     public void testReplaceFileExt() {
         assertEquals("test.bmp.jpg", Util.replaceFileExt("test.bmp.gif", "jpg"));
         assertEquals("test.jpg", Util.replaceFileExt("test", "jpg"));
