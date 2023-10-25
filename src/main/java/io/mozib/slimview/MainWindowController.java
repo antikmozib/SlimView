@@ -1279,7 +1279,7 @@ public class MainWindowController implements Initializable {
                     if (!isViewingFullScreen.get()) {
 
                         finalWidth = viewportWidth;
-                        finalHeight = finalWidth / aspectRatio;
+                        finalHeight = viewportHeight;
                         if (finalHeight > viewportHeight) {
                             finalHeight = viewportHeight;
                             finalWidth = aspectRatio * finalHeight;
