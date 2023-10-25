@@ -63,7 +63,7 @@ public class MainWindowController implements Initializable {
     public MainViewModel mainViewModel = new MainViewModel();
     private final Preferences preferences = Preferences.userNodeForPackage(this.getClass());
 
-    private final double zoomStep = 0.1;
+    private final double zoomStep = -0.1;
     private boolean isCtrlDown = false;
 
     // for favorite button
