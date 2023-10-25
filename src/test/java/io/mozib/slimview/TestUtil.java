@@ -42,6 +42,13 @@ public class TestUtil {
     }
 
     @Test
+    public void testGetContainingFolder()
+    {
+        ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
+        assertEquals("src/main/resources/io/mozib/slimview/icons", img.getContainingFolder().toString());
+    }
+
+    @Test
     public void testGetFileExt() {
         assertEquals("jpg", Util.getFileExt("test.bmp.jpg"));
         assertEquals("", Util.getFileExt("Test.This Folder\\test"));
