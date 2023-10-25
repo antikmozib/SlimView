@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -120,5 +121,14 @@ public class TestUtil {
 
         ActionEvent actionEvent = new ActionEvent();
         assertDoesNotThrow(() -> mainWindowController.buttonZoomIn_onAction(actionEvent));
+    }
+
+    @Test
+    public void addToRecentTest()
+    {
+        RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileLocation.RECENT_FILES);
+        recentFiles.setRecentFiles(null);
+        Util.addToRecent(null);
+        assertEquals(null, recentFiles.getRecentFiles());
     }
 }
