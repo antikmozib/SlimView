@@ -132,4 +132,11 @@ public class TestUtil {
         ActionEvent actionEvent = new ActionEvent();
         assertDoesNotThrow(() -> mainWindowController.buttonZoomIn_onAction(actionEvent));
     }
+
+    @Test
+    public void favoritesTest() {
+        FavoritesController favoritesController = new FavoritesController();
+        favoritesController.add("./testing.png");
+        assertFalse(favoritesController.exists("./testing.png"));
+    }
 }
