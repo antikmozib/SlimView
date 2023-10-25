@@ -111,7 +111,7 @@ public class TestUtil {
         assertThrows(NullPointerException.class, ()->{file.delete();});
     }
 
-    @Test
+    @Test // Bryce Doyle Test
     public void testGetOSType() {
         assertEquals(Util.getOSType(), Util.OSType.MAC);
     }
@@ -156,4 +156,6 @@ public class TestUtil {
         favoritesController.add("./testing.png");
         assertFalse(favoritesController.exists("./testing.png"));
     }
+
+
 }
