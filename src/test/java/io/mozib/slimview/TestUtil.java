@@ -160,10 +160,16 @@ public class TestUtil {
         assertEquals(null, recentFiles.getRecentFiles());
     }
 
-    @Test
+    @Test // Bryce Doyle Test
     public void favoritesTest() {
         FavoritesController favoritesController = new FavoritesController();
         favoritesController.add("./testing.png");
         assertFalse(favoritesController.exists("./testing.png"));
+    }
+
+    @Test // Bryce Doyle Test
+    public void imagePathTest() {
+        ImageModel imageModel = new ImageModel("./test.jpg");
+        assertEquals(imageModel.getPath(), "./test.jpg");
     }
 }
