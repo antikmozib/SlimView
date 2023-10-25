@@ -42,12 +42,30 @@ public class TestUtil {
     }
 
     @Test
+    public void testGetContainingFolder()
+    {
+        ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
+        assertEquals("src/main/resources/io/mozib/slimview/icons", img.getContainingFolder().toString());
+    }
+
+    @Test
     public void testGetFileExt() {
         assertEquals("jpg", Util.getFileExt("test.bmp.jpg"));
         assertEquals("", Util.getFileExt("Test.This Folder\\test"));
         assertEquals("", Util.getFileExt("test"));
         assertEquals("png", Util.getFileExt("test.photo.png"));
     }
+
+    @Test
+    public void testRecentFile(){
+        RecentFiles recentFiles = new RecentFiles();
+        assert(recentFiles.getRecentFiles().size()==0);
+        recentFiles.getRecentFiles().add(new RecentFiles.RecentFile());
+        assert(recentFiles.getRecentFiles().size()==1);
+        recentFiles.getRecentFiles().add(new RecentFiles.RecentFile());
+        assert(recentFiles.getRecentFiles().size()==2);
+    }
+
 
     @Test
     public void testReplaceFileExt() {
@@ -130,5 +148,12 @@ public class TestUtil {
 
         ActionEvent actionEvent = new ActionEvent();
         assertDoesNotThrow(() -> mainWindowController.buttonZoomIn_onAction(actionEvent));
+    }
+
+    @Test
+    public void favoritesTest() {
+        FavoritesController favoritesController = new FavoritesController();
+        favoritesController.add("./testing.png");
+        assertFalse(favoritesController.exists("./testing.png"));
     }
 }
