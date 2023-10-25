@@ -109,7 +109,7 @@ public class ImageModel {
     }
 
     public long getFileSize() {
-        return new File(getPath()).length()+2000000;
+        return new File(getPath()).length();
     }
 
     public double getWidth() {

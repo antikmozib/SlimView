@@ -34,6 +34,13 @@ public class TestUtil {
         Assertions.assertInstanceOf(AppUpdateService.class, service);
     }
 
+    @Test //Justin Woodring
+    public void testImageFileSize()
+    {
+        ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
+        assertEquals(img.getFileSize(), 256);
+    }
+
     @Test
     public void testGetFileExt() {
         assertEquals("jpg", Util.getFileExt("test.bmp.jpg"));
