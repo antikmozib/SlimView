@@ -941,12 +941,18 @@ public class MainWindowController implements Initializable {
     }
 
     private void zoomIn() {
+        if (mainViewModel.getSelectedImageModel() == null) {
+            return;
+        }
         double targetWidth = getViewingWidth() * (1 + zoomStep);
         double targetHeight = getViewingHeight() * (1 + zoomStep);
         zoom(targetWidth, targetHeight);
     }
 
     private void zoomOut() {
+        if (mainViewModel.getSelectedImageModel() == null) {
+            return;
+        }
         double targetWidth = getViewingWidth() * (1 - zoomStep);
         double targetHeight = getViewingHeight() * (1 - zoomStep);
         zoom(targetWidth, targetHeight);
@@ -982,7 +988,7 @@ public class MainWindowController implements Initializable {
 
             // *nix doesn't like Windows-style extension filters
             fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("All Files", "*"));
+                    new FileChooser.ExtensionFilter("All Files", "*.*"));
             fileChooser.getExtensionFilters().addAll(
                     getExtensionFilters(mainViewModel.getSupportedReadExtensions()));
         }
@@ -1273,7 +1279,7 @@ public class MainWindowController implements Initializable {
                     if (!isViewingFullScreen.get()) {
 
                         finalWidth = viewportWidth;
-                        finalHeight = finalWidth / aspectRatio;
+                        finalHeight = viewportHeight;
                         if (finalHeight > viewportHeight) {
                             finalHeight = viewportHeight;
                             finalWidth = aspectRatio * finalHeight;
@@ -1309,7 +1315,7 @@ public class MainWindowController implements Initializable {
                     }
 
                     menuFitToDesktop.setSelected(true);
-                    imageViewMain.setPreserveRatio(false);
+                    imageViewMain.setPreserveRatio(true);
                     imageViewMain.setFitWidth(finalWidth);
                     imageViewMain.setFitHeight(finalHeight);
                     break;
