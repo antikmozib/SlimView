@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -19,26 +20,32 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestUtil {
 
     @Test
-    public void testAspectRatio(){
+    public void testAspectRatio() {
         // could not write test for this yikes
     }
-    
+
     @Test //Sadie Forbes
-    public void testComplicatedExtension(){
+    public void testComplicatedExtension() {
         assertEquals("zip", Util.getFileExt("t.t.t.t.t.t.t.zip"));
     }
 
-    @Test //Justin Woodring
+    @Test
+        //Justin Woodring
     void testAppServiceConstructor() {
         AppUpdateService service = new AppUpdateService("testName", "testVersion");
         Assertions.assertInstanceOf(AppUpdateService.class, service);
     }
 
     @Test //Justin Woodring
-    public void testImageFileSize()
-    {
+    public void testImageFileSize() {
         ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
         assertEquals(img.getFileSize(), 256);
+    }
+
+    @Test
+    public void testGetContainingFolder() {
+        ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
+        assertEquals("src/main/resources/io/mozib/slimview/icons", img.getContainingFolder().toString());
     }
 
     @Test
@@ -48,6 +55,17 @@ public class TestUtil {
         assertEquals("", Util.getFileExt("test"));
         assertEquals("png", Util.getFileExt("test.photo.png"));
     }
+
+    @Test
+    public void testRecentFile() {
+        RecentFiles recentFiles = new RecentFiles();
+        assert (recentFiles.getRecentFiles().size() == 0);
+        recentFiles.getRecentFiles().add(new RecentFiles.RecentFile());
+        assert (recentFiles.getRecentFiles().size() == 1);
+        recentFiles.getRecentFiles().add(new RecentFiles.RecentFile());
+        assert (recentFiles.getRecentFiles().size() == 2);
+    }
+
 
     @Test
     public void testReplaceFileExt() {
@@ -90,30 +108,42 @@ public class TestUtil {
     @Test //Nicholas Levergne's test
     public void testDeleteException() throws IOException {
         File file = null;
-        assertThrows(NullPointerException.class, ()->{file.delete();});
+        assertThrows(NullPointerException.class, () -> {
+            file.delete();
+        });
     }
 
-    @Test
+    @Test // Bryce Doyle Test
     public void testGetOSType() {
         assertEquals(Util.getOSType(), Util.OSType.MAC);
     }
 
     @Test
-    public void CalvinsCoolTestCase()
-    {
+    public void testAddToRecent() {
+        Util.addToRecent("src/main/resources/io/mozib/slimview/icons/favorite.png");
+    }
+
+    @Test
+    public void testGetAppVersion() {
+        assertEquals(Util.getAppVersion(), "1.0.7");
+    }
+
+    @Test
+    public void CalvinsCoolTestCase() {
         ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
         assertEquals(img.getPath(), "src/main/resources/io/mozib/slimview/icons/save.png");
     }
 
     @Test
-    public void confirmingFavoritesBugFix()
-    {
+    public void confirmingFavoritesBugFix() {
         MainViewModel mainViewModel = new MainViewModel();
         ImageModel imageModel = null;
-        assertThrows(NullPointerException.class, ()->{mainViewModel.setAsFavorite(imageModel, true);});
+        assertThrows(NullPointerException.class, () -> {
+            mainViewModel.setAsFavorite(imageModel, true);
+        });
     }
 
-    @Test
+    @Test // Bryce Doyle Test
     public void zoomWithNoPictureTest() {
         MainViewModel mainViewModel = new MainViewModel();
         MainWindowController mainWindowController = new MainWindowController();
@@ -123,9 +153,23 @@ public class TestUtil {
     }
 
     @Test
+    public void addToRecentTest() {
+        RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileLocation.RECENT_FILES);
+        recentFiles.setRecentFiles(null);
+        Util.addToRecent(null);
+        assertEquals(null, recentFiles.getRecentFiles());
+    }
+
+    @Test // Bryce Doyle Test
     public void favoritesTest() {
         FavoritesController favoritesController = new FavoritesController();
         favoritesController.add("./testing.png");
         assertFalse(favoritesController.exists("./testing.png"));
+    }
+
+    @Test // Bryce Doyle Test
+    public void imagePathTest() {
+        ImageModel imageModel = new ImageModel("./test.jpg");
+        assertEquals(imageModel.getPath(), "./test.jpg");
     }
 }
