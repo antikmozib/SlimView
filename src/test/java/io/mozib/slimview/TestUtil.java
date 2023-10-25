@@ -141,7 +141,7 @@ public class TestUtil {
         assertThrows(NullPointerException.class, ()->{mainViewModel.setAsFavorite(imageModel, true);});
     }
 
-    @Test
+    @Test // Bryce Doyle Test
     public void zoomWithNoPictureTest() {
         MainViewModel mainViewModel = new MainViewModel();
         MainWindowController mainWindowController = new MainWindowController();
@@ -150,7 +150,7 @@ public class TestUtil {
         assertDoesNotThrow(() -> mainWindowController.buttonZoomIn_onAction(actionEvent));
     }
 
-    @Test
+    @Test // Bryce Doyle Test
     public void favoritesTest() {
         FavoritesController favoritesController = new FavoritesController();
         favoritesController.add("./testing.png");
