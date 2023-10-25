@@ -4,6 +4,10 @@
 
 package io.mozib.slimview;
 
+import javafx.event.ActionEvent;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUtil {
 
+    @Test
+    public void testAspectRatio(){
+        // could not write test for this yikes
+    }
+    
     @Test //Sadie Forbes
     public void testComplicatedExtension(){
         assertEquals("zip", Util.getFileExt("t.t.t.t.t.t.t.zip"));
@@ -25,11 +34,19 @@ public class TestUtil {
         Assertions.assertInstanceOf(AppUpdateService.class, service);
     }
 
+    @Test //Justin Woodring
+    public void testImageFileSize()
+    {
+        ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
+        assertEquals(img.getFileSize(), 256);
+    }
+
     @Test
     public void testGetFileExt() {
         assertEquals("jpg", Util.getFileExt("test.bmp.jpg"));
         assertEquals("", Util.getFileExt("Test.This Folder\\test"));
         assertEquals("", Util.getFileExt("test"));
+        assertEquals("png", Util.getFileExt("test.photo.png"));
     }
 
     @Test
@@ -94,5 +111,21 @@ public class TestUtil {
         MainViewModel mainViewModel = new MainViewModel();
         ImageModel imageModel = null;
         assertThrows(NullPointerException.class, ()->{mainViewModel.setAsFavorite(imageModel, true);});
+    }
+
+    @Test
+    public void zoomWithNoPictureTest() {
+        MainViewModel mainViewModel = new MainViewModel();
+        MainWindowController mainWindowController = new MainWindowController();
+
+        ActionEvent actionEvent = new ActionEvent();
+        assertDoesNotThrow(() -> mainWindowController.buttonZoomIn_onAction(actionEvent));
+    }
+
+    @Test
+    public void favoritesTest() {
+        FavoritesController favoritesController = new FavoritesController();
+        favoritesController.add("./testing.png");
+        assertFalse(favoritesController.exists("./testing.png"));
     }
 }

@@ -17,7 +17,7 @@ public class RecentFiles implements Serializable {
     }
 
     public List<RecentFile> getRecentFiles() {
-        return recentFiles;
+        return null;
     }
 
     public void setRecentFiles(List<RecentFile> recentFiles) {
