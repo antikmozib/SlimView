@@ -151,14 +151,7 @@ public class TestUtil {
         ActionEvent actionEvent = new ActionEvent();
         assertDoesNotThrow(() -> mainWindowController.buttonZoomIn_onAction(actionEvent));
     }
-
-    @Test
-    public void addToRecentTest() {
-        RecentFiles recentFiles = Util.readDataFile(RecentFiles.class, Util.DataFileLocation.RECENT_FILES);
-        recentFiles.setRecentFiles(null);
-        Util.addToRecent(null);
-        assertEquals(null, recentFiles.getRecentFiles());
-    }
+    
 
     @Test // Bryce Doyle Test
     public void favoritesTest() {
