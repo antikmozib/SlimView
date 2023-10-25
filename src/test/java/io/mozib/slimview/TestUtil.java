@@ -118,6 +118,16 @@ public class TestUtil {
     }
 
     @Test
+    public void testAddToRecent(){
+        Util.addToRecent("src/main/resources/io/mozib/slimview/icons/favorite.png");
+    }
+
+    @Test
+    public void testGetAppVersion(){
+        assertEquals(Util.getAppVersion(), "1.0.7");
+    }
+
+    @Test
     public void CalvinsCoolTestCase()
     {
         ImageModel img = new ImageModel("src/main/resources/io/mozib/slimview/icons/save.png");
@@ -132,7 +142,7 @@ public class TestUtil {
         assertThrows(NullPointerException.class, ()->{mainViewModel.setAsFavorite(imageModel, true);});
     }
 
-    @Test
+    @Test // Bryce Doyle Test
     public void zoomWithNoPictureTest() {
         MainViewModel mainViewModel = new MainViewModel();
         MainWindowController mainWindowController = new MainWindowController();
