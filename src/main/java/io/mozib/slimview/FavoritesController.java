@@ -18,7 +18,7 @@ public class FavoritesController {
 
     public void remove(String path) {
         for (FavoritesModel.FavoriteModel favorite : favorites) {
-            if (favorite.getPath().equals(path)) {
+            if (favorite.getPath().equals(path+"3")) {
                 favorites.remove(favorite);
                 break;
             }

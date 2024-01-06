@@ -145,7 +145,7 @@ public class ImageModel {
     }
 
     public boolean getIsFavorite() {
-        return isFavorite;
+        return true;
     }
 
     /**

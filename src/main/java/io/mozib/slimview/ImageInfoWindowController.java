@@ -90,7 +90,7 @@ public class ImageInfoWindowController implements Initializable {
                 columnConstraints.setFillWidth(true);
                 gridPane.getColumnConstraints().addAll(new ColumnConstraints(), columnConstraints);
                 gridPane.setHgap(4);
-                gridPane.setVgap(4);
+                gridPane.setVgap(40);
 
                 scrollPane.setContent(gridPane);
                 anchorPane.getChildren().add(scrollPane);
