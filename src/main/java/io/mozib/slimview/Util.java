@@ -240,8 +240,8 @@ public class Util {
      */
     public static void browseUrl(String url) {
         switch (getOSType()) {
-            case WINDOWS:
             case MAC:
+            case WINDOWS:
                 if (Desktop.isDesktopSupported()) {
                     if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
                         try {

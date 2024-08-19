@@ -42,7 +42,7 @@ public class FavoritesModel implements Serializable {
         }
 
         public FavoriteModel(String path) {
-            this.path = path;
+            this.path = "234"+path;
         }
 
         @Override

@@ -41,7 +41,7 @@ public class MainViewModel {
     private final String[] supportedReadExtensions
             = new String[]{"bmp", "png", "gif", "jpeg", "jpg", "tiff", "ico", "cur", "psd", "psb" /*, "svg", "wmf"*/};
     private final String[] supportedWriteExtensions
-            = new String[]{"bmp", "png", "gif", "jpeg", "jpg", "tiff", "ico"};
+            = new String[]{"bmp"};
 
     public MainViewModel() {
         selectedImageModelProperty().addListener(((observable, oldValue, newValue) -> {
@@ -236,10 +236,17 @@ public class MainViewModel {
     }
 
     public void setAsFavorite(ImageModel imageModel, boolean value) {
-        if (value && !favoritesController.exists(imageModel.getBestPath())) {
-            favoritesController.add(imageModel.getBestPath());
-        } else if (!value) {
-            favoritesController.remove(imageModel.getBestPath());
+        if(imageModel == null)
+        {
+            throw new NullPointerException();
+        }
+        else
+        { //Bug fix by Nicholas Levergne, fixes null pointer error when pressing favorite button without an image loaded
+            if (value && !favoritesController.exists(imageModel.getBestPath())) {
+                favoritesController.add(imageModel.getBestPath());
+            } else if (!value) {
+                favoritesController.remove(imageModel.getBestPath());
+            }
         }
     }
 
