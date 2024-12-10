@@ -18,3 +18,7 @@ A fast and simple directory-based image viewer and browser for Windows, macOS an
 * Maven 3.8.4+
 
 `clone` the repository, `cd` into the root directory and execute `mvn clean package`.
+
+## Contributions
+
+_Currently not actively accepting contributions._
