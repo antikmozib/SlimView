@@ -1,5 +1,4 @@
 .idea/
-installer/
 target/
 .vscode/
 *.sh
