@@ -1,10 +1,12 @@
 .idea/
-dependency-reduced-pom.xml
-*.iml
-nbactions.xml
 installer/
-nb-configuration.xml
 target/
-nbactions-uninst.xml
+.vscode/
 *.sh
+*.iml
+pom.xml.versionsBackup
+dependency-reduced-pom.xml
+nbactions.xml
+nb-configuration.xml
+nbactions-uninst.xml
 SlimView.svg
