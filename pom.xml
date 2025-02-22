@@ -75,6 +75,11 @@
             <version>4.2</version>
         </dependency>
         <dependency>
+            <groupId>com.adobe.xmp</groupId>
+            <artifactId>xmpcore</artifactId>
+            <version>6.1.11</version>
+        </dependency>
+        <dependency>
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>
             <version>2.19.0</version>
@@ -215,7 +220,7 @@
             <plugin>
                 <groupId>org.moditect</groupId>
                 <artifactId>moditect-maven-plugin</artifactId>
-                <version>1.2.1.Final</version>
+                <version>1.2.2.Final</version>
                 <executions>
                     <!-- Patch non-modularized dependencies -->
                     <execution>
@@ -274,20 +279,27 @@
                                 </module>
                                 <module>
                                     <artifact>
-                                        <groupId>com.drewnoakes</groupId>
-                                        <artifactId>metadata-extractor</artifactId>
-                                    </artifact>
-                                    <moduleInfo>
-                                        <name>metadata.extractor</name>
-                                    </moduleInfo>
-                                </module>
-                                <module>
-                                    <artifact>
                                         <groupId>com.adobe.xmp</groupId>
                                         <artifactId>xmpcore</artifactId>
                                     </artifact>
                                     <moduleInfo>
                                         <name>xmpcore</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>com.drewnoakes</groupId>
+                                        <artifactId>metadata-extractor</artifactId>
+                                    </artifact>
+                                    <additionalDependencies>
+                                        <dependency>
+                                            <groupId>com.adobe.xmp</groupId>
+                                            <artifactId>xmpcore</artifactId>
+                                            <version>6.1.11</version>
+                                        </dependency>
+                                    </additionalDependencies>
+                                    <moduleInfo>
+                                        <name>metadata.extractor</name>
                                     </moduleInfo>
                                 </module>
                                 <module>
