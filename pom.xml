@@ -75,11 +75,6 @@
             <version>4.2</version>
         </dependency>
         <dependency>
-            <groupId>com.adobe.xmp</groupId>
-            <artifactId>xmpcore</artifactId>
-            <version>6.1.11</version>
-        </dependency>
-        <dependency>
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>
             <version>2.19.0</version>
@@ -121,9 +116,9 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>3.8.8</version>
+                                    <version>3.9.9</version>
                                 </requireMavenVersion>
-                            </rules>    
+                            </rules>
                         </configuration>
                     </execution>
                 </executions>
@@ -231,6 +226,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/patched-modules</outputDirectory>
+                            <overwriteExistingFiles>true</overwriteExistingFiles>
                             <modules>
                                 <module>
                                     <artifact>
