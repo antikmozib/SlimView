@@ -437,7 +437,7 @@
                             <downloadUrl>https://java.com/download</downloadUrl>
                             <stayAlive>false</stayAlive>
                             <restartOnCrash>false</restartOnCrash>
-                            <icon>installer/SlimView.ico</icon>
+                            <icon>SlimView.ico</icon>
                             <classPath>
                                 <mainClass>${mainClass}</mainClass>
                             </classPath>
