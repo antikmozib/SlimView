@@ -212,7 +212,7 @@ public class Util {
             try {
                 data = classType.getDeclaredConstructor().newInstance();
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException
-                    | NoSuchMethodException e) {
+                     | NoSuchMethodException e) {
                 e.printStackTrace();
             }
         }

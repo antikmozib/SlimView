@@ -719,7 +719,7 @@ public class MainWindowController implements Initializable {
     public void menuCheckForUpdates_onAction(ActionEvent actionEvent) {
         AppUpdateService appUpdateService = new AppUpdateService(
                 "slimview",
-                Util.getAppVersion().equals("") ? "0" : Util.getAppVersion());
+                Util.getAppVersion() == null ? "0" : Util.getAppVersion());
         appUpdateService.setOnSucceeded(event -> {
             boolean updateAvailable = (boolean) event.getSource().getValue();
 
