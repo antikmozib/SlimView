@@ -217,8 +217,7 @@
                                     </excludes>
                                 </filter>
                             </filters>
-                            <finalName>
-                                ${project.artifactId}-${project.version}-with-dependencies</finalName>
+                            <finalName>${project.artifactId}-${project.version}-with-dependencies</finalName>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
                     </execution>
@@ -459,11 +458,11 @@
                             </jre>
                             <versionInfo>
                                 <fileVersion>${project.version}.0</fileVersion>
-                                <txtFileVersion>${project.version}.0</txtFileVersion>
+                                <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>SlimView</fileDescription>
                                 <copyright>Copyright © 2021-2023 Antik Mozib. All rights reserved.</copyright>
                                 <productVersion>${project.version}.0</productVersion>
-                                <txtProductVersion>${project.version}.0</txtProductVersion>
+                                <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>SlimView</productName>
                                 <companyName>Antik Mozib</companyName>
                                 <internalName>io.mozib.slimview</internalName>
