@@ -234,7 +234,7 @@
                             <goal>add-module-info</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/patched-modules</outputDirectory>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
                             <overwriteExistingFiles>true</overwriteExistingFiles>
                             <modules>
                                 <module>
@@ -402,7 +402,6 @@
                         <configuration>
                             <modulePath>
                                 <path>${project.build.directory}/modules</path>
-                                <path>${project.build.directory}/patched-modules</path>
                                 <path>${project.build.directory}/classes</path>
                             </modulePath>
                             <modules>
