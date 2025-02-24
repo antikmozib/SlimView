@@ -15,7 +15,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <jdk.version>21</jdk.version>
-        <javafx.version>21.0.3</javafx.version>
+        <javafx.version>21.0.6</javafx.version>
         <mainClass>io.mozib.slimview.App</mainClass>
     </properties>
     <dependencies>
