@@ -10,6 +10,11 @@
     <artifactId>slimview</artifactId>
     <version>1.0.7</version>
     <packaging>jar</packaging>
+    <description>A fast and simple directory-based image viewer and browser.</description>
+    <organization>
+        <name>Antik Mozib</name>
+    </organization>
+    <inceptionYear>2021</inceptionYear>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
@@ -455,12 +460,11 @@
                             </jre>
                             <versionInfo>
                                 <fileVersion>${project.version}.0</fileVersion>
-                                <txtFileVersion>${project.version}</txtFileVersion>
+                                <txtFileVersion>${project.version}.0</txtFileVersion>
                                 <fileDescription>SlimView</fileDescription>
-                                <copyright>Copyright © 2021-2023 Antik Mozib. All rights
-                                    reserved.</copyright>
+                                <copyright>Copyright © 2021-2023 Antik Mozib. All rights reserved.</copyright>
                                 <productVersion>${project.version}.0</productVersion>
-                                <txtProductVersion>${project.version}</txtProductVersion>
+                                <txtProductVersion>${project.version}.0</txtProductVersion>
                                 <productName>SlimView</productName>
                                 <companyName>Antik Mozib</companyName>
                                 <internalName>io.mozib.slimview</internalName>
