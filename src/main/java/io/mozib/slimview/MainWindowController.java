@@ -720,9 +720,9 @@ public class MainWindowController implements Initializable {
         AppUpdateService appUpdateService = new AppUpdateService(
                 "slimview",
                 Util.getAppVersion() == null ? "0" : Util.getAppVersion());
+
         appUpdateService.setOnSucceeded(event -> {
             boolean updateAvailable = (boolean) event.getSource().getValue();
-
             Alert alert;
             if (updateAvailable) {
                 alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -742,6 +742,16 @@ public class MainWindowController implements Initializable {
                 alert.showAndWait();
             }
         });
+
+        appUpdateService.setOnFailed(event -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Update");
+            alert.initOwner(imageViewMain.getScene().getWindow());
+            alert.setHeaderText("Unable to check for updates.");
+            alert.getDialogPane().setContentText(appUpdateService.getException().getMessage());
+            alert.showAndWait();
+        });
+
         appUpdateService.start();
     }
 
